@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+# Dir
+/build/
+/hive/luaclib/
+
+# File
+/hive/lua
+/hive/luac
