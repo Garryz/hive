@@ -155,14 +155,27 @@ function cell.wakeup(event)
     table.insert(event_q1, event)
 end
 
-function cell.fork(f)
-    local co =
-        co_create(
-        function()
-            f()
-            return "EXIT"
-        end
-    )
+function cell.fork(func, ...)
+    local n = select("#", ...)
+    local co
+    if n == 0 then
+        co =
+            co_create(
+            function()
+                func()
+                return "EXIT"
+            end
+        )
+    else
+        local args = {...}
+        co =
+            co_create(
+            function()
+                func(table.unpack(args, 1, n))
+                return "EXIT"
+            end
+        )
+    end
     session = session + 1
     new_task(nil, nil, co, session)
     cell.wakeup(session)

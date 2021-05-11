@@ -1,7 +1,7 @@
 --[[
 Author: your name
 Date: 2021-05-06 14:04:22
-LastEditTime: 2021-05-07 10:42:55
+LastEditTime: 2021-05-11 16:22:20
 LastEditors: Please set LastEditors
 Description: In User Settings Edit
 FilePath: /hive/hive/test/main.lua
@@ -63,7 +63,7 @@ function cell.main()
     -- end)
     -- cell.exit()
 
-    -- local server = socket.listen("127.0.0.1", 8888, accepter)
+    local server = socket.listen("0.0.0.0", 8888, accepter)
     print("cell.main 1")
     local sock, err = socket.connect("127.0.0.1", 8888)
     print(sock, err)
