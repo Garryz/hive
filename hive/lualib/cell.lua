@@ -191,6 +191,10 @@ function cell.wait(event)
     coroutine.yield("WAIT", event)
 end
 
+function cell.kill(addr)
+    cell.send(system, "kill", addr)
+end
+
 function cell.exit()
     cell.send(system, "kill", self)
     -- no return
