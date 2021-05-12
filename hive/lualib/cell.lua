@@ -7,6 +7,12 @@ local select = select
 local next = next
 local pairs = pairs
 local type = type
+local pcall = pcall
+local debug = debug
+local print = print
+local error = error
+local tostring = tostring
+local string = string
 
 local session = 0
 local coroutine_pool = setmetatable({}, {__mode = "kv"})

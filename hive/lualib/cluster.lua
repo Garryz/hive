@@ -1,5 +1,12 @@
 local cell = require "cell"
-local seri = require "hive.seri"
+
+local pcall = pcall
+local print = print
+local ipairs = ipairs
+local type = type
+local setmetatable = setmetatable
+local table = table
+local assert = assert
 
 local clusterd = cell.uniqueservice("service.clusterd")
 
@@ -21,7 +28,7 @@ local function request_sender(q, node)
     for _, task in ipairs(q) do
         if type(task) == "table" then
             if c then
-                cell.send(c, "push", seri.pack(table.unpack(task)))
+                cell.send(c, "push", table.unpack(task))
             end
         else
             cell.wakeup(task)
@@ -54,16 +61,20 @@ local function get_sender(node)
 end
 
 function cluster.call(node, service, func, ...)
-    return cell.call(get_sender(node), "req", seri.pack(service, func, ...))
+    assert(type(node) == "string")
+    assert(type(service) == "string")
+    return cell.call(get_sender(node), "req", service, func, ...)
 end
 
 function cluster.send(node, service, func, ...)
+    assert(type(node) == "string")
+    assert(type[service] == "string")
     -- push is the same with req, but no response
     local s = sender[node]
     if not s then
         table.insert(task_queue[node], table.pack(service, func, ...))
     else
-        cell.send(sender[node], "push", seri.pack(service, func, ...))
+        cell.send(sender[node], "push", service, func, ...)
     end
 end
 

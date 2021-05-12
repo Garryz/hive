@@ -2,6 +2,14 @@ local cell = require "cell"
 local socket = require "socket"
 
 local coroutine = coroutine
+local assert = assert
+local pairs = pairs
+local pcall = pcall
+local print = print
+local table = table
+local ipairs = ipairs
+local type = type
+local error = error
 
 -- channel support auto reconnect , and capture socket error in request/response transaction
 -- { host = "", port = , auth = function(so) , response = function(so) session, data }

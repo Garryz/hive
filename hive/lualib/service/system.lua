@@ -4,6 +4,12 @@ local system = require "cell.system"
 local coroutine = coroutine
 local table = table
 local assert = assert
+local package = package
+local error = error
+local type = type
+local ipairs = ipairs
+local table = table
+local print = print
 
 local command = {}
 local message = {}

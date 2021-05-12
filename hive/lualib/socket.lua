@@ -4,6 +4,9 @@ local csocket = require "cell.c.socket"
 local coroutine = coroutine
 local assert = assert
 local type = type
+local print = print
+local string = string
+local setmetatable = setmetatable
 
 local BUFFER_LIMIT = 128 * 1024
 

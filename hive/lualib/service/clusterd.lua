@@ -1,5 +1,12 @@
 local cell = require "cell"
 
+local table = table
+local assert = assert
+local string = string
+local pcall = pcall
+local ipairs = ipairs
+local setmetatable = setmetatable
+
 local command = {}
 
 local node_address = {}
@@ -23,7 +30,7 @@ local function open_channel(t, key)
         local host, port = string.match(address, "([^:]+):(.*)$")
         c = node_sender[key]
         if c == nil then
-            c = cell.newservice("clustersender", key, host, port)
+            c = cell.newservice("clustersender", host, port)
             if node_sender[key] then
                 -- doublc check
                 cell.kill(c)
