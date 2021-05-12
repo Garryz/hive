@@ -90,10 +90,10 @@ function cluster.reload(config)
     cell.call(clusterd, "reload", config)
 end
 
-function cluster.register(name, addr)
+function cluster.register(name, service)
     assert(type(name) == "string")
-    assert(type(addr) == "userdata")
-    return cell.call(clusterd, "register", name, addr)
+    assert(type(service) == "userdata")
+    return cell.call(clusterd, "register", name, service)
 end
 
 return cluster

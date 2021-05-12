@@ -1,4 +1,5 @@
 local cell = require "cell"
+local socket = require "socket"
 
 local table = table
 local assert = assert
@@ -10,6 +11,7 @@ local io = io
 local load = load
 local type = type
 local pairs = pairs
+local print = print
 
 local command = {}
 
@@ -36,7 +38,7 @@ local function open_channel(t, key)
         local host, port = string.match(address, "([^:]+):(.*)$")
         c = node_sender[key]
         if c == nil then
-            c = cell.newservice("clustersender", host, port)
+            c = cell.newservice("service.clustersender", host, port)
             if node_sender[key] then
                 -- doublc check
                 cell.kill(c)
@@ -105,6 +107,56 @@ end
 
 function command.reload(config)
     loadconfig(config)
+end
+
+local cluster_gate = {} -- gatename : serversock
+local cluster_agent = {} -- fd : service
+
+local function accepter(fd, addr, listen_fd)
+    print(string.format("soket accept from %s", addr))
+    local agent = cell.newservice("service.clusteragent", fd)
+    cluster_agent[fd] = agent
+    return agent
+end
+
+function command.listen(addr, port)
+    local gatename = port
+    if port == nil then
+        local address = assert(node_address[addr], addr .. " is down")
+        gatename = addr
+        addr, port = string.match(address, "([^:]+):(.*)$")
+    end
+    cluster_gate[gatename] = socket.listen(addr, tonumber(port), accepter)
+end
+
+local register_name = {}
+
+local function clearnamecache()
+    for _, service in pairs(cluster_agent) do
+        if type(service) == "userdata" then
+            cell.send(service, "namechange")
+        end
+    end
+end
+
+function command.register(name, service)
+    assert(register_name[name] == nil)
+    local old_name = register_name[service]
+    if old_name then
+        register_name[old_name] = nil
+        clearnamecache()
+    end
+    register_name[service] = name
+    register_name[name] = service
+    print(string.format("Register [%s] :%s", name, service))
+end
+
+function command.queryname(name)
+    return register_name[name]
+end
+
+function command.closeagent(fd)
+    cluster_agent[fd] = nil
 end
 
 cell.command(command)
