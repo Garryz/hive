@@ -12,9 +12,8 @@ local command = {}
 local channel
 
 local function pack(service, session, func, ...)
-    local msg = {service = service, session = session, func = func, args = {...}}
     local request = {}
-    request[2] = mp.pack(msg)
+    request[2] = mp.pack({service = service, session = session, func = func, args = {...}})
     request[1] = string.pack("<I4", #request[2])
     return table.concat(request)
 end
