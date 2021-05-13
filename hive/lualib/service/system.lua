@@ -56,7 +56,7 @@ end
 
 function command.launch(name, ...)
     local fullname = assert(package.searchpath(name, package.path), "cell was not found")
-    local c = system.launch(fullname)
+    local c = system.launch(fullname, system.loader)
     if c then
         -- 4 is launch proto
         local ev = cell.event()
@@ -84,7 +84,7 @@ function command.uniquelaunch(name)
 
     if s.launch == nil then
         s.launch = true
-        local c = system.launch(fullname)
+        local c = system.launch(fullname, system.loader)
         if c then
             local ev = cell.event()
             cell.rawcall(c, ev, 4, cell.self, ev, true)
@@ -170,7 +170,7 @@ local function start()
     print("[socket cell]", socket_cell)
     cell.rawsend(socket_cell, 4, nil, nil, false)
 
-    local c = system.launch(system.maincell)
+    local c = system.launch(system.maincell, system.loader)
     if c then
         cell.rawsend(c, 4, nil, nil, false)
     else

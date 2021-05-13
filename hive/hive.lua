@@ -10,7 +10,11 @@ local hive = {}
 
 function hive.start(t)
     local main = assert(package.searchpath(t.main, package.path), "main cell was not found")
-    return c.start(t, system_cell, socket_cell, main)
+    local loader
+    if t.loader then
+        loader = assert(package.searchpath(t.loader, package.path), "loader was not found")
+    end
+    return c.start(t, system_cell, socket_cell, main, loader)
 end
 
 return hive

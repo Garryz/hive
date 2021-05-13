@@ -15,8 +15,12 @@ static int lkill(lua_State *L) {
 
 static int llaunch(lua_State *L) {
     const char *filename = luaL_checkstring(L, 1);
+    const char *loadername = nullptr;
+    if (lua_type(L, 2) == LUA_TSTRING) {
+        loadername = luaL_checkstring(L, 2);
+    }
     lua_State *sL = scheduler_newtask(L, true);
-    cell *c = cell_new(sL, filename);
+    cell *c = cell_new(sL, filename, loadername);
     if (c) {
         cell_touserdata(L, lua_upvalueindex(1), c);
         scheduler_starttask(sL);

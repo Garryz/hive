@@ -8,8 +8,8 @@ struct cell;
 cell *cell_alloc(lua_State *L);
 cell *cell_socket(lua_State *L, cell *sys, const char *socketfile);
 cell *cell_sys(lua_State *L, cell *sys, cell *socket, const char *systemfile,
-               const char *mainfile);
-cell *cell_new(lua_State *L, const char *mainfile);
+               const char *mainfile, const char *loaderfie);
+cell *cell_new(lua_State *L, const char *mainfile, const char *loaderfile);
 void cell_close(cell *c);
 bool cell_dispatch_message(cell *c);
 int cell_send(cell *c, int type, void *msg);

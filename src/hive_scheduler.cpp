@@ -210,6 +210,10 @@ int scheduler_start(lua_State *L) {
     const char *system_lua = luaL_checkstring(L, 2);
     const char *socket_lua = luaL_checkstring(L, 3);
     const char *main_lua = luaL_checkstring(L, 4);
+    const char *loader_lua = nullptr;
+    if (lua_type(L, 5) == LUA_TSTRING) {
+        loader_lua = luaL_checkstring(L, 5);
+    }
     lua_getfield(L, 1, "thread");
     int thread = static_cast<int>(luaL_optinteger(L, -1, DEFAULT_THREAD));
     lua_pop(L, 1);
@@ -231,7 +235,7 @@ int scheduler_start(lua_State *L) {
         return 0;
     }
 
-    sys = cell_sys(sL, sys, socket, system_lua, main_lua);
+    sys = cell_sys(sL, sys, socket, system_lua, main_lua, loader_lua);
     if (sys == nullptr) {
         return 0;
     }

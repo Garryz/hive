@@ -105,7 +105,8 @@ static void require_cell(lua_State *L, cell *c,
     hive_setenv(L, "cell_pointer");
 }
 
-static void require_sys(lua_State *L, cell *socket, const char *mainfile) {
+static void require_sys(lua_State *L, cell *socket, const char *mainfile,
+                        const char *loaderfile) {
     hive_getenv(L, "cell_map");
     int cell_map = lua_absindex(L, -1);
     luaL_requiref(L, "cell.system", cell_system_lib, 0);
@@ -115,6 +116,9 @@ static void require_sys(lua_State *L, cell *socket, const char *mainfile) {
 
     lua_pushstring(L, mainfile);
     lua_setfield(L, -2, "maincell");
+
+    lua_pushstring(L, loaderfile);
+    lua_setfield(L, -2, "loader");
 
     lua_pop(L, 2);
 }
@@ -168,7 +172,8 @@ static int lcallback(lua_State *L) {
     return 0;
 }
 
-static cell *init_cell(lua_State *L, cell *c, const char *mainfile) {
+static cell *init_cell(lua_State *L, cell *c, const char *mainfile,
+                       const char *loaderfile) {
     auto _error = [](lua_State *L, cell *c) -> cell * {
         scheduler_deletetask(L);
         c->L = nullptr;
@@ -176,7 +181,25 @@ static cell *init_cell(lua_State *L, cell *c, const char *mainfile) {
         return nullptr;
     };
 
-    int err = luaL_loadfile(L, mainfile);
+    int err = 0;
+    if (loaderfile != nullptr) {
+        err = luaL_loadfile(L, loaderfile);
+        if (err) {
+            printf("%d : %s\n", err, lua_tostring(L, -1));
+            lua_pop(L, 1);
+            return _error(L, c);
+        }
+
+        err = lua_pcall(L, 0, 0, 0);
+        if (err) {
+            printf("loader (%s) error %d : %s\n", loaderfile, err,
+                   lua_tostring(L, -1));
+            lua_pop(L, 1);
+            return _error(L, c);
+        }
+    }
+
+    err = luaL_loadfile(L, mainfile);
     if (err) {
         printf("%d : %s\n", err, lua_tostring(L, -1));
         lua_pop(L, 1);
@@ -216,12 +239,12 @@ cell *cell_socket(lua_State *L, cell *sys, const char *socketfile) {
         lua_setfield(L, -2, "system");
     });
 
-    return init_cell(L, c, socketfile);
+    return init_cell(L, c, socketfile, nullptr);
 }
 
 cell *cell_sys(lua_State *L, cell *sys, cell *socket, const char *systemfile,
-               const char *mainfile) {
-    require_sys(L, socket, mainfile);
+               const char *mainfile, const char *loaderfile) {
+    require_sys(L, socket, mainfile, loaderfile);
 
     sys->single_thread = true;
 
@@ -230,10 +253,10 @@ cell *cell_sys(lua_State *L, cell *sys, cell *socket, const char *systemfile,
     lua_pushlightuserdata(L, sys);
     hive_setenv(L, "system_pointer");
 
-    return init_cell(L, sys, systemfile);
+    return init_cell(L, sys, systemfile, nullptr);
 }
 
-cell *cell_new(lua_State *L, const char *mainfile) {
+cell *cell_new(lua_State *L, const char *mainfile, const char *loaderfile) {
     require_socket(L);
 
     cell *c = cell_alloc(L);
@@ -249,7 +272,7 @@ cell *cell_new(lua_State *L, const char *mainfile) {
         }
     });
 
-    return init_cell(L, c, mainfile);
+    return init_cell(L, c, mainfile, loaderfile);
 }
 
 void cell_close(cell *c) {
