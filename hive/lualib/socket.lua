@@ -296,7 +296,14 @@ cell.dispatch {
     dispatch = function(fd)
         local obj = sockets[fd]
         if obj then
-            obj:disconnect()
+            local co =
+                cell.co_create(
+                function()
+                    obj:disconnect()
+                    return "EXIT"
+                end
+            )
+            cell.suspend(nil, nil, co, coroutine.resume(co))
         end
     end
 }
@@ -306,10 +313,17 @@ cell.dispatch {
     dispatch = function(fd, size)
         local obj = sockets[fd]
         if obj then
-            local warning = sockets_warning[fd] or function(fd, size)
-                    print(string.format("WARNING: %d K bytes need to send out (fd = %d)", size, fd))
+            local co =
+                cell.co_create(
+                function()
+                    local warning = sockets_warning[fd] or function(fd, size)
+                            print(string.format("WARNING: %d K bytes need to send out (fd = %d)", size, fd))
+                        end
+                    warning(fd, size)
+                    return "EXIT"
                 end
-            warning(fd, size)
+            )
+            cell.suspend(nil, nil, co, coroutine.resume(co))
         end
     end
 }

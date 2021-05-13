@@ -8,6 +8,7 @@ local pcall = pcall
 local error = error
 
 local command = {}
+local message = {}
 
 local channel
 
@@ -20,7 +21,7 @@ end
 
 local function send_request(service, func, ...)
     local session = cell.event()
-    return channel.request(pack(service, session, func, ...), session)
+    return channel:request(pack(service, session, func, ...), session)
 end
 
 function command.req(service, func, ...)
@@ -36,16 +37,17 @@ function command.req(service, func, ...)
     end
 end
 
-function command.push(service, func, ...)
-    channel:request(pack(service, nil, func, ...))
-end
-
 function command.changenode(host, port)
     channel:changehost(host, tonumber(port))
     channel:connect(true)
 end
 
+function message.push(service, func, ...)
+    channel:request(pack(service, nil, func, ...))
+end
+
 cell.command(command)
+cell.message(message)
 
 local function read_response(sock)
     local sz = string.unpack("<I4", sock:readbytes(4))
@@ -58,7 +60,7 @@ function cell.main(init_host, init_port)
     channel =
         sc.channel {
         host = init_host,
-        prot = tonumber(init_port),
+        port = tonumber(init_port),
         response = read_response
     }
 end

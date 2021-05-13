@@ -1,4 +1,5 @@
 local c = require "cell.c"
+local cell_require = require "require"
 
 local table = table
 local coroutine = coroutine
@@ -238,6 +239,8 @@ function cell.message(msgfuncs)
     message = msgfuncs
 end
 
+cell.init = cell_require.init
+
 function cell.main()
 end
 
@@ -261,6 +264,7 @@ cell.dispatch {
         local co =
             co_create(
             function(...)
+                cell_require.init_all()
                 return op, cell.main(...)
             end
         )

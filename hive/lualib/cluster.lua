@@ -8,7 +8,7 @@ local setmetatable = setmetatable
 local table = table
 local assert = assert
 
-local clusterd = cell.uniqueservice("service.clusterd")
+local clusterd
 
 local cluster = {}
 
@@ -43,6 +43,7 @@ local function get_queue(t, node)
     local q = {}
     t[node] = q
     cell.fork(request_sender, q, node)
+    return q
 end
 
 setmetatable(task_queue, {__index = get_queue})
@@ -68,7 +69,7 @@ end
 
 function cluster.send(node, service, func, ...)
     assert(type(node) == "string")
-    assert(type[service] == "string")
+    assert(type(service) == "string")
     -- push is the same with req, but no response
     local s = sender[node]
     if not s then
@@ -95,5 +96,11 @@ function cluster.register(name, service)
     assert(type(service) == "userdata")
     return cell.call(clusterd, "register", name, service)
 end
+
+cell.init(
+    function()
+        clusterd = cell.uniqueservice("service.clusterd")
+    end
+)
 
 return cluster

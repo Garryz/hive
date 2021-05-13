@@ -59,12 +59,12 @@ local function dispatch_request()
         sz = string.unpack("<I4", sz)
         local msg = sock:readbytes(sz)
         if msg == nil then
-            sock:close()
+            sock:disconnect()
             return
         end
         local request = mp.unpack(msg)
         if request == nil or request.service == nil then
-            sock:close()
+            sock:disconnect()
             return
         end
         local service = register_name[request.service]
@@ -75,9 +75,11 @@ local function dispatch_request()
                     ok, data =
                         pcall(
                         function()
-                            return table.pack(
-                                cell.call(service, request.func, request.args and table.unpack(request.args))
-                            )
+                            if request.args then
+                                return table.pack(cell.call(service, request.func, table.unpack(request.args)))
+                            else
+                                return table.pack(cell.call(service, request.func))
+                            end
                         end
                     )
                     local response = {}
@@ -89,13 +91,17 @@ local function dispatch_request()
                     data = "name not found"
                 end
             elseif service then
-                cell.send(service, request.func, request.args and table.unpack(request.args))
+                if request.args then
+                    cell.send(service, request.func, table.unpack(request.args))
+                else
+                    cell.send(service, request.func)
+                end
             end
         else
         end
         sz = sock:readbytes(4)
     end
-    sock:close()
+    sock:disconnect()
 end
 
 function cell.main(fd)

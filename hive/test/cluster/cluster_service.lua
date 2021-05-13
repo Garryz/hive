@@ -7,8 +7,8 @@ function command.add(a, b)
     return a + b
 end
 
-function message.print(str)
-    print("cluster_service", str)
+function message.print(...)
+    print("cluster_service", ...)
 end
 
 cell.command(command)

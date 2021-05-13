@@ -400,7 +400,9 @@ function channel:close()
     if not self.__closed then
         term_dispatch_thread(self)
         self.__closed = true
-        self.__sock:close()
+        if self.__socke then
+            self.__sock:close()
+        end
     end
 end
 
@@ -409,7 +411,7 @@ function channel:changehost(host, port)
     if port then
         self.__port = port
     end
-    if not self.__closed then
+    if not self.__closed and self.__sock then
         self.__sock:close()
     end
 end

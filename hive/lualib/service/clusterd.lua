@@ -48,12 +48,13 @@ local function open_channel(t, key)
             end
         end
 
-        succ = pcall(cell.call, c, "changenode", host, port)
+        succ, err = pcall(cell.call, c, "changenode", host, port)
 
         if succ then
             t[key] = c
             ct.channel = c
         else
+            print(err)
             err = string.format("changenode [%s] (%s:%s) failed", key, host, port)
         end
     else
@@ -83,7 +84,7 @@ local function loadconfig(tmp)
             local f = assert(io.open(config_name))
             local source = f:read "*a"
             f:close()
-            assert(load(source, "@" .. config_name, "t", tmp))
+            assert(load(source, "@" .. config_name, "t", tmp))()
         end
     end
     local reload = {}
