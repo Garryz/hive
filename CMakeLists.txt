@@ -1,5 +1,6 @@
 project(hive)
 
+set(EXE ${CMAKE_SOURCE_DIR}/hive)
 set(LIB ${CMAKE_SOURCE_DIR}/hive/luaclib)
 
 if(CMAKE_SYSTEM_NAME MATCHES "Windows")
@@ -37,6 +38,7 @@ if(CMAKE_SYSTEM_NAME MATCHES "Windows")
 else()
     cmake_minimum_required(VERSION 3.1.3)
 
+    set(EXECUTABLE_OUTPUT_PATH ${EXE})
     set(LIBRARY_OUTPUT_PATH ${LIB})
 
     set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")

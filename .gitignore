@@ -42,3 +42,4 @@
 # File
 /hive/lua
 /hive/luac
+/hive/protoc*
