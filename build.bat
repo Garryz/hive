@@ -8,19 +8,13 @@ del %cd%\hive\core* /f /q
 
 del %cd%\hive\lua /f /q
 
-del %cd%\hive\lua.exe /f /q
-
-del %cd%\hive\lua.ilk /f /q
-
-del %cd%\hive\lua.pdb /f /q
+del %cd%\hive\lua.* /f /q
 
 del %cd%\hive\luac /f /q
 
-del %cd%\hive\luac.exe /f /q
+del %cd%\hive\luac.* /f /q
 
-del %cd%\hive\luac.ilk /f /q
-
-del %cd%\hive\luac.pdb /f /q
+del %cd%\hive\proto* /f /q
 
 mkdir %cd%\build
 
