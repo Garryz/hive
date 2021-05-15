@@ -39,10 +39,7 @@ int data_unpack(lua_State *L) {
 
 extern "C" {
 
-#if (defined(_WIN32) || defined(WIN32))
-__declspec(dllexport)
-#endif
-    int luaopen_hive_seri(lua_State *L) {
+LUALIB_API int luaopen_hive_seri(lua_State *L) {
     luaL_checkversion(L);
     luaL_Reg l[] = {
         {"pack", data_pack},

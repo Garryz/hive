@@ -14,8 +14,6 @@ if(CMAKE_SYSTEM_NAME MATCHES "Windows")
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL ${LIB})
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO ${LIB})
 
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-
     macro(get_WIN32_WINNT version)
         if (CMAKE_SYSTEM_VERSION)
             set(ver ${CMAKE_SYSTEM_VERSION})
@@ -50,3 +48,5 @@ endif()
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 add_subdirectory(${CMAKE_SOURCE_DIR}/third_party/lua)
+add_subdirectory(${CMAKE_SOURCE_DIR}/third_party/pb)
+add_subdirectory(${CMAKE_SOURCE_DIR}/third_party/protobuf/cmake)

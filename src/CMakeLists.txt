@@ -1,11 +1,18 @@
 project(core)
 
+add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+
 include_directories(${CMAKE_SOURCE_DIR}/third_party)
 include_directories(${CMAKE_SOURCE_DIR}/third_party/lua)
 
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} CORE_SOURCES)
 
 find_package(Threads)
+
+if(CMAKE_SYSTEM_NAME MATCHES "Windows")
+    add_definitions(-DLUA_BUILD_AS_DLL)
+    add_definitions(-DLUA_LIB)
+endif()
 
 add_library(hive SHARED ${CORE_SOURCES})
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
