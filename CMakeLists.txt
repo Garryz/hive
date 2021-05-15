@@ -35,7 +35,7 @@ if(CMAKE_SYSTEM_NAME MATCHES "Windows")
     get_WIN32_WINNT(ver)
     add_definitions(-D_WIN32_WINNT=${ver})
 else()
-    cmake_minimum_required(VERSION 2.8.12.2)
+    cmake_minimum_required(VERSION 3.1.3)
 
     set(LIBRARY_OUTPUT_PATH ${LIB})
 
