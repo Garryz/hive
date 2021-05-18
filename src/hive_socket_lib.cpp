@@ -136,7 +136,10 @@ static int lreadline(lua_State *L) {
     const char *sep = luaL_checklstring(L, 2, &len);
     bool read = !lua_toboolean(L, 3);
 
-    for (std::size_t i = 0; i < buffer->len - len + 1; i++) {
+    if (buffer->len + 1 <= len) {
+        return 0;
+    }
+    for (std::size_t i = 0; i < buffer->len + 1 - len; i++) {
         if (buffer->check_sep(i, sep, len)) {
             if (!read) {
                 lua_pushboolean(L, 1);

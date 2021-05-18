@@ -1,11 +1,3 @@
---[[
-Author: your name
-Date: 2021-05-06 14:04:22
-LastEditTime: 2021-05-11 16:22:20
-LastEditors: Please set LastEditors
-Description: In User Settings Edit
-FilePath: /hive/hive/test/main.lua
---]]
 local cell = require "cell"
 local socket = require "socket"
 
@@ -63,34 +55,34 @@ function cell.main()
     -- end)
     -- cell.exit()
 
-    local server = socket.listen("0.0.0.0", 8888, accepter)
-    print("cell.main 1")
-    local sock, err = socket.connect("127.0.0.1", 8888)
-    print(sock, err)
-    cell.sleep(60000)
-    print("session write 1")
-    sock:write("test\n")
-    cell.sleep(60000)
-    print("session write 2")
-    sock:write("test\n")
-    -- sock:disconnect()
-    -- local line = sock:readline("\n")
-    -- print("session read", line)
-    -- sock:write(line .. "\n")
-    -- -- server:disconnect()
-    -- sock:disconnect()
-    -- local function f()
-    --     collectgarbage("count")
-    --     cell.timeout(1000, f)
-    -- end
-    -- cell.timeout(1000, f)
-    -- cell.exit()
-    print("exit")
+    -- local server = socket.listen("0.0.0.0", 8888, accepter)
+    -- print("cell.main 1")
+    -- local sock, err = socket.connect("127.0.0.1", 8888)
+    -- print(sock, err)
+    -- cell.sleep(60000)
+    -- print("session write 1")
+    -- sock:write("test\n")
+    -- cell.sleep(60000)
+    -- print("session write 2")
+    -- sock:write("test\n")
+    -- -- sock:disconnect()
+    -- -- local line = sock:readline("\n")
+    -- -- print("session read", line)
+    -- -- sock:write(line .. "\n")
+    -- -- -- server:disconnect()
+    -- -- sock:disconnect()
+    -- -- local function f()
+    -- --     collectgarbage("count")
+    -- --     cell.timeout(1000, f)
+    -- -- end
+    -- -- cell.timeout(1000, f)
+    -- -- cell.exit()
+    -- print("exit")
 
-    -- local server = socket.listen("127.0.0.1", 8888, accepter)
-    -- servers[server.__fd] = server
+    local server = socket.listen("127.0.0.1", 8888, accepter)
+    servers[server.__fd] = server
     -- for i = 1, 10000 do
-    -- 	table.insert(clients, cell.cmd("launch", "test.client"))
+    table.insert(clients, cell.cmd("launch", "test.client"))
     -- end
 
     -- for i = 1, 200 do

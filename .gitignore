@@ -36,6 +36,8 @@
 *.pdb
 
 # Dir
+.gitee/
+.vscode/
 /build/
 /hive/luaclib/
 

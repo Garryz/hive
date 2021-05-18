@@ -3,7 +3,7 @@ local socket = require "socket"
 
 local function random_str(len)
     math.randomseed(os.time())
-    local len = math.random(0, len)
+    local len = math.random(1, len)
     local rand_table = {}
     for i = 1, len do
         local rand_num = math.random(1, 3)
@@ -23,17 +23,17 @@ function cell.main()
     cell.fork(
         function()
             local sock = socket.connect("127.0.0.1", 8888)
-            print("connect", sock.__fd)
-            local str = random_str(1024)
-            sock:write(str .. "\n")
-            -- print(sock.__fd, "write", str)
-            local line = sock:readline("\n")
+            print("connect", sock.__fd, cell.self)
+            local str = random_str(1)
+            sock:write(str .. "\r\n")
+            print(sock.__fd, "write", str)
+            local line = sock:readline("\r\n")
             while line do
-                -- print(sock.__fd, "read", line)
-                str = random_str(1024)
-                sock:write(str .. "\n")
-                -- print(sock.__fd, "write", str)
-                line = sock:readline("\n")
+                print(sock.__fd, "read", line)
+                str = random_str(1)
+                sock:write(str .. "\r\n")
+                print(sock.__fd, "write", str)
+                line = sock:readline("\r\n")
             end
         end
     )

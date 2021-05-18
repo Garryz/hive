@@ -16,13 +16,73 @@ local error = error
 
 local socket_channel = {}
 local channel = {}
+local channel_socket = {}
 local channel_meta = {__index = channel}
+local channel_socket_meta = {
+    __index = channel_socket
+}
+
+local socket_error =
+    setmetatable(
+    {},
+    {
+        __tostring = function()
+            return "[Error: socket]"
+        end
+    }
+) -- alias for error object
+
+function channel_socket:write(msg)
+    local sock = self[1]
+    if sock then
+        return sock:write(msg)
+    end
+end
+
+function channel_socket:close()
+    local sock = self[1]
+    self[1] = false
+    if sock then
+        sock:disconnect()
+    end
+end
+
+channel_socket_meta.__gc = channel_socket.close
+
+function channel_socket:readbytes(bytes)
+    local sock = self[1]
+    if sock then
+        local result = sock:readbytes(bytes)
+        if not result then
+            error(socket_error)
+        else
+            return result
+        end
+    else
+        error(socket_error)
+    end
+end
+
+function channel_socket:readline(sep)
+    local sock = self[1]
+    if sock then
+        local result = sock:readline(sep)
+        if not result then
+            error(socket_error)
+        else
+            return result
+        end
+    else
+        error(socket_error)
+    end
+end
 
 function socket_channel.channel(desc)
     local c = {
         __host = assert(desc.host),
         __port = assert(desc.port),
         __backup = desc.backup,
+        __auth = desc.auth,
         __response = desc.response, -- It's for session mode
         __request = {}, -- request seq { response func }	-- It's for order mode
         __thread = {}, -- event seq or session->event map
@@ -230,12 +290,12 @@ local function connect_once(self)
 
         sock:onclose(
             function(fd)
-                if self.__sock and self.__sock.__fd == fd then
+                if self.__sock and self.__sock[1] and self.__sock[1].__fd == fd then
                     self.__sock = false
                 end
             end
         )
-        self.__sock = sock
+        self.__sock = setmetatable({sock}, channel_socket_meta)
         self.__dispatch_thread =
             cell.fork(
             function()
@@ -400,7 +460,7 @@ function channel:close()
     if not self.__closed then
         term_dispatch_thread(self)
         self.__closed = true
-        if self.__socke then
+        if self.__sock then
             self.__sock:close()
         end
     end

@@ -129,7 +129,9 @@ function socket:readbytes(bytes)
             if sockets_closed[fd] then
                 sockets_buffer[fd] = nil
             end
-            return data ~= "" and data
+            if data ~= "" then
+                return data
+            end
         end
         return
     end
@@ -175,7 +177,9 @@ function socket:readline(sep)
         if sockets_closed[fd] then
             line = csocket.readall(sockets_buffer[fd])
             sockets_buffer[fd] = nil
-            return line ~= "" and line
+            if line ~= "" then
+                return line
+            end
         end
     end
 end
