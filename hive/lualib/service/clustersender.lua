@@ -14,7 +14,7 @@ local channel
 
 local function pack(service, session, func, ...)
     local request = {}
-    request[2] = mp.pack({service = service, session = session, func = func, args = {...}})
+    request[2] = mp.pack({service = service, session = session, func = func, args = table.pack(...)})
     request[1] = string.pack("<I4", #request[2])
     return table.concat(request)
 end
