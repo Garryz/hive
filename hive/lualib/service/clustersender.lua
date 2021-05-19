@@ -27,11 +27,7 @@ end
 function command.req(service, func, ...)
     local ok, msg = pcall(send_request, service, func, ...)
     if ok then
-        if type(msg) == "table" then
-            return table.unpack(msg)
-        else
-            return msg
-        end
+        return table.unpack(msg)
     else
         error(msg)
     end

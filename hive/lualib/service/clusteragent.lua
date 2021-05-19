@@ -68,7 +68,7 @@ local function dispatch_request()
             return
         end
         local service = register_name[request.service]
-        if request.func and type(request.func) == "string" then
+        if request.func and type(request.func) == "string" and request.func ~= "" then
             if request.session then
                 local ok, data
                 if service then
