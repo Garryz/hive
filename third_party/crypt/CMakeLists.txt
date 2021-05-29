@@ -1,0 +1,15 @@
+project(crypt)
+
+if(CMAKE_SYSTEM_NAME MATCHES "Windows")
+    add_definitions(-DLUA_BUILD_AS_DLL)
+    add_definitions("/wd4267")
+    add_definitions("/wd4244")
+    add_definitions("/wd4309")
+endif()
+
+include_directories(${CMAKE_SOURCE_DIR}/third_party/lua)
+
+aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} CRYPT_SOURCES)
+
+add_library(crypt SHARED ${CRYPT_SOURCES})
+target_link_libraries(crypt liblua)
