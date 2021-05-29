@@ -40,6 +40,7 @@ do
 
         local loading_queue = loading[name]
         if loading_queue then
+            assert(loading_queue.co ~= co, "circular dependency")
             -- Module is in the init process (require the same mod at the same time in different coroutines) , waiting.
             local cell = require "cell"
             local event = cell.event()
@@ -52,7 +53,7 @@ do
             return m
         end
 
-        loading_queue = {}
+        loading_queue = {co = co}
         loading[name] = loading_queue
 
         local old_init_list = context[co]
