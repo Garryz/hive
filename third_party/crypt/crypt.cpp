@@ -12,7 +12,7 @@
 #include <random>
 
 static std::random_device sd;
-static std::default_random_engine random(sd());
+static std::default_random_engine rng(sd());
 
 #define PADDING_MODE_ISO7816_4 0
 #define PADDING_MODE_PKCS7 1
@@ -321,7 +321,7 @@ static int lrandomkey(lua_State *L) {
     int i;
     char x = 0;
     for (i = 0; i < 8; i++) {
-        tmp[i] = random() & 0xff;
+        tmp[i] = rng() & 0xff;
         x ^= tmp[i];
     }
     if (x == 0) {
@@ -979,7 +979,8 @@ static int lxor_str(lua_State *L) {
     return 1;
 }
 
-extern "C" LUALIB_API int luaopen_crypt(lua_State *L) {
+extern "C" {
+LUALIB_API int luaopen_crypt(lua_State *L) {
     luaL_checkversion(L);
     luaL_Reg l[] = {
         {"hashkey", lhashkey},
@@ -1010,4 +1011,5 @@ extern "C" LUALIB_API int luaopen_crypt(lua_State *L) {
     lua_setfield(L, -2, "padding");
 
     return 1;
+}
 }

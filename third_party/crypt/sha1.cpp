@@ -316,11 +316,11 @@ int lsha1(lua_State *L) {
 
 #define BLOCKSIZE 64
 
-static inline void xor_key(uint8_t key[BLOCKSIZE], uint32_t xor) {
+static inline void xor_key(uint8_t key[BLOCKSIZE], uint32_t xor_value) {
     int i;
     for (i = 0; i < BLOCKSIZE; i += sizeof(uint32_t)) {
         uint32_t *k = (uint32_t *)&key[i];
-        *k ^= xor;
+        *k ^= xor_value;
     }
 }
 
