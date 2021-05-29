@@ -15,6 +15,8 @@
  * and avoid compile-time configuration.
  */
 
+#define LUA_LIB
+
 #include "md5.h"
 #include <string.h>
 

@@ -32,6 +32,8 @@
  * $Id: sha2.c,v 1.1 2001/11/08 00:01:51 adg Exp adg $
  */
 
+#define LUA_LIB
+
 #include <string.h> /* memcpy()/memset() or bcopy()/bzero() */
 #include <sys/types.h>
 /* #include <assert.h> */ /* assert() */
