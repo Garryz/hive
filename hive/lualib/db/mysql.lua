@@ -86,6 +86,11 @@ local COM_STMT_RESET = "\x1a"
 local CURSOR_TYPE_NO_CURSOR = 0x00
 local SERVER_MORE_RESULTS_EXISTS = 8
 
+local DEFAULT_CLIENT_FLAGS = 0x3f7cf
+local CLIENT_SSL = 0x00000800
+local CLIENT_PLUGIN_AUTH = 0x00080000
+local CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA = 0x00200000
+
 local RESP_OK = "OK"
 local RESP_AUTHMOREDATA = "AUTHMOREDATA"
 local RESP_LOCALINFILE = "LOCALINFILE"
@@ -565,7 +570,7 @@ local function _mysql_login(self, user, password, charset, database, on_connect)
             plugin = "mysql_native_password"
         end
 
-        local client_flags = 260047
+        local client_flags = DEFAULT_CLIENT_FLAGS | CLIENT_PLUGIN_AUTH
         local req =
             strpack(
             "<I4I4c1c23zs1zz",

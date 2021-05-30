@@ -1072,6 +1072,8 @@ int lsha256_new(lua_State *L) {
             {nullptr, nullptr},
         };
         luaL_setfuncs(L, l, 0);
+        lua_pushvalue(L, -1);
+        lua_setfield(L, -2, "__index");
     }
     lua_setmetatable(L, -2);
 
