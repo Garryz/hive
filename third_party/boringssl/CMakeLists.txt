@@ -29,7 +29,7 @@ if(ANDROID)
     set(GO_EXECUTABLE "go")
   endif()
 else()
-  # find_package(Perl REQUIRED)
+  find_package(Perl REQUIRED)
   find_program(GO_EXECUTABLE go)
 endif()
 
