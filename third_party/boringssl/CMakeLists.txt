@@ -270,6 +270,8 @@ endif()
 # pthread_rwlock_t requires a feature flag.
 if(NOT WIN32)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_XOPEN_SOURCE=700")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif()
 
 if(FUZZ)
