@@ -4,7 +4,6 @@ if(CMAKE_SYSTEM_NAME MATCHES "Windows")
     add_definitions(-DLUA_BUILD_AS_DLL)
     add_definitions("/wd4267")
     add_definitions("/wd4244")
-    add_definitions("/wd4309")
 endif()
 
 include_directories(${CMAKE_SOURCE_DIR}/third_party/lua)
