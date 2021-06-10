@@ -8,8 +8,9 @@ if(CMAKE_SYSTEM_NAME MATCHES "Windows")
 endif()
 
 include_directories(${CMAKE_SOURCE_DIR}/third_party/lua)
+include_directories(${CMAKE_SOURCE_DIR}/third_party/boringssl/include)
 
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} CRYPT_SOURCES)
 
 add_library(crypt SHARED ${CRYPT_SOURCES})
-target_link_libraries(crypt liblua)
+target_link_libraries(crypt liblua crypto)

@@ -1,8 +1,10 @@
 #define LUA_LIB
 
-#include "md5.h"
-#include "sha1.h"
-#include "sha2.h"
+#include "lua.hpp"
+
+#include "openssl/hmac.h"
+#include "openssl/md5.h"
+#include "openssl/sha.h"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -958,6 +960,91 @@ static int lb64decode(lua_State *L) {
         }
     }
     lua_pushlstring(L, buffer, output);
+    return 1;
+}
+
+static int lmd5(lua_State *L) {
+    size_t sz = 0;
+    const unsigned char *buffer =
+        (const unsigned char *)luaL_checklstring(L, 1, &sz);
+    unsigned char digest[MD5_DIGEST_LENGTH];
+    MD5(buffer, sz, digest);
+    lua_pushlstring(L, (const char *)digest, MD5_DIGEST_LENGTH);
+
+    return 1;
+}
+
+static int lsha1(lua_State *L) {
+    size_t sz = 0;
+    const unsigned char *buffer =
+        (const unsigned char *)luaL_checklstring(L, 1, &sz);
+    unsigned char digest[SHA_DIGEST_LENGTH];
+    SHA1(buffer, sz, digest);
+    lua_pushlstring(L, (const char *)digest, SHA_DIGEST_LENGTH);
+
+    return 1;
+}
+
+static int lhmac_sha1(lua_State *L) {
+    size_t key_sz = 0;
+    const void *key = luaL_checklstring(L, 1, &key_sz);
+    size_t text_sz = 0;
+    const unsigned char *text =
+        (const unsigned char *)luaL_checklstring(L, 2, &text_sz);
+    unsigned char digest[SHA_DIGEST_LENGTH];
+    unsigned int digest_len = 0;
+    HMAC(EVP_sha1(), key, key_sz, text, text_sz, digest, &digest_len);
+    lua_pushlstring(L, (const char *)digest, digest_len);
+
+    return 1;
+}
+
+static int lsha256(lua_State *L) {
+    size_t sz = 0;
+    const unsigned char *buffer =
+        (const unsigned char *)luaL_checklstring(L, 1, &sz);
+    unsigned char digest[SHA256_DIGEST_LENGTH];
+    SHA256(buffer, sz, digest);
+    lua_pushlstring(L, (const char *)digest, SHA256_DIGEST_LENGTH);
+
+    return 1;
+}
+
+static int lsha256_update(lua_State *L) {
+    SHA256_CTX *ctx = (SHA256_CTX *)luaL_checkudata(L, 1, "sha256");
+    luaL_argcheck(L, ctx != nullptr, 1, "sha256 expected");
+    size_t sz = 0;
+    const void *buffer = luaL_checklstring(L, 2, &sz);
+    SHA256_Update(ctx, buffer, sz);
+
+    return 0;
+}
+
+static int lsha256_final(lua_State *L) {
+    SHA256_CTX *ctx = (SHA256_CTX *)luaL_checkudata(L, 1, "sha256");
+    luaL_argcheck(L, ctx != nullptr, 1, "sha256 expected");
+    unsigned char digest[SHA256_DIGEST_LENGTH];
+    SHA256_Final(digest, ctx);
+    lua_pushlstring(L, (const char *)digest, SHA256_DIGEST_LENGTH);
+
+    return 1;
+}
+
+static int lsha256_new(lua_State *L) {
+    SHA256_CTX *ctx = (SHA256_CTX *)lua_newuserdatauv(L, sizeof(SHA256_CTX), 0);
+    SHA256_Init(ctx);
+    if (luaL_newmetatable(L, "sha256")) {
+        luaL_Reg l[] = {
+            {"update", lsha256_update},
+            {"final", lsha256_final},
+            {nullptr, nullptr},
+        };
+        luaL_setfuncs(L, l, 0);
+        lua_pushvalue(L, -1);
+        lua_setfield(L, -2, "__index");
+    }
+    lua_setmetatable(L, -2);
+
     return 1;
 }
 
