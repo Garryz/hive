@@ -1039,8 +1039,8 @@ static int lsha256_new(lua_State *L) {
             {"final", lsha256_final},
             {nullptr, nullptr},
         };
-        luaL_setfuncs(L, l, 0);
-        lua_pushvalue(L, -1);
+
+        luaL_newlib(L, l);
         lua_setfield(L, -2, "__index");
     }
     lua_setmetatable(L, -2);
