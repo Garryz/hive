@@ -14,6 +14,7 @@ local print = print
 local error = error
 local tostring = tostring
 local string = string
+local xpcall = xpcall
 
 local session = 0
 local coroutine_pool = setmetatable({}, {__mode = "kv"})
@@ -261,6 +262,28 @@ function cell.execwithtimeout(ti, f, ...)
 
     if ret then
         return table.unpack(ret, 1, ret.n)
+    end
+end
+
+function cell.queue()
+    local event_queue = {}
+
+    local function xpcall_ret(ok, ...)
+        table.remove(event_queue, 1)
+        if event_queue[1] then
+            cell.wakeup(event_queue[1])
+        end
+        assert(ok, (...))
+        return ...
+    end
+
+    return function(f, ...)
+        local event = cell.event()
+        table.insert(event_queue, event)
+        if #event_queue > 1 then
+            cell.wait(event)
+        end
+        return xpcall_ret(xpcall(f, debug.traceback, ...))
     end
 end
 
