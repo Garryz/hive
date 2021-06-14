@@ -36,7 +36,7 @@ cell.dispatch {
     dispatch = csocket.send
 }
 
-local dispatch_message = cell.get_dispatch(3)
+local dispatch_message = cell.getdispatch(3)
 cell.dispatch {
     msg_type = 3, -- message
     dispatch = function(...)
@@ -45,7 +45,7 @@ cell.dispatch {
     end
 }
 
-local dispatch_command = cell.get_dispatch(2)
+local dispatch_command = cell.getdispatch(2)
 cell.dispatch {
     msg_type = 2, -- command
     dispatch = function(...)

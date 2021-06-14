@@ -20,6 +20,7 @@ local coroutine_pool = setmetatable({}, {__mode = "kv"})
 local msg_dispatchers = {}
 local task_coroutine = {}
 local task_session = {}
+local task_twice_session = {}
 local task_source = {}
 local event_q1 = {}
 local event_q2 = {}
@@ -66,7 +67,7 @@ local function co_create(f)
     return co
 end
 
-cell.co_create = co_create
+cell.cocreate = co_create
 
 local function suspend(source, session, co, ok, op, ...)
     if ok then
@@ -91,12 +92,20 @@ cell.suspend = suspend
 
 local function resume_co(session, ...)
     local co = task_coroutine[session]
-    if co == nil then
+    if co == "BREAK" then
+        task_coroutine[session] = nil
+        return
+    elseif co == nil then
         error("Unknown response : " .. tostring(session))
     end
     local reply_session = task_session[session]
     local reply_addr = task_source[session]
-    task_coroutine[session] = nil
+    if task_twice_session[session] then
+        task_coroutine[session] = "BREAK"
+        task_twice_session[session] = nil
+    else
+        task_coroutine[session] = nil
+    end
     task_session[session] = nil
     task_source[session] = nil
     suspend(reply_addr, reply_session, co, coroutine.resume(co, ...))
@@ -121,7 +130,7 @@ function cell.dispatch(dispatcher)
     msg_dispatchers[msg_type] = dispatcher
 end
 
-function cell.get_dispatch(msg_type)
+function cell.getdispatch(msg_type)
     return msg_dispatchers[msg_type].dispatch
 end
 
@@ -208,10 +217,15 @@ function cell.exit()
     cell.wait(cell.event())
 end
 
-function cell.sleep(ti)
-    session = session + 1
-    c.send(system, 2, self, session, "timeout", ti)
-    coroutine.yield("WAIT", session)
+function cell.sleep(ti, event)
+    if event then
+        task_twice_session[event] = event
+    else
+        session = session + 1
+        event = session
+    end
+    c.send(system, 2, self, event, "timeout", ti)
+    coroutine.yield("WAIT", event)
 end
 
 function cell.yield()
@@ -229,6 +243,25 @@ function cell.timeout(ti, f)
     session = session + 1
     c.send(system, 2, self, session, "timeout", ti)
     new_task(nil, nil, co, session)
+end
+
+function cell.execwithtimeout(ti, f, ...)
+    local ret
+    local event = cell.event()
+
+    cell.fork(
+        function(...)
+            ret = table.pack(f(...))
+            cell.wakeup(event)
+        end,
+        ...
+    )
+
+    cell.sleep(ti, event)
+
+    if ret then
+        return table.unpack(ret, 1, ret.n)
+    end
 end
 
 function cell.command(cmdfuncs)

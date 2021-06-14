@@ -242,7 +242,7 @@ cell.dispatch {
         if accepter then
             -- accepter: new fd ,  ip addr
             local co =
-                cell.co_create(
+                cell.cocreate(
                 function()
                     local forward = accepter(fd, addr) or cell.self
                     cell.call(sockets_fd, "forward", fd, forward)
@@ -301,7 +301,7 @@ cell.dispatch {
         local obj = sockets[fd]
         if obj then
             local co =
-                cell.co_create(
+                cell.cocreate(
                 function()
                     obj:disconnect()
                     return "EXIT"
@@ -318,7 +318,7 @@ cell.dispatch {
         local obj = sockets[fd]
         if obj then
             local co =
-                cell.co_create(
+                cell.cocreate(
                 function()
                     local warning = sockets_warning[fd] or function(fd, size)
                             print(string.format("WARNING: %d K bytes need to send out (fd = %d)", size, fd))

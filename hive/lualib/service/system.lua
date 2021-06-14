@@ -32,7 +32,7 @@ end
 
 local function timeout(n, f)
     local co =
-        cell.co_create(
+        cell.cocreate(
         function()
             local ev = cell.event()
             local ti = ticker + n
