@@ -277,8 +277,10 @@ cell *cell_new(lua_State *L, const char *mainfile, const char *loaderfile) {
 
 void cell_close(cell *c) {
     c->lock();
-    c->close = true;
-    c->push_in_gmq();
+    if (!c->close) {
+        c->close = true;
+        c->push_in_gmq();
+    }
     c->unlock();
 }
 

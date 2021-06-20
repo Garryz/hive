@@ -58,9 +58,21 @@ function command.launch(name, ...)
     local fullname = assert(package.searchpath(name, package.path), "cell was not found")
     local c = system.launch(fullname, system.loader)
     if c then
-        -- 4 is launch proto
-        local ev = cell.event()
-        return c, cell.rawcall(c, ev, 4, cell.self, ev, true, ...)
+        local ok, result =
+            pcall(
+            function(...)
+                -- 4 is launch proto
+                local ev = cell.event()
+                return table.pack(cell.rawcall(c, ev, 4, cell.self, ev, true, ...))
+            end,
+            ...
+        )
+        if ok then
+            return c, table.unpack(result)
+        else
+            system.kill(c)
+            return nil, result
+        end
     else
         error("launch " .. name .. " failed")
     end
@@ -85,11 +97,22 @@ function command.uniquelaunch(name)
     if s.launch == nil then
         s.launch = true
         local c = system.launch(fullname, system.loader)
+        local ok, result
         if c then
-            local ev = cell.event()
-            cell.rawcall(c, ev, 4, cell.self, ev, true)
-            unique_service[fullname] = c
-            service_name[c] = fullname
+            ok, result =
+                pcall(
+                function()
+                    local ev = cell.event()
+                    cell.rawcall(c, ev, 4, cell.self, ev, true)
+                end
+            )
+            if ok then
+                unique_service[fullname] = c
+                service_name[c] = fullname
+            else
+                system.kill(c)
+                unique_service[fullname] = result
+            end
         else
             unique_service[fullname] = "launch " .. name .. " failed"
         end
@@ -98,7 +121,7 @@ function command.uniquelaunch(name)
             cell.wakeup(v)
         end
 
-        if c then
+        if c and ok then
             return c
         else
             error(unique_service[fullname])

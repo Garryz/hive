@@ -37,4 +37,5 @@ function cell.main()
             end
         end
     )
+    cell.exit()
 end
