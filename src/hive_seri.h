@@ -5,6 +5,7 @@
 #include "lua.hpp"
 
 #include <cstddef>
+#include <cstdint>
 #include <cstring>
 #include <functional>
 
