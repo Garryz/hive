@@ -55,13 +55,6 @@ cell.dispatch {
 }
 
 function cell.main()
-    -- cell.fork(function()
-    --     local function f()
-    --         collectgarbage("count")
-    --         cell.timeout(1000, f)
-    --     end
-    --     cell.timeout(1000, f)
-    -- end)
     while true do
         csocket.pollfor(100) -- milliseconds
         cell.yield()

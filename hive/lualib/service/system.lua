@@ -18,6 +18,8 @@ local timer = {}
 local free_queue = {}
 local unique_service = {}
 local service_name = {}
+local service_id = {}
+local id_service = {}
 
 local function alloc_queue()
     local n = #free_queue
@@ -68,6 +70,9 @@ function command.launch(name, ...)
             ...
         )
         if ok then
+            service_name[c] = fullname
+            service_id[c] = c:id()
+            id_service[c:id()] = c
             return c, table.unpack(result)
         else
             system.kill(c)
@@ -109,6 +114,8 @@ function command.uniquelaunch(name)
             if ok then
                 unique_service[fullname] = c
                 service_name[c] = fullname
+                service_id[c] = c:id()
+                id_service[c:id()] = c
             else
                 system.kill(c)
                 unique_service[fullname] = result
@@ -143,6 +150,8 @@ function command.kill(c)
     if service_name[c] then
         unique_service[service_name[c]] = nil
         service_name[c] = nil
+        id_service[service_id[c]] = nil
+        service_id[c] = nil
     end
     return assert(system.kill(c))
 end
@@ -163,6 +172,61 @@ end
 
 function command.socket()
     return system.socket
+end
+
+function command.list()
+    local list = {}
+    for k, v in pairs(service_name) do
+        list[tostring(k)] = v
+    end
+    return list
+end
+
+local function list_srv(ti, cmd)
+    local list = {}
+    for k in pairs(service_name) do
+        list[tostring(k)] = cell.debug(k, ti, cmd)
+        if not list[tostring(k)] then
+            list[tostring(k)] = k .. "timeout"
+        end
+    end
+    return list
+end
+
+function command.stat()
+    return list_srv(3000, "stat")
+end
+
+function command.info(id)
+    local c = id_service[id]
+    if not c then
+        return "service not exist"
+    end
+    return cell.debug(c, 3000, "info")
+end
+
+function command.killid(id)
+    local c = id_service[id]
+    if not c then
+        return "service not exist"
+    end
+    return command.kill(c)
+end
+
+function command.mem()
+    return list_srv(3000, "mem")
+end
+
+function command.gc()
+    return list_srv(3000, "gc")
+end
+
+function command.call(id, cmd, ...)
+    local c = id_service[id]
+    if not c then
+        return "service not exist"
+    end
+    return cell.call(c, cmd, ...)
 end
 
 message.kill = command.kill
@@ -199,12 +263,6 @@ local function start()
     else
         error "launch main.lua failed"
     end
-
-    -- local function f()
-    --     collectgarbage("count")
-    --     timeout(1000, f)
-    -- end
-    -- timeout(1000, f)
 end
 
 start()

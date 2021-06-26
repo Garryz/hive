@@ -1,0 +1,2 @@
+thread = 4
+main = "test.debug_console"

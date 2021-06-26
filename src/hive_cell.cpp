@@ -32,6 +32,7 @@ struct cell {
     bool single_thread{false};
     bool close{false};
     int id{__cell_id.fetch_add(1)};
+    int message_count{0};
 
     void lock() { mut.lock(); }
 
@@ -248,7 +249,10 @@ cell *cell_sys(lua_State *L, cell *sys, cell *socket, const char *systemfile,
 
     sys->single_thread = true;
 
-    require_cell(L, sys, [](lua_State *L, int cell_map) {});
+    require_cell(L, sys, [sys](lua_State *L, int cell_map) {
+        cell_touserdata(L, cell_map, sys);
+        lua_setfield(L, -2, "system");
+    });
 
     lua_pushlightuserdata(L, sys);
     hive_setenv(L, "system_pointer");
@@ -326,6 +330,7 @@ bool cell_dispatch_message(cell *c) {
     }
 
     cell_grab(c);
+    ++c->message_count;
     c->unlock();
     _dispatch(L, &m);
     cell_release(c);
@@ -359,6 +364,33 @@ static int lrelease(lua_State *L) {
     return 0;
 }
 
+static int lmqlen(lua_State *L) {
+    auto cud = static_cast<cell_ud *>(luaL_checkudata(L, 1, "cell"));
+    luaL_argcheck(L, cud != nullptr, 1, "cell expected");
+    cud->c->lock();
+    lua_pushinteger(L, cud->c->mq.size());
+    cud->c->unlock();
+    return 1;
+}
+
+static int lmessage(lua_State *L) {
+    auto cud = static_cast<cell_ud *>(luaL_checkudata(L, 1, "cell"));
+    luaL_argcheck(L, cud != nullptr, 1, "cell expected");
+    cud->c->lock();
+    lua_pushinteger(L, cud->c->message_count);
+    cud->c->unlock();
+    return 1;
+}
+
+static int lid(lua_State *L) {
+    auto cud = static_cast<cell_ud *>(luaL_checkudata(L, 1, "cell"));
+    luaL_argcheck(L, cud != nullptr, 1, "cell expected");
+    cud->c->lock();
+    lua_pushinteger(L, cud->c->id);
+    cud->c->unlock();
+    return 1;
+}
+
 void cell_touserdata(lua_State *L, int index, cell *c) {
     lua_rawgetp(L, index, c);
     if (lua_isuserdata(L, -1)) {
@@ -371,6 +403,15 @@ void cell_touserdata(lua_State *L, int index, cell *c) {
     if (luaL_newmetatable(L, "cell")) {
         lua_pushboolean(L, 1);
         lua_rawsetp(L, -2, CELL_TAG);
+
+        luaL_Reg l[] = {
+            {"mqlen", lmqlen},
+            {"message", lmessage},
+            {"id", lid},
+            {nullptr, nullptr},
+        };
+        luaL_newlib(L, l);
+        lua_setfield(L, -2, "__index");
         lua_pushcfunction(L, ltostring);
         lua_setfield(L, -2, "__tostring");
         lua_pushcfunction(L, lrelease);

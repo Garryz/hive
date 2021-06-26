@@ -27,6 +27,7 @@ local event_q1 = {}
 local event_q2 = {}
 local command = {}
 local message = {}
+local debug_command = {}
 
 local cell = {}
 
@@ -173,26 +174,14 @@ function cell.wakeup(event)
 end
 
 function cell.fork(func, ...)
-    local n = select("#", ...)
-    local co
-    if n == 0 then
-        co =
-            co_create(
-            function()
-                func()
-                return "EXIT"
-            end
-        )
-    else
-        local args = {...}
-        co =
-            co_create(
-            function()
-                func(table.unpack(args, 1, n))
-                return "EXIT"
-            end
-        )
-    end
+    local args = {...}
+    local co =
+        co_create(
+        function()
+            func(table.unpack(args, 1, args.n))
+            return "EXIT"
+        end
+    )
     session = session + 1
     new_task(nil, nil, co, session)
     cell.wakeup(session)
@@ -233,11 +222,12 @@ function cell.yield()
     cell.sleep(0)
 end
 
-function cell.timeout(ti, f)
+function cell.timeout(ti, func, ...)
+    local args = {...}
     local co =
         co_create(
         function()
-            f()
+            func(table.unpack(args, 1, args.n))
             return "EXIT"
         end
     )
@@ -299,6 +289,96 @@ cell.init = cell_require.init
 
 function cell.main()
 end
+
+function cell.task()
+    local t = 0
+    for _, co in pairs(task_coroutine) do
+        if co ~= "BREAK" then
+            t = t + 1
+        end
+    end
+    return t
+end
+
+function cell.info()
+end
+
+local DEBUG_TIMEOUT = 3000 -- 3 sec
+function cell.debug(addr, ti, cmd, ...)
+    if not ti or ti <= 0 then
+        ti = DEBUG_TIMEOUT
+    end
+    return cell.execwithtimeout(
+        ti,
+        function(...)
+            -- debug command
+            local event = cell.event()
+            if not c.send(addr, 21, cell.self, event, cmd, ...) then
+                return "call error " .. addr
+            end
+            local ret = table.pack(coroutine.yield("WAIT", event))
+            if ret[1] then
+                return table.unpack(ret, 2, ret.n)
+            else
+                return addr .. "do debug cmd error"
+            end
+        end,
+        ...
+    )
+end
+
+function debug_command.stat()
+    local stat = {}
+    stat.task = cell.task()
+    stat.mqlen = self:mqlen()
+    stat.message = self:message()
+    return stat
+end
+
+function debug_command.info()
+    return cell.info()
+end
+
+function debug_command.mem()
+    local kb = collectgarbage "count"
+    return string.format("%.2f Kb", kb)
+end
+
+local gcing = false
+function debug_command.gc()
+    if gcing then
+        return "gcing"
+    end
+    gcing = true
+    local before = collectgarbage "count"
+    local before_time = os.time()
+    collectgarbage "collect"
+    -- skip subsequent GC message
+    cell.yield()
+    local after = collectgarbage "count"
+    local after_time = os.time()
+    print(string.format("GC %.2f Kb -> %.2f Kb, cost %.2f sec", before, after, after_time - before_time))
+    gcing = false
+    return string.format("%.2f Kb", after)
+end
+
+cell.dispatch {
+    msg_type = 21, -- debug
+    dispatch = function(source, session, cmd, ...)
+        local f = debug_command[cmd]
+        if f == nil then
+            c.send(source, 1, session, false, "Unknown dubug command " .. cmd)
+        else
+            local co =
+                co_create(
+                function(...)
+                    return "RETURN", f(...)
+                end
+            )
+            suspend(source, session, co, coroutine.resume(co, ...))
+        end
+    end
+}
 
 cell.dispatch {
     msg_type = 5, -- exit
