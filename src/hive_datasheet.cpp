@@ -112,7 +112,7 @@ static void update_cache(lua_State *L, const void *data, const void *newdata) {
         if (lua_rawget(L, pt) == LUA_TUSERDATA) {
             // pointer, table, proxy
             proxy *p = static_cast<proxy *>(lua_touserdata(L, -1));
-            if (p->data = data) {
+            if (p->data == data) {
                 p->data = newdata;
                 const table *newt =
                     gettable(static_cast<const document *>(newdata), p->index);
