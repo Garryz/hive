@@ -1,5 +1,5 @@
 package.cpath = "./luaclib/lib?.so;./luaclib/?.dll;./luaclib/lib?.dylib;" .. package.cpath
-package.path = "./lualib/?.lua;" .. package.path
+package.path = "./lualib/?.lua;./lualib/?/init.lua;" .. package.path
 
 local c = require "hive.core"
 
