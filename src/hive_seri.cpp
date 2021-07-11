@@ -36,18 +36,3 @@ int data_unpack(lua_State *L) {
 
     return lua_gettop(L) - 2;
 }
-
-extern "C" {
-
-LUALIB_API int luaopen_hive_seri(lua_State *L) {
-    luaL_checkversion(L);
-    luaL_Reg l[] = {
-        {"pack", data_pack},
-        {"unpack", data_unpack},
-        {nullptr, nullptr},
-    };
-    luaL_newlib(L, l);
-
-    return 1;
-}
-}

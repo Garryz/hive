@@ -1,6 +1,6 @@
 #!/bin/sh
 
-rm -rf build hive/luaclib/* hive/core* hive/lua hive/lua.* hive/luac hive/luac.* hive/protoc*
+rm -rf build luaclib/* core* lua lua.* luac luac.* protoc*
 
 mkdir build
 

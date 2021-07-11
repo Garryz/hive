@@ -2,19 +2,19 @@ del %cd%\build\* /f /s /q
 
 rd %cd%\build /s /q
 
-del %cd%\hive\luaclib\* /f /s /q
+del %cd%\luaclib\* /f /s /q
 
-del %cd%\hive\core* /f /q
+del %cd%\core* /f /q
 
-del %cd%\hive\lua /f /q
+del %cd%\lua /f /q
 
-del %cd%\hive\lua.* /f /q
+del %cd%\lua.* /f /q
 
-del %cd%\hive\luac /f /q
+del %cd%\luac /f /q
 
-del %cd%\hive\luac.* /f /q
+del %cd%\luac.* /f /q
 
-del %cd%\hive\proto* /f /q
+del %cd%\proto* /f /q
 
 mkdir %cd%\build
 

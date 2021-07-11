@@ -6,8 +6,8 @@ if(CMAKE_SYSTEM_NAME MATCHES "Windows")
     add_definitions("/wd4244")
 endif()
 
-include_directories(${CMAKE_SOURCE_DIR}/third_party/lua)
-include_directories(${CMAKE_SOURCE_DIR}/third_party/boringssl/include)
+include_directories(../lua)
+include_directories(../boringssl/include)
 
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} CRYPT_SOURCES)
 

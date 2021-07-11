@@ -2,8 +2,8 @@ project(core)
 
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
-include_directories(${CMAKE_SOURCE_DIR}/third_party)
-include_directories(${CMAKE_SOURCE_DIR}/third_party/lua)
+include_directories(../third_party)
+include_directories(../third_party/lua)
 
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} CORE_SOURCES)
 
@@ -16,12 +16,12 @@ endif()
 
 add_library(hive SHARED ${CORE_SOURCES})
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
-    set(JEMALLOC_LIBRARY ${CMAKE_SOURCE_DIR}/third_party/jemalloc/lib/libjemalloc_pic.a)
+    set(JEMALLOC_LIBRARY ./third_party/jemalloc/lib/libjemalloc_pic.a)
 
     add_custom_target(
         build_jemalloc ALL ./autogen.sh --enable-prof
         COMMAND ${CMAKE_MAKE_PROGRAM}
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/third_party/jemalloc/
+        WORKING_DIRECTORY ./third_party/jemalloc/
         COMMENT "Original jemalloc makefile target"
     )
 

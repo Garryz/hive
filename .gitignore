@@ -32,6 +32,7 @@
 *.app
 
 # Debug files
+*.exp
 *.ilk
 *.pdb
 
@@ -39,9 +40,9 @@
 .gitee/
 .vscode/
 /build/
-/hive/luaclib/
+/luaclib/
 
 # File
-/hive/lua
-/hive/luac
-/hive/protoc*
+/lua
+/luac
+/protoc*

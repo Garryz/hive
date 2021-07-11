@@ -5,7 +5,7 @@ if(CMAKE_SYSTEM_NAME MATCHES "Windows")
     add_definitions("/wd4267")
 endif()
 
-include_directories(${CMAKE_SOURCE_DIR}/third_party/lua)
+include_directories(../lua)
 
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} PB_SOURCES)
 

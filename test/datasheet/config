@@ -1,0 +1,5 @@
+thread = 4
+main = "test.datasheet.main"
+loader = "loader"
+cpath = "./luaclib/lib?.so;./luaclib/?.dll;./luaclib/lib?.dylib;"
+path = "./lualib/?.lua;./lualib/?/init.lua;"

@@ -1,3 +1,0 @@
-thread = 4
-main = "test.datasheet.main"
-loader = "loader"
