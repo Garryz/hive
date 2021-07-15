@@ -1,5 +1,6 @@
 local cell = require "cell"
 local socket = require "socket"
+local env = require "env"
 
 local table = table
 local assert = assert
@@ -18,7 +19,7 @@ local command = {}
 local node_address = {}
 local node_sender = {}
 
-local config_name = "./clustername.lua"
+local config_name = env.getconfig("cluster") or "./clustername.lua"
 
 local connecting = {}
 

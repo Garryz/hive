@@ -107,7 +107,7 @@ static void require_cell(lua_State *L, cell *c,
 }
 
 static void require_sys(lua_State *L, cell *socket, const char *mainfile,
-                        const char *loaderfile) {
+                        const char *loaderfile, void *config) {
     hive_getenv(L, "cell_map");
     int cell_map = lua_absindex(L, -1);
     luaL_requiref(L, "cell.system", cell_system_lib, 0);
@@ -120,6 +120,9 @@ static void require_sys(lua_State *L, cell *socket, const char *mainfile,
 
     lua_pushstring(L, loaderfile);
     lua_setfield(L, -2, "loader");
+
+    lua_pushlightuserdata(L, config);
+    lua_setfield(L, -2, "configptr");
 
     lua_pop(L, 2);
 }
@@ -239,8 +242,8 @@ cell *cell_socket(lua_State *L, cell *sys, const char *socketfile) {
 }
 
 cell *cell_sys(lua_State *L, cell *sys, cell *socket, const char *systemfile,
-               const char *mainfile, const char *loaderfile) {
-    require_sys(L, socket, mainfile, loaderfile);
+               const char *mainfile, const char *loaderfile, void *config) {
+    require_sys(L, socket, mainfile, loaderfile, config);
 
     sys->single_thread = true;
 
@@ -252,7 +255,7 @@ cell *cell_sys(lua_State *L, cell *sys, cell *socket, const char *systemfile,
     lua_pushlightuserdata(L, sys);
     hive_setenv(L, "system_pointer");
 
-    return init_cell(L, sys, systemfile, nullptr);
+    return init_cell(L, sys, systemfile, loaderfile);
 }
 
 cell *cell_new(lua_State *L, const char *mainfile, const char *loaderfile) {
