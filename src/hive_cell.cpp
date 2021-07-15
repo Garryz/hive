@@ -152,11 +152,7 @@ static int lcallback(lua_State *L) {
             lua_upvalueindex(2)); // traceback dispatcher port data_unpack
         lua_pushlightuserdata(L,
                               msg); // traceback dispatcher port data_unpack msg
-        lua_pushvalue(
-            L,
-            lua_upvalueindex(
-                4)); // traceback dispatcher port data_unpack msg cell_map
-        err = lua_pcall(L, 2, LUA_MULTRET, 1);
+        err = lua_pcall(L, 1, LUA_MULTRET, 1);
         if (err) {
             printf("Unpack failed : %s\n", lua_tostring(L, -1));
             return 0;
@@ -167,7 +163,7 @@ static int lcallback(lua_State *L) {
 
     if (err) {
         printf("[cell %p] err_code = %d, err = %s\n",
-               lua_touserdata(L, lua_upvalueindex(5)), err,
+               lua_touserdata(L, lua_upvalueindex(4)), err,
                lua_tostring(L, -1));
     }
     return 0;
@@ -222,9 +218,8 @@ static cell *init_cell(lua_State *L, cell *c, const char *mainfile,
         printf("set dispatcher first\n");
         return _error(L, c);
     }
-    hive_getenv(L, "cell_map"); // upvalue 4
-    lua_pushlightuserdata(L, c);
-    lua_pushcclosure(L, lcallback, 5);
+    lua_pushlightuserdata(L, c); // upvalue 4
+    lua_pushcclosure(L, lcallback, 4);
 
     return c;
 }

@@ -34,8 +34,7 @@ static int lsend(lua_State *L) {
     if (cell_send(c, port, msg)) {
         lua_pushcfunction(L, data_unpack);
         lua_pushvalue(L, 2);
-        hive_getenv(L, "cell_map");
-        lua_call(L, 2, 0);
+        lua_call(L, 1, 0);
         printf("Cell object %p is closed\n", c);
         return 0;
     }
