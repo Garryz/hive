@@ -1,6 +1,7 @@
 local cell = require "cell"
 local datasheet = require "datasheet"
 local builder = require "datasheet.builder"
+local env = require "env"
 
 local function dump(t, prefix)
     for k, v in pairs(t) do
@@ -12,6 +13,7 @@ local function dump(t, prefix)
 end
 
 function cell.main(mode)
+    print(env.getconfig("cpath"))
     if mode == "child" then
         local t = datasheet.query("foobar")
         dump(t, "[CHILD]")

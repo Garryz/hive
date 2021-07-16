@@ -1,5 +1,7 @@
 local cell = require "cell"
 local system = require "cell.system"
+local seri = require "hive.seri"
+local builder = require "datasheet.builder"
 
 local coroutine = coroutine
 local table = table
@@ -251,11 +253,21 @@ cell.dispatch {
     end
 }
 
+local config
+
+function cell.main()
+    builder.new("__HIVE_ENV", config)
+end
+
 local function start()
     print("[system cell]", cell.self)
     local socket_cell = system.socket
     print("[socket cell]", socket_cell)
     cell.rawsend(socket_cell, 4, nil, nil, false)
+
+    config = seri.unpack(system.configptr)
+    system.configptr = nil
+    cell.rawsend(cell.self, 4, nil, nil, false)
 
     local c = system.launch(system.maincell, system.loader)
     if c then

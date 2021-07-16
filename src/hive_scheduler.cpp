@@ -3,6 +3,7 @@
 #include "crash_dump.h"
 #include "hive_cell.h"
 #include "hive_env.h"
+#include "hive_seri.h"
 
 #include <atomic>
 #include <cassert>
@@ -218,6 +219,17 @@ int scheduler_start(lua_State *L) {
     int thread = static_cast<int>(luaL_optinteger(L, -1, DEFAULT_THREAD));
     lua_pop(L, 1);
 
+    lua_pushcfunction(L, data_pack);
+    lua_pushvalue(L, 1);
+    int err = lua_pcall(L, 1, 1, 0);
+    if (err) {
+        printf("%d : %s\n", err, lua_tostring(L, -1));
+        lua_pop(L, 1);
+        return 0;
+    }
+    void *config = lua_touserdata(L, -1);
+    lua_pop(L, 1);
+
     hive_createenv(L);
     auto gmq = static_cast<global_queue *>(
         lua_newuserdatauv(L, sizeof(global_queue), 0));
@@ -235,7 +247,7 @@ int scheduler_start(lua_State *L) {
         return 0;
     }
 
-    sys = cell_sys(sL, sys, socket, system_lua, main_lua, loader_lua);
+    sys = cell_sys(sL, sys, socket, system_lua, main_lua, loader_lua, config);
     if (sys == nullptr) {
         return 0;
     }

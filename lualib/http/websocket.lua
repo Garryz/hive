@@ -3,6 +3,7 @@ local socket = require "socket"
 local crypt = require "crypt"
 local httpd = require "http.httpd"
 local sockethelper = require "http.sockethelper"
+local env = require "env"
 
 local GLOBAL_GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 local MAX_FRAME_SIZE = 256 * 1024 -- max frame is 256K
@@ -353,8 +354,8 @@ local function _new_server_ws(sock, protocol)
             SSLCTX_SERVER = tls.newctx()
             -- gen cert and key
             -- openssl req -x509 -newkey rsa:2048 -days 3650 -nodes -keyout server-key.pem -out server-cert.pem
-            local certfile = CERT_FILE
-            local keyfile = KEY_FILE
+            local certfile = env.getconfig("certfile") or CERT_FILE
+            local keyfile = env.getconfig("keyfile") or KEY_FILE
             SSLCTX_SERVER:set_cert(certfile, keyfile)
         end
         local tls_ctx = tls.newtls("server", SSLCTX_SERVER)

@@ -1,4 +1,5 @@
 #include "hive_seri.h"
+#include "hive_env.h"
 
 int data_pack(lua_State *L) {
     write_block b;
@@ -14,8 +15,8 @@ int data_unpack(lua_State *L) {
     if (blk == nullptr) {
         return luaL_error(L, "Need a block to unpack");
     }
-    luaL_checktype(L, 2, LUA_TTABLE);
-    lua_settop(L, 2);
+    lua_settop(L, 1);
+    hive_getenv(L, "cell_map");
 
     read_block rb;
     rb.init(blk);
@@ -35,4 +36,18 @@ int data_unpack(lua_State *L) {
     rb.close();
 
     return lua_gettop(L) - 2;
+}
+
+extern "C" {
+LUALIB_API int luaopen_hive_seri(lua_State *L) {
+    luaL_checkversion(L);
+    luaL_Reg l[] = {
+        {"pack", data_pack},
+        {"unpack", data_unpack},
+        {nullptr, nullptr},
+    };
+    luaL_newlib(L, l);
+
+    return 1;
+}
 }
