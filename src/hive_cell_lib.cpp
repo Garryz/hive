@@ -46,9 +46,9 @@ static int lsend(lua_State *L) {
 
 static int ltime(lua_State *L) {
     auto time_now = std::chrono::system_clock::now();
-    auto duration_in_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+    auto duration_in_ms = std::chrono::duration_cast<std::chrono::microseconds>(
         time_now.time_since_epoch());
-    lua_pushnumber(L, static_cast<double>(duration_in_ms.count()) / 1000);
+    lua_pushnumber(L, static_cast<double>(duration_in_ms.count()) / 1000000);
     return 1;
 }
 
