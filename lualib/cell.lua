@@ -136,6 +136,10 @@ function cell.getdispatch(msg_type)
     return msg_dispatchers[msg_type].dispatch
 end
 
+function cell.time()
+    return c.time()
+end
+
 function cell.event()
     session = session + 1
     return session

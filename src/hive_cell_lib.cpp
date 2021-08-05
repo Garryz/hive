@@ -44,11 +44,20 @@ static int lsend(lua_State *L) {
     return 1;
 }
 
+static int ltime(lua_State *L) {
+    auto time_now = std::chrono::system_clock::now();
+    auto duration_in_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+        time_now.time_since_epoch());
+    lua_pushnumber(L, static_cast<double>(duration_in_ms.count()) / 1000);
+    return 1;
+}
+
 int cell_lib(lua_State *L) {
     luaL_checkversion(L);
     luaL_Reg l[] = {
         {"dispatch", ldispatch},
         {"send", lsend},
+        {"time", ltime},
         {nullptr, nullptr},
     };
     luaL_newlib(L, l);
