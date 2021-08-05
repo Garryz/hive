@@ -1,5 +1,6 @@
 local cell = require "cell"
 local socket = require "socket"
+local log = require "log"
 
 local COMMAND = {}
 local COMMANDX = {}
@@ -87,7 +88,7 @@ end
 
 local function console_main_loop(stdin, print, addr)
     print("Welcome to hive console")
-    _G.print(addr, "connected")
+    log.info(addr, "connected")
     local ok, err =
         pcall(
         function()
@@ -103,9 +104,9 @@ local function console_main_loop(stdin, print, addr)
         end
     )
     if not ok then
-        _G.print(stdin, err)
+        log.error(stdin, err)
     end
-    _G.print(addr, "disconnect")
+    log.info(addr, "disconnect")
     stdin:disconnect()
 end
 

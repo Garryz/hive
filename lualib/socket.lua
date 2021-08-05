@@ -1,10 +1,10 @@
 local cell = require "cell"
 local csocket = require "cell.c.socket"
+local log = require "log"
 
 local coroutine = coroutine
 local assert = assert
 local type = type
-local print = print
 local string = string
 local setmetatable = setmetatable
 
@@ -89,9 +89,9 @@ local function socket_pause(fd, size)
         return
     end
     if size then
-        print(string.format("Pause socket (%d) size: %d", fd, size))
+        log.info(string.format("Pause socket (%d) size: %d", fd, size))
     else
-        print(string.format("Pause socket (%d)", fd))
+        log.info(string.format("Pause socket (%d)", fd))
     end
     cell.send(sockets_fd, "pause", fd)
     sockets_pause[fd] = true
@@ -102,7 +102,7 @@ local function socket_wait(fd, sep)
     sockets_event[fd] = cell.event()
     sockets_arg[fd] = sep
     if sockets_pause[fd] then
-        print(string.format("Resume socket (%d)", fd))
+        log.info(string.format("Resume socket (%d)", fd))
         cell.send(sockets_fd, "resume", fd)
         cell.wait(sockets_event[fd])
         sockets_pause[fd] = nil
@@ -321,7 +321,7 @@ cell.dispatch {
                 cell.cocreate(
                 function()
                     local warning = sockets_warning[fd] or function(fd, size)
-                            print(string.format("WARNING: %d K bytes need to send out (fd = %d)", size, fd))
+                            log.warning(string.format("WARNING: %d K bytes need to send out (fd = %d)", size, fd))
                         end
                     warning(fd, size)
                     return "EXIT"

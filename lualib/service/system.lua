@@ -2,6 +2,7 @@ local cell = require "cell"
 local system = require "cell.system"
 local seri = require "hive.seri"
 local builder = require "datasheet.builder"
+local log = require "log"
 
 local coroutine = coroutine
 local table = table
@@ -11,7 +12,6 @@ local error = error
 local type = type
 local ipairs = ipairs
 local table = table
-local print = print
 
 local command = {}
 local message = {}

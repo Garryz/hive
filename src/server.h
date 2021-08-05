@@ -22,9 +22,10 @@ class server : public std::enable_shared_from_this<server> {
         asio::ip::tcp::resolver::iterator end;
 
         if (iter == end || ec) {
-            printf("server listen address = %s, port = %d, id = %d, error_code "
-                   "= %d, error = %s\n",
-                   addr, port, id, ec.value(), ec.message().c_str());
+            log_error(
+                "server listen address = %s, port = %d, id = %d, error_code "
+                "= %d, error = %s",
+                addr, port, id, ec.value(), ec.message().c_str());
             return false;
         }
 
@@ -59,7 +60,7 @@ class server : public std::enable_shared_from_this<server> {
         acceptor.async_accept([this, self](std::error_code ec,
                                            asio::ip::tcp::socket socket) {
             if (!acceptor.is_open()) {
-                printf("accept not open, id = %d\n", id);
+                log_error("accept not open, id = %d", id);
                 return;
             }
 
@@ -71,8 +72,8 @@ class server : public std::enable_shared_from_this<server> {
                 s->start();
                 accept();
             } else if (ec != asio::error::operation_aborted) {
-                printf("accept error_code = %d, error = %s, id = %d\n",
-                       ec.value(), ec.message().c_str(), id);
+                log_error("accept error_code = %d, error = %s, id = %d",
+                          ec.value(), ec.message().c_str(), id);
             }
         });
     }

@@ -1,11 +1,11 @@
 local cell = require "cell"
 local socket = require "socket"
+local log = require "log"
 
 local coroutine = coroutine
 local assert = assert
 local pairs = pairs
 local pcall = pcall
-local print = print
 local table = table
 local ipairs = ipairs
 local type = type
@@ -136,7 +136,7 @@ local function dispatch_by_session(self)
                 self.__result_data[event] = result_data
                 cell.wakeup(event)
             else
-                print("socket: unknown session:", session)
+                log.error("socket: unknown session:", session)
             end
         else
             if self.__sock then
@@ -260,7 +260,7 @@ local function connect_once(self)
     local function _next_addr()
         local addr = table.remove(addr_list, 1)
         if addr then
-            print("socket: connect to backup host", addr.host, addr.port)
+            log.info("socket: connect to backup host", addr.host, addr.port)
         end
         return addr
     end
@@ -312,7 +312,7 @@ local function connect_once(self)
                 if self.__sock then
                     self.__sock:close()
                 end
-                print("socket: auth failed", message)
+                log.warning("socket: auth failed", message)
             end
             self.__authcoroutine = false
             if ok then
@@ -344,16 +344,16 @@ local function try_connect(self, once)
         local ok, err = connect_once(self)
         if ok then
             if not once then
-                print("socket: connect to", self.__host, self.__port)
+                log.info("socket: connect to", self.__host, self.__port)
             end
             return
         elseif once then
             return err
         else
-            print("socket: connect", err)
+            log.warning("socket: connect", err)
         end
         if t > 1000 then
-            print("socket: try to reconnect", self.__host, self.__port)
+            log.info("socket: try to reconnect", self.__host, self.__port)
             cell.sleep(t)
             t = 0
         else
@@ -404,7 +404,7 @@ local function block_connect(self, once)
 
     r = check_connection(self)
     if r == nil then
-        print(string.format("Connect to %s:%d failed (%s)", self.__host, self.__port, err))
+        log.error(string.format("Connect to %s:%d failed (%s)", self.__host, self.__port, err))
         error("[Error: socket]")
     else
         return r

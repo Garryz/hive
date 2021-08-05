@@ -1,7 +1,7 @@
 local cell = require "cell"
+local log = require "log"
 
 local pcall = pcall
-local print = print
 local ipairs = ipairs
 local type = type
 local setmetatable = setmetatable
@@ -18,7 +18,7 @@ local task_queue = {}
 local function request_sender(q, node)
     local ok, c = pcall(cell.call, clusterd, "sender", node)
     if not ok then
-        print(c)
+        log.error(c)
         c = nil
     end
     -- run tasks in queue

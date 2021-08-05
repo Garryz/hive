@@ -1,6 +1,7 @@
 #include "hive_cell_lib.h"
 #include "hive_cell.h"
 #include "hive_env.h"
+#include "hive_log.h"
 #include "hive_seri.h"
 
 static int ldispatch(lua_State *L) {
@@ -19,7 +20,7 @@ static int lsend(lua_State *L) {
     int port = static_cast<int>(luaL_checkinteger(L, 2));
     if (lua_gettop(L) == 2) {
         if (cell_send(c, port, nullptr)) {
-            printf("Cell object %p is closed\n", c);
+            log_error("Cell object %p is closed", c);
             return 0;
         }
         lua_pushboolean(L, 1);
@@ -35,7 +36,7 @@ static int lsend(lua_State *L) {
         lua_pushcfunction(L, data_unpack);
         lua_pushvalue(L, 2);
         lua_call(L, 1, 0);
-        printf("Cell object %p is closed\n", c);
+        log_error("Cell object %p is closed", c);
         return 0;
     }
 

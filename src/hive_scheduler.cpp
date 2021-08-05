@@ -3,6 +3,7 @@
 #include "crash_dump.h"
 #include "hive_cell.h"
 #include "hive_env.h"
+#include "hive_log.h"
 #include "hive_seri.h"
 
 #include <atomic>
@@ -78,6 +79,7 @@ lua_State *scheduler_newtask(lua_State *pL, bool inc) {
         globalmq_inc(mq);
     }
     hive_copyenv(L, pL, "system_pointer");
+    hive_copyenv(L, pL, "logger_pointer");
 
     lua_newtable(L);
     lua_newtable(L);
@@ -193,6 +195,8 @@ static void _start(global_queue *gmq, cell *sys, cell *socket, timer *t,
 
     threads.emplace_back(_cell, gmq, socket);
 
+    threads.emplace_back(_cell, gmq, get_logger());
+
     threads.emplace_back(_timer, t);
 
     for (int i = 0; i < threadnum; i++) {
@@ -210,20 +214,27 @@ int scheduler_start(lua_State *L) {
     luaL_checktype(L, 1, LUA_TTABLE);
     const char *system_lua = luaL_checkstring(L, 2);
     const char *socket_lua = luaL_checkstring(L, 3);
-    const char *main_lua = luaL_checkstring(L, 4);
+    const char *logger_lua = luaL_checkstring(L, 4);
+    const char *main_lua = luaL_checkstring(L, 5);
     const char *loader_lua = nullptr;
-    if (lua_type(L, 5) == LUA_TSTRING) {
-        loader_lua = luaL_checkstring(L, 5);
+    if (lua_type(L, 6) == LUA_TSTRING) {
+        loader_lua = luaL_checkstring(L, 6);
     }
     lua_getfield(L, 1, "thread");
     int thread = static_cast<int>(luaL_optinteger(L, -1, DEFAULT_THREAD));
+    lua_pop(L, 1);
+    lua_getfield(L, 1, "logdir");
+    const char *logdir = luaL_checkstring(L, -1);
+    lua_pop(L, 1);
+    lua_getfield(L, 1, "logfile");
+    const char *logfile = luaL_checkstring(L, -1);
     lua_pop(L, 1);
 
     lua_pushcfunction(L, data_pack);
     lua_pushvalue(L, 1);
     int err = lua_pcall(L, 1, 1, 0);
     if (err) {
-        printf("%d : %s\n", err, lua_tostring(L, -1));
+        log_error("%d : %s", err, lua_tostring(L, -1));
         lua_pop(L, 1);
         return 0;
     }
@@ -241,13 +252,19 @@ int scheduler_start(lua_State *L) {
     lua_State *sL = scheduler_newtask(L, false);
     cell *sys = cell_alloc(sL);
 
+    lua_State *loggerL = scheduler_newtask(L, false);
+    cell *logger =
+        cell_logger(loggerL, sys, logger_lua, loader_lua, logdir, logfile);
+    set_logger(logger);
+
     lua_State *socketL = scheduler_newtask(L, false);
     cell *socket = cell_socket(socketL, sys, socket_lua);
     if (socket == nullptr) {
         return 0;
     }
 
-    sys = cell_sys(sL, sys, socket, system_lua, main_lua, loader_lua, config);
+    sys = cell_sys(sL, sys, socket, logger, system_lua, main_lua, loader_lua,
+                   config);
     if (sys == nullptr) {
         return 0;
     }

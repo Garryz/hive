@@ -46,3 +46,4 @@
 /lua
 /luac
 /protoc*
+*.log

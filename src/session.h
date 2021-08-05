@@ -4,6 +4,7 @@
 #include "asio_buffer.h"
 #include "common.h"
 #include "hive_cell.h"
+#include "hive_log.h"
 #include "hive_seri.h"
 
 #include "asio/ip/tcp.hpp"
@@ -110,8 +111,8 @@ class session : public std::enable_shared_from_this<session> {
                 close_after_last_write();
             }
         } else {
-            printf("session id = %d, write error_code = %d, error = %s\n", id,
-                   ec.value(), ec.message().c_str());
+            log_error("session id = %d, write error_code = %d, error = %s", id,
+                      ec.value(), ec.message().c_str());
             if (ec != asio::error::operation_aborted &&
                 ec != asio::error::bad_descriptor &&
                 ec != asio::error::connection_aborted) {
@@ -152,8 +153,8 @@ class session : public std::enable_shared_from_this<session> {
                 read();
             }
         } else {
-            printf("session id = %d, read error_code = %d, error = %s\n", id,
-                   ec.value(), ec.message().c_str());
+            log_error("session id = %d, read error_code = %d, error = %s", id,
+                      ec.value(), ec.message().c_str());
             if (ec != asio::error::operation_aborted &&
                 ec != asio::error::bad_descriptor) {
                 notify_close();

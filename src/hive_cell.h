@@ -6,9 +6,13 @@
 struct cell;
 
 cell *cell_alloc(lua_State *L);
+cell *cell_logger(lua_State *L, cell *sys, const char *loggerfile,
+                  const char *loaderfile, const char *logdir,
+                  const char *logfile);
 cell *cell_socket(lua_State *L, cell *sys, const char *socketfile);
-cell *cell_sys(lua_State *L, cell *sys, cell *socket, const char *systemfile,
-               const char *mainfile, const char *loaderfie, void *config);
+cell *cell_sys(lua_State *L, cell *sys, cell *socket, cell *logger,
+               const char *systemfile, const char *mainfile,
+               const char *loaderfie, void *config);
 cell *cell_new(lua_State *L, const char *mainfile, const char *loaderfile);
 void cell_close(cell *c);
 bool cell_dispatch_message(cell *c);

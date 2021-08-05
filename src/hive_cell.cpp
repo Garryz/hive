@@ -1,6 +1,7 @@
 #include "hive_cell.h"
 #include "hive_cell_lib.h"
 #include "hive_env.h"
+#include "hive_log.h"
 #include "hive_scheduler.h"
 #include "hive_seri.h"
 #include "hive_socket_lib.h"
@@ -157,7 +158,7 @@ static int lcallback(lua_State *L) {
                               msg); // traceback dispatcher port data_unpack msg
         err = lua_pcall(L, 1, LUA_MULTRET, 1);
         if (err) {
-            printf("Unpack failed : %s\n", lua_tostring(L, -1));
+            log_error("Unpack failed : %s", lua_tostring(L, -1));
             return 0;
         }
         int n = lua_gettop(L);           // traceback dispatcher ...
@@ -165,9 +166,9 @@ static int lcallback(lua_State *L) {
     }
 
     if (err) {
-        printf("[cell %p] err_code = %d, err = %s\n",
-               lua_touserdata(L, lua_upvalueindex(4)), err,
-               lua_tostring(L, -1));
+        log_error("[cell %p] err_code = %d, err = %s",
+                  lua_touserdata(L, lua_upvalueindex(4)), err,
+                  lua_tostring(L, -1));
     }
     return 0;
 }
@@ -185,15 +186,15 @@ static cell *init_cell(lua_State *L, cell *c, const char *mainfile,
     if (loaderfile != nullptr) {
         err = luaL_loadfile(L, loaderfile);
         if (err) {
-            printf("%d : %s\n", err, lua_tostring(L, -1));
+            log_error("%d : %s", err, lua_tostring(L, -1));
             lua_pop(L, 1);
             return _error(L, c);
         }
 
         err = lua_pcall(L, 0, 0, 0);
         if (err) {
-            printf("loader (%s) error %d : %s\n", loaderfile, err,
-                   lua_tostring(L, -1));
+            log_error("loader (%s) error %d : %s", loaderfile, err,
+                      lua_tostring(L, -1));
             lua_pop(L, 1);
             return _error(L, c);
         }
@@ -201,15 +202,15 @@ static cell *init_cell(lua_State *L, cell *c, const char *mainfile,
 
     err = luaL_loadfile(L, mainfile);
     if (err) {
-        printf("%d : %s\n", err, lua_tostring(L, -1));
+        log_error("%d : %s", err, lua_tostring(L, -1));
         lua_pop(L, 1);
         return _error(L, c);
     }
 
     err = lua_pcall(L, 0, 0, 0);
     if (err) {
-        printf("new cell (%s) error %d : %s\n", mainfile, err,
-               lua_tostring(L, -1));
+        log_error("new cell (%s) error %d : %s", mainfile, err,
+                  lua_tostring(L, -1));
         lua_pop(L, 1);
         return _error(L, c);
     }
@@ -218,13 +219,33 @@ static cell *init_cell(lua_State *L, cell *c, const char *mainfile,
     lua_pushcfunction(L, data_unpack); // upvalue 2
     hive_getenv(L, "dispatcher");      // upvalue 3
     if (!lua_isfunction(L, -1)) {
-        printf("set dispatcher first\n");
+        log_error("set dispatcher first");
         return _error(L, c);
     }
     lua_pushlightuserdata(L, c); // upvalue 4
     lua_pushcclosure(L, lcallback, 4);
 
     return c;
+}
+
+cell *cell_logger(lua_State *L, cell *sys, const char *loggerfile,
+                  const char *loaderfile, const char *logdir,
+                  const char *logfile) {
+    cell *c = cell_alloc(L);
+    c->single_thread = true;
+
+    require_cell(L, c, [sys, logdir, logfile](lua_State *L, int cell_map) {
+        cell_touserdata(L, cell_map, sys);
+        lua_setfield(L, -2, "system");
+
+        lua_pushstring(L, logdir);
+        lua_setfield(L, -2, "logdir");
+
+        lua_pushstring(L, logfile);
+        lua_setfield(L, -2, "logfile");
+    });
+
+    return init_cell(L, c, loggerfile, loaderfile);
 }
 
 cell *cell_socket(lua_State *L, cell *sys, const char *socketfile) {
@@ -241,19 +262,26 @@ cell *cell_socket(lua_State *L, cell *sys, const char *socketfile) {
     return init_cell(L, c, socketfile, nullptr);
 }
 
-cell *cell_sys(lua_State *L, cell *sys, cell *socket, const char *systemfile,
-               const char *mainfile, const char *loaderfile, void *config) {
+cell *cell_sys(lua_State *L, cell *sys, cell *socket, cell *logger,
+               const char *systemfile, const char *mainfile,
+               const char *loaderfile, void *config) {
     require_sys(L, socket, mainfile, loaderfile, config);
 
     sys->single_thread = true;
 
-    require_cell(L, sys, [sys](lua_State *L, int cell_map) {
+    require_cell(L, sys, [sys, logger](lua_State *L, int cell_map) {
         cell_touserdata(L, cell_map, sys);
         lua_setfield(L, -2, "system");
+
+        cell_touserdata(L, cell_map, logger);
+        lua_setfield(L, -2, "logger");
     });
 
     lua_pushlightuserdata(L, sys);
     hive_setenv(L, "system_pointer");
+
+    lua_pushlightuserdata(L, logger);
+    hive_setenv(L, "logger_pointer");
 
     return init_cell(L, sys, systemfile, loaderfile);
 }
@@ -271,6 +299,15 @@ cell *cell_new(lua_State *L, const char *mainfile, const char *loaderfile) {
         if (sys) {
             cell_touserdata(L, cell_map, sys);
             lua_setfield(L, -2, "system");
+        }
+
+        hive_getenv(L, "logger_pointer");
+        auto logger = static_cast<cell *>(
+            lua_touserdata(L, -1)); // cell_map cell_lib logger_cell
+        lua_pop(L, 1);
+        if (logger) {
+            cell_touserdata(L, cell_map, logger);
+            lua_setfield(L, -2, "logger");
         }
     });
 

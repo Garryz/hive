@@ -1,5 +1,6 @@
 local c = require "cell.c"
 local cell_require = require "require"
+local log = require "log"
 
 local table = table
 local coroutine = coroutine
@@ -10,7 +11,6 @@ local pairs = pairs
 local type = type
 local pcall = pcall
 local debug = debug
-local print = print
 local error = error
 local tostring = tostring
 local string = string
@@ -63,7 +63,7 @@ local function co_create(f)
     else
         local ret, err = coroutine.resume(co, f)
         if not ret then
-            print(debug.traceback(), "\n", string.format("co_create %s", err))
+            log.error(debug.traceback(), "\n", string.format("co_create %s", err))
         end
     end
     return co
@@ -85,8 +85,8 @@ local function suspend(source, session, co, ok, op, ...)
     elseif source then
         c.send(source, 1, session, false, op)
     else
-        print(cell.self, op, ...)
-        print(debug.traceback(co))
+        log.error(cell.self, op, ...)
+        log.error(debug.traceback(co))
     end
 end
 
@@ -119,7 +119,7 @@ local function deliver_event()
         for i = 1, #event_q2 do
             local ok, err = pcall(resume_co, event_q2[i])
             if not ok then
-                print(cell.self, err)
+                log.error(cell.self, err)
             end
             event_q2[i] = nil
         end
@@ -357,7 +357,7 @@ function debug_command.gc()
     cell.yield()
     local after = collectgarbage "count"
     local after_time = os.time()
-    print(string.format("GC %.2f Kb -> %.2f Kb, cost %.2f sec", before, after, after_time - before_time))
+    log.info(string.format("GC %.2f Kb -> %.2f Kb, cost %.2f sec", before, after, after_time - before_time))
     gcing = false
     return string.format("%.2f Kb", after)
 end
@@ -413,7 +413,7 @@ cell.dispatch {
     dispatch = function(cmd, ...)
         local f = message[cmd]
         if f == nil then
-            print("Unknown message ", cmd)
+            log.error("Unknown message ", cmd)
         else
             local co =
                 co_create(

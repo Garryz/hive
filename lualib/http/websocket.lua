@@ -4,6 +4,7 @@ local crypt = require "crypt"
 local httpd = require "http.httpd"
 local sockethelper = require "http.sockethelper"
 local env = require "env"
+local log = require "log"
 
 local GLOBAL_GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 local MAX_FRAME_SIZE = 256 * 1024 -- max frame is 256K
@@ -271,7 +272,7 @@ function websocket:readmsg()
         local fin, op, payload_data = read_frame(self)
         if op == "close" then
             local code, reason = read_close(payload_data)
-            print("%s close code %s reason %s", self.sock, code, reason)
+            log.info("%s close code %s reason %s", self.sock, code, reason)
             self.interface.close()
             return
         elseif op == "ping" then
@@ -317,7 +318,7 @@ function websocket:close(code, reason)
     )
     self.interface.close()
     if not ok then
-        print(err)
+        log.error(err)
     end
 end
 
@@ -380,7 +381,7 @@ function M.accept(socket_id, protocol, addr, options)
 
     local ok, err = xpcall(resolve_accept, debug.traceback, ws_obj, options)
     if not ok then
-        print(err)
+        log.error(err)
         return
     end
 

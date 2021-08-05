@@ -24,10 +24,10 @@ class client : public std::enable_shared_from_this<client> {
         asio::ip::tcp::resolver::iterator end;
 
         if (iter == end || ec) {
-            printf("client connect address = %s, port = %d, id = %d, "
-                   "error_code = %d, error = %s\n",
-                   addr, port, session_ptr->session_id(), ec.value(),
-                   ec.message().c_str());
+            log_error("client connect address = %s, port = %d, id = %d, "
+                      "error_code = %d, error = %s",
+                      addr, port, session_ptr->session_id(), ec.value(),
+                      ec.message().c_str());
             return false;
         }
 
@@ -65,10 +65,10 @@ class client : public std::enable_shared_from_this<client> {
             client_map[session_ptr->session_id()] = nullptr;
             session_map[session_ptr->session_id()] = nullptr;
 
-            printf("client connect address = %s, port = %d, id = %d, "
-                   "error_code = %d, error = %s\n",
-                   addr, port, session_ptr->session_id(), ec.value(),
-                   ec.message().c_str());
+            log_error("client connect address = %s, port = %d, id = %d, "
+                      "error_code = %d, error = %s",
+                      addr, port, session_ptr->session_id(), ec.value(),
+                      ec.message().c_str());
 
             notify_connect_fail(event, ec.message());
         }

@@ -1,2 +1,5 @@
 thread = 4
 main = "test.main"
+logger = "service.loggerd"
+logdir = "."
+logfile = "log"

@@ -1,5 +1,5 @@
-#ifndef hive_lua_env_h
-#define hive_lua_env_h
+#ifndef hive_env_h
+#define hive_env_h
 
 #include "lua.hpp"
 

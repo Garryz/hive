@@ -1,6 +1,7 @@
 local cell = require "cell"
 local socket = require "socket"
 local env = require "env"
+local log = require "log"
 
 local table = table
 local assert = assert
@@ -12,7 +13,6 @@ local io = io
 local load = load
 local type = type
 local pairs = pairs
-local print = print
 
 local command = {}
 
@@ -55,7 +55,6 @@ local function open_channel(t, key)
             t[key] = c
             ct.channel = c
         else
-            print(err)
             err = string.format("changenode [%s] (%s:%s) failed", key, host, port)
         end
     else
@@ -115,7 +114,7 @@ local cluster_gate = {} -- gatename : serversock
 local cluster_agent = {} -- fd : service
 
 local function accepter(fd, addr, listen_fd)
-    print(string.format("soket accept from %s", addr))
+    log.info(string.format("soket accept from %s", addr))
     local agent = cell.newservice("service.clusteragent", fd)
     cluster_agent[fd] = agent
     return agent
@@ -150,7 +149,7 @@ function command.register(name, service)
     end
     register_name[service] = name
     register_name[name] = service
-    print(string.format("Register [%s] :%s", name, service))
+    log.info(string.format("Register [%s] :%s", name, service))
 end
 
 function command.queryname(name)
