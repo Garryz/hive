@@ -9,7 +9,11 @@ local function send(...)
 end
 
 local function sendlog(levelstr, ...)
-    return send(levelstr, table.concat({...}, " "))
+    local strs = {}
+    for _, v in ipairs({...}) do
+        table.insert(strs, tostring(v))
+    end
+    return send(levelstr, table.concat(strs, " "))
 end
 
 local function setlevel(levelstr, flag)
