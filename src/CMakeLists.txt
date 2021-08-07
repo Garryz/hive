@@ -15,12 +15,12 @@ endif()
 
 add_library(hive SHARED ${CORE_SOURCES})
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
-    set(JEMALLOC_LIBRARY ./third_party/jemalloc/lib/libjemalloc_pic.a)
+    set(JEMALLOC_LIBRARY ${CMAKE_CURRENT_SOURCE_DIR}/../third_party/jemalloc/lib/libjemalloc_pic.a)
 
     add_custom_target(
-        build_jemalloc ALL ./autogen.sh --enable-prof
+        build_jemalloc ALL ./autogen.sh --enable-prof --disable-initial-exec-tls
         COMMAND ${CMAKE_MAKE_PROGRAM}
-        WORKING_DIRECTORY ./third_party/jemalloc/
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../third_party/jemalloc/
         COMMENT "Original jemalloc makefile target"
     )
 
