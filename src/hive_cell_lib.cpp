@@ -4,6 +4,8 @@
 #include "hive_log.h"
 #include "hive_seri.h"
 
+#include <chrono>
+
 static int ldispatch(lua_State *L) {
     luaL_checktype(L, 1, LUA_TFUNCTION);
     lua_settop(L, 1);
