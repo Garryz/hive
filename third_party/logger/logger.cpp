@@ -1,5 +1,10 @@
 #define LUA_LIB
 
+#if (defined(_WIN32) || defined(WIN32))
+#define _CRT_SECURE_NO_WARNINGS
+#include <windows.h>
+#endif
+
 #include "lua.hpp"
 
 #include <chrono>

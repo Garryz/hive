@@ -3,7 +3,7 @@
 
 static cell *logger = nullptr;
 
-static int LOG_MESSAGE_SIZE = 256;
+static const int LOG_MESSAGE_SIZE = 256;
 
 void set_logger(cell *c) { logger = c; }
 
