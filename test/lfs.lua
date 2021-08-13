@@ -179,3 +179,16 @@ local iter, dir = lfs.dir(tmp)
 dir:close()
 assert(not pcall(dir.next, dir))
 print "OK!"
+
+package.path = "./lualib/?.lua;./lualib/?/init.lua;" .. package.path
+
+require "utils.string"
+local lfs = require "utils.lfs"
+local currentDir = lfs.getCurrentDir()
+print(currentDir)
+local fileList = lfs.getFiles(currentDir)
+for _, v in ipairs(fileList) do
+    print(v)
+end
+lfs.createPath("./tmp")
+print(lfs.getFileModification("./tmp"))
