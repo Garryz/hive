@@ -20,20 +20,20 @@ local function setlevel(levelstr, flag)
     return send("enable" .. levelstr, flag and true or false)
 end
 
-function log.warning(...)
-    sendlog("warning", ...)
+function log.warning(str)
+    sendlog("warning", str)
 end
 
-function log.debug(...)
-    sendlog("debug", ...)
+function log.debug(str)
+    sendlog("debug", str)
 end
 
-function log.info(...)
-    sendlog("info", ...)
+function log.info(str)
+    sendlog("info", str)
 end
 
-function log.error(...)
-    sendlog("error", ...)
+function log.error(str)
+    sendlog("error", str)
 end
 
 function log.enableprint(flag)
