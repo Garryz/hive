@@ -9,18 +9,7 @@ function Class(classname, super)
 
     function class_type.new(...)
         local obj = setmetatable({}, {__index = class_type})
-        do
-            local function create(c, ...)
-                if c.super then
-                    create(c.super, ...)
-                end
-                if c.ctor then
-                    c.ctor(obj, ...)
-                end
-            end
-
-            create(class_type, ...)
-        end
+        class_type.ctor(obj, ...)
         return obj
     end
 

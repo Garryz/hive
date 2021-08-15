@@ -19,7 +19,8 @@ end
 
 local test = Class("test", base_type)
 
-function test:ctor()
+function test:ctor(x)
+    test.super.ctor(self, x)
     print("test ctor")
 end
 
