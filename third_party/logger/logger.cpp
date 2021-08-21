@@ -91,13 +91,13 @@ static int32_t create_dir(const std::string &dir_path) {
             if (ACCESS(tmp_dir_path, 0) != 0) {
                 int32_t ret = MKDIR(tmp_dir_path);
                 if (ret != 0) {
-                    delete tmp_dir_path;
+                    delete[] tmp_dir_path;
                     return ret;
                 }
             }
         }
     }
-    delete tmp_dir_path;
+    delete[] tmp_dir_path;
     return 0;
 }
 
