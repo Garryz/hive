@@ -84,17 +84,20 @@ static bool is_diff_day(long long a, long long b) {
 static int32_t create_dir(const std::string &dir_path) {
     std::size_t dir_path_len = dir_path.length();
     char *tmp_dir_path = new char[dir_path_len];
+    memset(tmp_dir_path, 0, dir_path_len);
     for (std::size_t i = 0; i < dir_path_len; i++) {
         tmp_dir_path[i] = dir_path[i];
         if (tmp_dir_path[i] == '\\' || tmp_dir_path[i] == '/') {
             if (ACCESS(tmp_dir_path, 0) != 0) {
                 int32_t ret = MKDIR(tmp_dir_path);
                 if (ret != 0) {
+                    delete tmp_dir_path;
                     return ret;
                 }
             }
         }
     }
+    delete tmp_dir_path;
     return 0;
 }
 
