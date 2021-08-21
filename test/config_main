@@ -1,5 +1,5 @@
 thread = 4
 main = "test.main"
 logger = "service.loggerd"
-logdir = "."
+logdir = "./log"
 logfile = "log"

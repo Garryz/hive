@@ -2,7 +2,12 @@
 
 #if (defined(_WIN32) || defined(WIN32))
 #define _CRT_SECURE_NO_WARNINGS
+#include <direct.h>
+#include <io.h>
 #include <windows.h>
+#else
+#include <sys/stat.h>
+#include <unistd.h>
 #endif
 
 #include "lua.hpp"
@@ -13,6 +18,14 @@
 #include <iomanip>
 #include <map>
 #include <sstream>
+
+#if (defined(_WIN32) || defined(WIN32))
+#define ACCESS(fileName, accessMode) _access(fileName, accessMode)
+#define MKDIR(path) _mkdir(path)
+#else
+#define ACCESS(fileName, accessMode) access(fileName, accessMode)
+#define MKDIR(path) mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH)
+#endif
 
 enum class logger_level {
     LEVEL_NONE = 0,
@@ -68,11 +81,32 @@ static bool is_diff_day(long long a, long long b) {
            tma->tm_mday != tmb->tm_mday;
 }
 
+static int32_t create_dir(const std::string &dir_path) {
+    std::size_t dir_path_len = dir_path.length();
+    char *tmp_dir_path = new char[dir_path_len];
+    for (std::size_t i = 0; i < dir_path_len; i++) {
+        tmp_dir_path[i] = dir_path[i];
+        if (tmp_dir_path[i] == '\\' || tmp_dir_path[i] == '/') {
+            if (ACCESS(tmp_dir_path, 0) != 0) {
+                int32_t ret = MKDIR(tmp_dir_path);
+                if (ret != 0) {
+                    return ret;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
 static FILE *new_file(lua_State *L, const char *filedir, const char *filename,
                       long long create_timestamp) {
     std::string fname;
-    fname = fname + filedir + "/" + filename + "_" +
-            get_timestamp_fmt(create_timestamp, "%F") + ".log";
+    fname = fname + filedir + "/";
+    if (create_dir(fname) != 0) {
+        luaL_error(L, "Can not create dir %s", fname.c_str());
+    }
+    fname = fname + filename + "_" + get_timestamp_fmt(create_timestamp, "%F") +
+            ".log";
     FILE *file = fopen(fname.c_str(), "a");
     if (file == nullptr) {
         luaL_error(L, "Can not create file %s", fname.c_str());
