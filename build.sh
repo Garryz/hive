@@ -8,4 +8,4 @@ cd build
 
 cmake ..
 
-cmake --build . --config Release --target all --clean-first
+cmake --build . --config Release --target all --clean-first -j 14
