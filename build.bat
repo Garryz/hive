@@ -20,6 +20,6 @@ mkdir %cd%\build
 
 cmake --no-warn-unused-cli -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -H%cd% -B%cd%\build -G "Visual Studio 16 2019" -T host=x64 -A x64
 
-cmake --build %cd%\build --config Release --target ALL_BUILD --clean-first -- /maxcpucount:14
+cmake --build %cd%\build --config Release --target ALL_BUILD --clean-first -j 14
 
 pause
