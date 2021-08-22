@@ -19,7 +19,7 @@ local command = {}
 local node_address = {}
 local node_sender = {}
 
-local config_name = env.getconfig("cluster") or "./clustername.lua"
+local CLUSTERNAME = "./clustername.lua"
 
 local connecting = {}
 
@@ -80,6 +80,7 @@ end
 local function loadconfig(tmp)
     if tmp == nil then
         tmp = {}
+        local config_name = env.getconfig("cluster") or "./clustername.lua"
         if config_name then
             local f = assert(io.open(config_name))
             local source = f:read "*a"
