@@ -89,9 +89,9 @@ local function socket_pause(fd, size)
         return
     end
     if size then
-        log.info(string.format("Pause socket (%d) size: %d", fd, size))
+        log.infof("Pause socket (%d) size: %d", fd, size)
     else
-        log.info(string.format("Pause socket (%d)", fd))
+        log.infof("Pause socket (%d)", fd)
     end
     cell.send(sockets_fd, "pause", fd)
     sockets_pause[fd] = true
@@ -102,7 +102,7 @@ local function socket_wait(fd, sep)
     sockets_event[fd] = cell.event()
     sockets_arg[fd] = sep
     if sockets_pause[fd] then
-        log.info(string.format("Resume socket (%d)", fd))
+        log.infof("Resume socket (%d)", fd)
         cell.send(sockets_fd, "resume", fd)
         cell.wait(sockets_event[fd])
         sockets_pause[fd] = nil
@@ -321,7 +321,7 @@ cell.dispatch {
                 cell.cocreate(
                 function()
                     local warning = sockets_warning[fd] or function(fd, size)
-                            log.warning(string.format("WARNING: %d K bytes need to send out (fd = %d)", size, fd))
+                            log.warningf("WARNING: %d K bytes need to send out (fd = %d)", size, fd)
                         end
                     warning(fd, size)
                     return "EXIT"

@@ -272,7 +272,7 @@ function websocket:readmsg()
         local fin, op, payload_data = read_frame(self)
         if op == "close" then
             local code, reason = read_close(payload_data)
-            log.info("%s close code %s reason %s", self.sock, code, reason)
+            log.infof("%s close code %s reason %s", self.sock, code, reason)
             self.interface.close()
             return
         elseif op == "ping" then

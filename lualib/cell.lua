@@ -291,7 +291,7 @@ end
 
 cell.init = cell_require.init
 
-function cell.main()
+function cell.main(...)
 end
 
 function cell.task()
@@ -361,7 +361,7 @@ function debug_command.gc()
     cell.yield()
     local after = collectgarbage "count"
     local after_time = os.time()
-    log.info(string.format("GC %.2f Kb -> %.2f Kb, cost %.2f sec", before, after, after_time - before_time))
+    log.infof("GC %.2f Kb -> %.2f Kb, cost %.2f sec", before, after, after_time - before_time)
     gcing = false
     return string.format("%.2f Kb", after)
 end

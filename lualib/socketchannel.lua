@@ -404,7 +404,7 @@ local function block_connect(self, once)
 
     r = check_connection(self)
     if r == nil then
-        log.error(string.format("Connect to %s:%d failed (%s)", self.__host, self.__port, err))
+        log.errorf("Connect to %s:%d failed (%s)", self.__host, self.__port, err)
         error("[Error: socket]")
     else
         return r

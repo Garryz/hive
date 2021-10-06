@@ -115,7 +115,7 @@ local cluster_gate = {} -- gatename : serversock
 local cluster_agent = {} -- fd : service
 
 local function accepter(fd, addr, listen_fd)
-    log.info(string.format("soket accept from %s", addr))
+    log.infof("soket accept from %s", addr)
     local agent = cell.newservice("service.clusteragent", fd)
     cluster_agent[fd] = agent
     return agent
@@ -150,7 +150,7 @@ function command.register(name, service)
     end
     register_name[service] = name
     register_name[name] = service
-    log.info(string.format("Register [%s] :%s", name, service))
+    log.infof("Register [%s] :%s", name, service)
 end
 
 function command.queryname(name)
