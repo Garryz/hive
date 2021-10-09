@@ -1,12 +1,4 @@
 --[[
-Author: your name
-Date: 2021-08-05 20:36:44
-LastEditTime: 2021-08-13 20:38:31
-LastEditors: your name
-Description: In User Settings Edit
-FilePath: /hive/lualib/hotfix/hotfix.lua
---]]
---[[
 Lua 5.2/5.3 hotfix. Hot update functions and keep old data.
 Author: Jin Qing ( http://blog.csdn.net/jq0123 )
 --]]
