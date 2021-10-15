@@ -34,3 +34,12 @@ print(str:ltrim("|"))
 print(str:rtrim("|"))
 
 print(str:trim("|"))
+
+local t = {
+    [1] = 1,
+    a = "b",
+    f = function()
+    end,
+    t = {}
+}
+print(string.toString(t))
