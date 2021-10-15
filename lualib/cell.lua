@@ -34,6 +34,7 @@ local cell = {}
 local self = c.self
 local system = c.system
 cell.self = self
+cell.id = self:id()
 
 cell.rawsend = c.send
 

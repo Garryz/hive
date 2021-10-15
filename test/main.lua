@@ -42,7 +42,7 @@ local function random_str(len)
 end
 
 function cell.main()
-    print("[cell main]", cell.self, cell.time())
+    print("[cell main]", cell.self, cell.id, cell.time())
 
     -- print(cell.cmd("echo", "Hello world"))
     -- local ping, pong = cell.cmd("launch", "test.pingpong", "pong")
