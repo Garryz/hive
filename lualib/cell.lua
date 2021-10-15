@@ -145,7 +145,21 @@ function cell.event()
     return session
 end
 
+local function checkcell(addr)
+    if not addr then
+        error "service not exist"
+    end
+    if type(addr) ~= "userdata" then
+        addr = cell.cmd("getcell", addr)
+    end
+    if not addr then
+        error "service not exist"
+    end
+    return addr
+end
+
 function cell.call(addr, ...)
+    addr = checkcell(addr)
     -- command
     session = session + 1
     if not c.send(addr, 2, cell.self, session, ...) then
@@ -155,6 +169,7 @@ function cell.call(addr, ...)
 end
 
 function cell.rawcall(addr, session, ...)
+    addr = checkcell(addr)
     if not c.send(addr, ...) then
         error("rawcall error " .. addr)
     end
@@ -193,6 +208,7 @@ function cell.fork(func, ...)
 end
 
 function cell.send(addr, ...)
+    addr = checkcell(addr)
     -- message
     return c.send(addr, 3, ...)
 end
@@ -202,6 +218,7 @@ function cell.wait(event)
 end
 
 function cell.kill(addr)
+    addr = checkcell(addr)
     cell.send(system, "kill", addr)
 end
 
@@ -309,6 +326,7 @@ end
 
 local DEBUG_TIMEOUT = 3000 -- 3 sec
 function cell.debug(addr, ti, cmd, ...)
+    addr = checkcell(addr)
     if not ti or ti <= 0 then
         ti = DEBUG_TIMEOUT
     end

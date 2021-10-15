@@ -164,7 +164,7 @@ function COMMAND.info(id)
     if not id or id <= 0 then
         error "id invalid"
     end
-    return cell.cmd("info", id)
+    return cell.debug(id, 3000, "info")
 end
 
 function COMMAND.kill(id)
@@ -174,7 +174,7 @@ function COMMAND.kill(id)
     if not id or id <= 0 then
         error "id invalid"
     end
-    return cell.cmd("killid", id)
+    return cell.kill(id)
 end
 
 function COMMAND.mem()
@@ -217,5 +217,5 @@ function COMMANDX.call(cmdline)
     if not args[1] then
         error(args[2])
     end
-    return table.pack(cell.cmd("call", id, cmd, table.unpack(args, 2, args.n)))
+    return table.pack(cell.call(id, cmd, table.unpack(args, 2, args.n)))
 end

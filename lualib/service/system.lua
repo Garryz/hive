@@ -176,6 +176,13 @@ function command.socket()
     return system.socket
 end
 
+function command.getcell(val)
+    local val_type = type(val)
+    if val_type == "number" then
+        return id_service[val]
+    end
+end
+
 function command.list()
     local list = {}
     for k, v in pairs(service_name) do
@@ -199,36 +206,12 @@ function command.stat()
     return list_srv(3000, "stat")
 end
 
-function command.info(id)
-    local c = id_service[id]
-    if not c then
-        return "service not exist"
-    end
-    return cell.debug(c, 3000, "info")
-end
-
-function command.killid(id)
-    local c = id_service[id]
-    if not c then
-        return "service not exist"
-    end
-    return command.kill(c)
-end
-
 function command.mem()
     return list_srv(3000, "mem")
 end
 
 function command.gc()
     return list_srv(3000, "gc")
-end
-
-function command.call(id, cmd, ...)
-    local c = id_service[id]
-    if not c then
-        return "service not exist"
-    end
-    return cell.call(c, cmd, ...)
 end
 
 message.kill = command.kill
