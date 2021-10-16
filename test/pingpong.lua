@@ -8,5 +8,6 @@ cell.command {
 
 function cell.main(...)
     print("pingpong launched")
+    cell.register("pingpong")
     return ...
 end

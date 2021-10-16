@@ -86,7 +86,7 @@ local function suspend(source, session, co, ok, op, ...)
     elseif source then
         c.send(source, 1, session, false, op)
     else
-        log.error(cell.self, op, ...)
+        log.error(self, op, ...)
         log.error(debug.traceback(co))
     end
 end
@@ -120,7 +120,7 @@ local function deliver_event()
         for i = 1, #event_q2 do
             local ok, err = pcall(resume_co, event_q2[i])
             if not ok then
-                log.error(cell.self, err)
+                log.error(self, err)
             end
             event_q2[i] = nil
         end
@@ -163,7 +163,7 @@ function cell.call(addr, ...)
     addr = checkcell(addr)
     -- command
     session = session + 1
-    if not c.send(addr, 2, cell.self, session, ...) then
+    if not c.send(addr, 2, self, session, ...) then
         error("call error " .. addr)
     end
     return select(2, assert(coroutine.yield("WAIT", session)))
@@ -185,8 +185,12 @@ function cell.newservice(service_path, ...)
     return cell.cmd("launch", service_path, ...)
 end
 
-function cell.uniqueservice(service_path)
-    return cell.cmd("uniquelaunch", service_path)
+function cell.uniqueservice(service_path, ...)
+    return cell.cmd("uniquelaunch", service_path, ...)
+end
+
+function cell.register(name)
+    return cell.cmd("register", self, name)
 end
 
 function cell.wakeup(event)
@@ -336,7 +340,7 @@ function cell.debug(addr, ti, cmd, ...)
         function(...)
             -- debug command
             local event = cell.event()
-            if not c.send(addr, 21, cell.self, event, cmd, ...) then
+            if not c.send(addr, 21, self, event, cmd, ...) then
                 return "call error " .. addr
             end
             local ret = table.pack(coroutine.yield("WAIT", event))

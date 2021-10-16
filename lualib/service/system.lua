@@ -22,6 +22,8 @@ local unique_service = {}
 local service_name = {}
 local service_id = {}
 local id_service = {}
+local register_name_service = {}
+local service_register_name = {}
 
 local function alloc_queue()
     local n = #free_queue
@@ -85,7 +87,7 @@ function command.launch(name, ...)
     end
 end
 
-function command.uniquelaunch(name)
+function command.uniquelaunch(name, ...)
     local fullname = assert(package.searchpath(name, package.path), "cell was not found")
     local s = unique_service[fullname]
     if type(s) == "userdata" then
@@ -108,10 +110,11 @@ function command.uniquelaunch(name)
         if c then
             ok, result =
                 pcall(
-                function()
+                function(...)
                     local ev = cell.event()
-                    cell.rawcall(c, ev, 4, cell.self, ev, true)
-                end
+                    return table.pack(cell.rawcall(c, ev, 4, cell.self, ev, true, ...))
+                end,
+                ...
             )
             if ok then
                 unique_service[fullname] = c
@@ -131,7 +134,7 @@ function command.uniquelaunch(name)
         end
 
         if c and ok then
-            return c
+            return c, table.unpack(result)
         else
             error(unique_service[fullname])
         end
@@ -154,6 +157,10 @@ function command.kill(c)
         service_name[c] = nil
         id_service[service_id[c]] = nil
         service_id[c] = nil
+    end
+    if service_register_name[c] then
+        register_name_service[service_register_name[c]] = nil
+        service_register_name[c] = nil
     end
     return assert(system.kill(c))
 end
@@ -180,7 +187,18 @@ function command.getcell(val)
     local val_type = type(val)
     if val_type == "number" then
         return id_service[val]
+    elseif val_type == "string" then
+        return register_name_service[val]
     end
+end
+
+function command.register(c, name)
+    if register_name_service[name] then
+        return false
+    end
+    service_register_name[c] = name
+    register_name_service[name] = c
+    return true
 end
 
 function command.list()

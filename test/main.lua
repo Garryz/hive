@@ -95,4 +95,8 @@ function cell.main()
 
     -- print(cell.uniqueservice("test.session_agent"))
     -- print(cell.uniqueservice("test.session_agent"))
+
+    print(cell.uniqueservice("test.pingpong", "ping pong"))
+    print(cell.uniqueservice("test.pingpong", "pong ping"))
+    print(cell.call("pingpong", "ping", "ping"))
 end
