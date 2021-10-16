@@ -63,13 +63,13 @@ end
 
 function cluster.call(node, service, func, ...)
     assert(type(node) == "string")
-    assert(type(service) == "string")
+    assert(type(service) == "string" or type(service) == "number")
     return cell.call(get_sender(node), "req", service, func, ...)
 end
 
 function cluster.send(node, service, func, ...)
     assert(type(node) == "string")
-    assert(type(service) == "string")
+    assert(type(service) == "string" or type(service) == "number")
     -- push is the same with req, but no response
     local s = sender[node]
     if not s then
@@ -95,6 +95,10 @@ function cluster.register(name, service)
     assert(type(name) == "string")
     assert(type(service) == "userdata")
     return cell.call(clusterd, "register", name, service)
+end
+
+function cluster.query(node, service)
+    return cluster.call(node, service)
 end
 
 cell.init(

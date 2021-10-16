@@ -53,6 +53,13 @@ end
 
 cell.message(message)
 
+local function pack(session, ok, data)
+    local response = {}
+    response[2] = mp.pack({session = session, ok = ok, data = data})
+    response[1] = string.pack("<I4", #response[2])
+    return table.concat(response)
+end
+
 local function dispatch_request()
     local sz = sock:readbytes(4)
     while sz do
@@ -67,10 +74,15 @@ local function dispatch_request()
             sock:disconnect()
             return
         end
-        local service = register_name[request.service]
         if request.func and type(request.func) == "string" and request.func ~= "" then
+            local service
+            if type(request.service) == "string" then
+                service = register_name[request.service]
+            else
+                service = cell.cmd("getcell", request.service)
+            end
             if request.session then
-                local ok, data
+                local ok, data = false, "service not found"
                 if service then
                     ok, data =
                         pcall(
@@ -82,14 +94,8 @@ local function dispatch_request()
                             end
                         end
                     )
-                    local response = {}
-                    response[2] = mp.pack({session = request.session, ok = ok, data = data})
-                    response[1] = string.pack("<I4", #response[2])
-                    sock:write(table.concat(response))
-                else
-                    ok = false
-                    data = "name not found"
                 end
+                sock:write(pack(request.session, ok, data))
             elseif service then
                 if request.args then
                     cell.send(service, request.func, table.unpack(request.args))
@@ -98,6 +104,12 @@ local function dispatch_request()
                 end
             end
         else
+            local id
+            local service = register_name[request.service]
+            if service then
+                id = service:id()
+            end
+            sock:write(pack(request.session, true, {id}))
         end
         sz = sock:readbytes(4)
     end
