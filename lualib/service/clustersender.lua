@@ -1,6 +1,7 @@
 local cell = require "cell"
 local sc = require "socketchannel"
 local mp = require "msgpack"
+local log = require "log"
 
 local string = string
 local table = table
@@ -34,8 +35,13 @@ function command.req(service, func, ...)
 end
 
 function command.changenode(host, port)
-    channel:changehost(host, tonumber(port))
-    channel:connect(true)
+    if not host then
+        log.errorf("Close cluster sender %s:%d", channel.__host, channel.__port)
+        channel:close()
+    else
+        channel:changehost(host, tonumber(port))
+        channel:connect(true)
+    end
 end
 
 function message.push(service, func, ...)

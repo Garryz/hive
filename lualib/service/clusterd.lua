@@ -26,10 +26,15 @@ local connecting = {}
 local function open_channel(t, key)
     local ct = connecting[key]
     if ct then
-        local event = cell.event()
-        table.insert(ct, event)
-        cell.wait(event)
-        return assert(ct.channel)
+        local channel
+        while ct do
+            local event = cell.event()
+            table.insert(ct, event)
+            cell.wait(event)
+            channel = ct.channel
+            -- reload again if ct ~= nil
+        end
+        return assert(node_address[key] and channel)
     end
     ct = {}
     connecting[key] = ct
@@ -57,6 +62,15 @@ local function open_channel(t, key)
         else
             err = string.format("changenode [%s] (%s:%s) failed", key, host, port)
         end
+    elseif address == false then
+        c = node_sender[key]
+        if c == nil then
+            -- no sender, always succ
+            succ = true
+        else
+            -- turn off the sender
+            succ, err = pcall(cell.call, c, "changenode", false)
+        end
     else
         err = string.format("cluster node [%s] is %s.", key, address == false and "down" or "absent")
     end
@@ -80,7 +94,7 @@ end
 local function loadconfig(tmp)
     if tmp == nil then
         tmp = {}
-        local config_name = env.getconfig("cluster") or "./clustername.lua"
+        local config_name = env.getconfig("cluster") or CLUSTERNAME
         if config_name then
             local f = assert(io.open(config_name))
             local source = f:read "*a"
