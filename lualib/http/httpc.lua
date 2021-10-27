@@ -25,7 +25,7 @@ local function check_protocol(host)
 end
 
 local SSLCTX_CLIENT = nil
-local function gen_interface(protocol, sock)
+local function gen_interface(protocol, sock, hostname)
     if protocol == "http" then
         return {
             init = nil,
@@ -39,7 +39,7 @@ local function gen_interface(protocol, sock)
     elseif protocol == "https" then
         local tls = require "http.tlshelper"
         SSLCTX_CLIENT = SSLCTX_CLIENT or tls.newctx()
-        local tls_ctx = tls.newtls("client", SSLCTX_CLIENT)
+        local tls_ctx = tls.newtls("client", SSLCTX_CLIENT, hostname)
         return {
             init = tls.initrequestfunc(sock, tls_ctx),
             close = tls.closefunc(tls_ctx),
@@ -52,48 +52,91 @@ local function gen_interface(protocol, sock)
     end
 end
 
-function httpc.request(method, host, url, recvheader, header, content, timeout)
+local function connect(host, timeout)
     local protocol
     protocol, host = check_protocol(host)
-    local hostname, port = host:match "([^:]+):?(%d*)$"
+    local hostaddr, port = host:match "([^:]+):?(%d*)$"
     if port == "" then
         port = protocol == "http" and 80 or protocol == "https" and 443
     else
         port = tonumber(port)
     end
-    local sock = socket.connect(hostname, port, timeout)
-    if not sock then
-        error(string.format("%s connect error host:%s, port:%s, timeout:%s", protocol, hostname, port, timeout))
+    local hostname
+    if not hostaddr:match(".*%d+$") then
+        hostname = hostaddr
     end
-    local interface = gen_interface(protocol, sock)
-    local finish
+    local sock = socket.connect(hostaddr, port, timeout)
+    if not sock then
+        error(string.format("%s connect error host:%s, port:%s, timeout:%s", protocol, hostaddr, port, timeout))
+    end
+    local interface = gen_interface(protocol, sock, hostname)
+    if interface.init then
+        interface.init()
+    end
     if timeout then
         cell.timeout(
             timeout,
             function()
-                if not finish then
+                if not interface.finish then
                     socket.close(sock)
-                    if interface.close then
-                        interface.close()
-                    end
                 end
             end
         )
     end
-    if interface.init then
-        interface.init()
-    end
-    local ok, statuscode, body = pcall(internal.request, interface, method, host, url, recvheader, header, content)
-    finish = true
+    return sock, interface, host
+end
+
+local function close_interface(interface, sock)
+    interface.finish = true
     socket.close(sock)
     if interface.close then
         interface.close()
+        interface.close = nil
     end
+end
+
+function httpc.request(method, hostname, url, recvheader, header, content, timeout)
+    local sock, interface, host = connect(hostname, timeout)
+    local ok, statuscode, body, header =
+        pcall(internal.request, interface, method, host, url, recvheader, header, content)
+    if ok then
+        ok, body = pcall(internal.response, interface, statuscode, body, header)
+    end
+    close_interface(interface, sock)
     if ok then
         return statuscode, body
     else
         error(statuscode)
     end
+end
+
+function httpc.head(hostname, url, recvheader, header, content, timeout)
+    local sock, interface, host = connect(hostname, timeout)
+    local ok, statuscode = pcall(internal.request, interface, "HEAD", host, url, recvheader, header, content)
+    close_interface(interface, sock)
+    if ok then
+        return statuscode
+    else
+        error(statuscode)
+    end
+end
+
+function httpc.request_stream(method, hostname, url, recvheader, header, content, timeout)
+    local sock, interface, host = connect(hostname, timeout)
+    local ok, statuscode, body, header =
+        pcall(internal.request, interface, method, host, url, recvheader, header, content)
+    interface.finish = true -- don't shutdown fd in timeout
+    local function close_sock()
+        close_interface(interface, sock)
+    end
+    if not ok then
+        close_sock()
+        error(statuscode)
+    end
+    -- TODO: stream support timeout
+    local stream = internal.response_stream(interface, statuscode, body, header)
+    stream._onclose = close_sock
+    return stream
 end
 
 function httpc.get(host, url, recvheader, header, timeout)
