@@ -1,11 +1,11 @@
 project(hive)
 
+cmake_minimum_required(VERSION 3.5)
+
 set(EXE ${CMAKE_CURRENT_SOURCE_DIR})
 set(LIB ${CMAKE_CURRENT_SOURCE_DIR}/luaclib)
 
 if(CMAKE_SYSTEM_NAME MATCHES "Windows")
-    cmake_minimum_required(VERSION 3.3.2)
-
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${LIB})
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${LIB})
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_MINSIZEREL ${LIB})
@@ -36,8 +36,6 @@ if(CMAKE_SYSTEM_NAME MATCHES "Windows")
     get_WIN32_WINNT(ver)
     add_definitions(-D_WIN32_WINNT=${ver})
 else()
-    cmake_minimum_required(VERSION 3.1.3)
-
     set(EXECUTABLE_OUTPUT_PATH ${EXE})
     set(LIBRARY_OUTPUT_PATH ${LIB})
 
