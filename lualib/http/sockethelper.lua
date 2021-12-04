@@ -5,7 +5,7 @@ local setmetatable = setmetatable
 local error = error
 
 local sockethelper = {}
-local socket_error =
+local socketerror =
     setmetatable(
     {},
     {
@@ -15,7 +15,7 @@ local socket_error =
     }
 )
 
-sockethelper.socket_error = socket_error
+sockethelper.socketerror = socketerror
 
 local function preread(sock, str)
     return function(sz)
@@ -37,7 +37,7 @@ local function preread(sock, str)
                         str = nil
                         return ret
                     else
-                        error(socket_error)
+                        error(socketerror)
                     end
                 end
             end
@@ -46,7 +46,7 @@ local function preread(sock, str)
             if ret then
                 return ret
             else
-                error(socket_error)
+                error(socketerror)
             end
         end
     end
@@ -61,7 +61,7 @@ function sockethelper.readfunc(sock, pre)
         if ret then
             return ret
         else
-            error(socket_error)
+            error(socketerror)
         end
     end
 end
@@ -74,7 +74,7 @@ function sockethelper.writefunc(sock)
     return function(content)
         local ok = sock:write(content)
         if not ok then
-            error(socket_error)
+            error(socketerror)
         end
     end
 end
@@ -89,7 +89,7 @@ function sockethelper.connect(host, port, timeout)
     if sock then
         return sock
     end
-    error(socket_error)
+    error(socketerror)
 end
 
 function sockethelper.close(sock)

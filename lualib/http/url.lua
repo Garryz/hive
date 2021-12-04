@@ -20,7 +20,7 @@ function url.parse(u)
     return path, query
 end
 
-function url.parse_query(q)
+function url.parsequery(q)
     local r = {}
     for k, v in q:gmatch "(.-)=([^&]*)&?" do
         r[decode(k)] = decode(v)
