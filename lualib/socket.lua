@@ -46,6 +46,10 @@ local listen_meta = {
     end
 }
 
+function socket:fd()
+    return self.__fd
+end
+
 function socket:write(msg)
     local fd = self.__fd
     if sockets_closed[fd] then
@@ -207,7 +211,11 @@ function socket_ins.listen(addr, port, accepter)
     sockets_fd = sockets_fd or cell.cmd("socket")
     local obj = {__fd = assert(cell.call(sockets_fd, "listen", cell.self, addr, port), "Listen failed")}
     sockets_accept[obj.__fd] = function(fd, addr)
-        return accepter(fd, addr, obj)
+        local c = accepter(fd, addr, obj)
+        if type(c) ~= "userdata" then
+            c = cell.cmd("getcell", c)
+        end
+        return c
     end
     setmetatable(obj, listen_meta)
     sockets[obj.__fd] = obj
