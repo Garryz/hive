@@ -11,7 +11,6 @@ local package = package
 local error = error
 local type = type
 local ipairs = ipairs
-local table = table
 
 local command = {}
 local message = {}
