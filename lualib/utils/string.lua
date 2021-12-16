@@ -1,17 +1,3 @@
-do
-    local mt = getmetatable("")
-    local _index = mt.__index
-
-    function mt.__index(s, ...)
-        local k = ...
-        if "number" == type(k) then
-            return _index.sub(s, k, k)
-        else
-            return _index[k]
-        end
-    end
-end
-
 function string.firstToUpper(str)
     return (str:gsub("^%l", string.upper))
 end
