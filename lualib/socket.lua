@@ -50,6 +50,10 @@ function socket:fd()
     return self.__fd
 end
 
+function socket:addr()
+    return self.__addr
+end
+
 function socket:write(msg)
     local fd = self.__fd
     if sockets_closed[fd] then
@@ -209,7 +213,7 @@ end
 function socket_ins.listen(addr, port, accepter)
     assert(type(accepter) == "function")
     sockets_fd = sockets_fd or cell.cmd("socket")
-    local obj = {__fd = assert(cell.call(sockets_fd, "listen", cell.self, addr, port), "Listen failed")}
+    local obj = {__fd = assert(cell.call(sockets_fd, "listen", cell.self, addr, port), "Listen failed"), __addr = addr}
     sockets_accept[obj.__fd] = function(fd, addr)
         local c = accepter(fd, addr, obj)
         if type(c) ~= "userdata" then
@@ -229,15 +233,15 @@ function socket_ins.connect(addr, port)
     if not fd then
         return fd, err
     end
-    local obj = {__fd = fd}
+    local obj = {__fd = fd, __addr = addr}
     setmetatable(obj, socket_meta)
     sockets[obj.__fd] = obj
     return obj
 end
 
-function socket_ins.bind(fd)
+function socket_ins.bind(fd, addr)
     sockets_fd = sockets_fd or cell.cmd("socket")
-    local obj = {__fd = fd}
+    local obj = {__fd = fd, __addr = addr}
     setmetatable(obj, socket_meta)
     sockets[obj.__fd] = obj
     return obj
