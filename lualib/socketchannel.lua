@@ -299,7 +299,9 @@ local function connect_once(self)
         self.__dispatch_thread =
             cell.fork(
             function()
-                pcall(dispatch_function(self), self)
+                if self.__sock then
+                    pcall(dispatch_function(self), self)
+                end
                 -- clear dispatch_thread
                 self.__dispatch_thread = nil
             end

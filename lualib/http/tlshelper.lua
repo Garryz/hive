@@ -44,7 +44,10 @@ function tlshelper.closefunc(tls_ctx)
 end
 
 function tlshelper.readfunc(sock, tls_ctx)
-    local readfunc = socket.readfunc(sock)
+    local function readfunc()
+        readfunc = socket.readfunc(sock)
+        return ""
+    end
     local read_buff = ""
     return function(sz)
         if not sz then
