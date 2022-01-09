@@ -49,7 +49,7 @@ local function write_handshake(self, host, url, header)
     end
 
     local guid = self.guid
-    sw_key = crypt.base64encode(sw_key)
+    sw_key = crypt.base64decode(sw_key)
     if sw_key ~= crypt.sha1(key .. guid) then
         error("websocket handshake invalid Sec-WebSocket-Accept")
     end
@@ -176,7 +176,7 @@ local function write_frame(self, op, payload_data, masking_key)
     end
 
     if payload_len > 0 then
-        self.interface.write(s)
+        self.interface.write(payload_data)
     end
 end
 
@@ -191,7 +191,7 @@ local function read_close(payload_data)
 end
 
 local function read_frame(self)
-    local s = self.read(2)
+    local s = self.interface.read(2)
     local v1, v2 = string.unpack("I1I1", s)
     local fin = (v1 & 0x80) ~= 0
     -- unused flag
