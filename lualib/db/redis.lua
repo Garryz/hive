@@ -200,6 +200,18 @@ local function read_boolean(sock)
     return ok, result ~= 0
 end
 
+local function read_map(sock)
+    local ok, result = read_response(sock)
+    if not ok then
+        return ok, result
+    end
+    local map = {}
+    for i = 1, #result / 2 do
+        map[result[2 * i - 1]] = result[2 * i]
+    end
+    return ok, map
+end
+
 function command:exists(key)
     local sock = self[1]
     return sock:request(compose_message("EXISTS", key), read_boolean)
@@ -208,6 +220,82 @@ end
 function command:sismember(key, value)
     local sock = self[1]
     return sock:request(compose_message("SISMEMBER", table.pack(key, value)), read_boolean)
+end
+
+function command:hset(key, field, value)
+    local sock = self[1]
+    return sock:request(compose_message("HSET", table.pack(key, field, value)), read_boolean)
+end
+
+function command:hsetnx(key, field, value)
+    local sock = self[1]
+    return sock:request(compose_message("HSETNX", table.pack(key, field, value)), read_boolean)
+end
+
+function command:hexists(key, field)
+    local sock = self[1]
+    return sock:request(compose_message("HEXISTS", table.pack(key, field)), read_boolean)
+end
+
+function command:hgetall(key)
+    local sock = self[1]
+    return sock:request(compose_message("HGETALL", key), read_map)
+end
+
+function command:hmset(key, map)
+    local t = {}
+    table.insert(t, key)
+    for k, v in pairs(map) do
+        table.insert(t, k)
+        table.insert(t, v)
+    end
+    local sock = self[1]
+    return sock:request(compose_message("HMSET", t), read_response)
+end
+
+function command:expire(key, sec)
+    local sock = self[1]
+    return sock:request(compose_message("EXPIRE", table.pack(key, sec)), read_boolean)
+end
+
+function command:expireat(key, unixtime)
+    local sock = self[1]
+    return sock:request(compose_message("EXPIREAT", table.pack(key, unixtime)), read_boolean)
+end
+
+function command:mset(map)
+    local t = {}
+    for k, v in pairs(map) do
+        table.insert(t, k)
+        table.insert(t, v)
+    end
+    local sock = self[1]
+    return sock:request(compose_message("MSET", t), read_response)
+end
+
+function command:persist(key)
+    local sock = self[1]
+    return sock:request(compose_message("PERSIST", key), read_boolean)
+end
+
+function command:renamenx(key, newKey)
+    local sock = self[1]
+    return sock:request(compose_message("RENAMENX", table.pack(key, newKey)), read_boolean)
+end
+
+function command:smove(srcSet, dstSet, value)
+    local sock = self[1]
+    return sock:request(compose_message("SMOVE", table.pack(srcSet, dstSet, value)), read_boolean)
+end
+
+function command:msetnx(map)
+    local t = {}
+    for k, v in pairs(map) do
+        table.insert(t, k)
+        table.insert(t, v)
+    end
+    local sock = self[1]
+    return sock:request(compose_message("MSETNX", t), read_boolean)
 end
 
 local function compose_table(lines, msg)
