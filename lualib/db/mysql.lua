@@ -91,13 +91,6 @@ local CLIENT_SSL = 0x00000800
 local CLIENT_PLUGIN_AUTH = 0x00080000
 local CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA = 0x00200000
 
-local RESP_OK = "OK"
-local RESP_AUTHMOREDATA = "AUTHMOREDATA"
-local RESP_LOCALINFILE = "LOCALINFILE"
-local RESP_EOF = "EOF"
-local RESP_ERR = "ERR"
-local RESP_DATA = "DATA"
-
 local mt = {__index = _M}
 
 -- mysql field value type converters
@@ -192,9 +185,9 @@ end
 --     return strpack("<I8", n)
 -- end
 
--- local function _set_int8(n)
---     return strpack("<i8", n)
--- end
+local function _set_int8(n)
+    return strpack("<i8", n)
+end
 
 -- local function _set_float(n)
 --     return strpack("<f", n)
@@ -295,17 +288,13 @@ local function _recv_packet(self, sock)
 
     local typ
     if field_count == 0x00 then
-        typ = RESP_OK
-    elseif field_count == 0x01 then
-        typ = RESP_AUTHMOREDATA
-    elseif field_count == 0xfb then
-        typ = RESP_LOCALINFILE
-    elseif field_count == 0xfe then
-        typ = RESP_EOF
+        typ = "OK"
     elseif field_count == 0xff then
-        typ = RESP_ERR
+        typ = "ERR"
+    elseif field_count == 0xfe then
+        typ = "EOF"
     else
-        typ = RESP_DATA
+        typ = "DATA"
     end
 
     return data, typ
@@ -476,16 +465,16 @@ local function _recv_field_packet(self, sock)
         return nil, err
     end
 
-    if typ == RESP_ERR then
+    if typ == "ERR" then
         local errno, msg, sqlstate = _parse_err_packet(packet)
         return nil, msg, errno, sqlstate
     end
 
-    if typ ~= RESP_DATA then
+    if typ ~= "DATA" then
         return nil, "bad field packet type: " .. typ
     end
 
-    -- typ == RESP_DATA
+    -- typ == 'DATA'
 
     return _parse_field_packet(packet)
 end
@@ -497,12 +486,12 @@ local function _recv_decode_packet_resp(self)
             return false, "failed to receive the result packet" .. err
         end
 
-        if typ == RESP_ERR then
+        if typ == "ERR" then
             local errno, msg, sqlstate = _parse_err_packet(packet)
             return false, strformat("errno:%d, msg:%s,sqlstate:%s", errno, msg, sqlstate)
         end
 
-        if typ == RESP_EOF then
+        if typ == "EOF" then
             return false, "old pre-4.1 authentication protocol not supported"
         end
 
@@ -689,13 +678,13 @@ local function read_result(self, sock)
     --error( err )
     end
 
-    if typ == RESP_ERR then
+    if typ == "ERR" then
         local errno, msg, sqlstate = _parse_err_packet(packet)
         return nil, msg, errno, sqlstate
     --error( strformat("errno:%d, msg:%s,sqlstate:%s",errno,msg,sqlstate))
     end
 
-    if typ == RESP_OK then
+    if typ == "OK" then
         local res = _parse_ok_packet(packet)
         if res and res.server_status & SERVER_MORE_RESULTS_EXISTS ~= 0 then
             return res, "again"
@@ -703,7 +692,7 @@ local function read_result(self, sock)
         return res
     end
 
-    if typ ~= RESP_DATA then
+    if typ ~= "DATA" then
         return nil, "packet type " .. typ .. " not supported"
     --error( "packet type " .. typ .. " not supported" )
     end
@@ -727,7 +716,7 @@ local function read_result(self, sock)
         return nil, err
     end
 
-    if typ ~= RESP_EOF then
+    if typ ~= "EOF" then
         --error ( "unexpected packet type " .. typ .. " while eof packet is ".. "expected" )
         return nil, "unexpected packet type " .. typ .. " while eof packet is " .. "expected"
     end
@@ -744,7 +733,7 @@ local function read_result(self, sock)
             return nil, err
         end
 
-        if typ == RESP_EOF then
+        if typ == "EOF" then
             local warning_count, status_flags = _parse_eof_packet(packet)
             if status_flags & SERVER_MORE_RESULTS_EXISTS ~= 0 then
                 return rows, "again"
@@ -849,7 +838,7 @@ local function read_prepare_result(self, sock)
         return false, resp
     end
 
-    if typ == RESP_ERR then
+    if typ == "ERR" then
         local errno, msg, sqlstate = _parse_err_packet(packet)
         resp.badresult = true
         resp.errno = errno
@@ -859,7 +848,7 @@ local function read_prepare_result(self, sock)
     end
 
     --第一节只能是OK
-    if typ ~= RESP_OK then
+    if typ ~= "OK" then
         resp.badresult = true
         resp.errno = 300201
         resp.err = "first typ must be OK,now" .. typ
@@ -996,13 +985,13 @@ local function read_execute_result(self, sock)
     --error( err )
     end
 
-    if typ == RESP_ERR then
+    if typ == "ERR" then
         local errno, msg, sqlstate = _parse_err_packet(packet)
         return nil, msg, errno, sqlstate
     --error( strformat("errno:%d, msg:%s,sqlstate:%s",errno,msg,sqlstate))
     end
 
-    if typ == RESP_OK then
+    if typ == "OK" then
         local res = _parse_ok_packet(packet)
         if res and res.server_status & SERVER_MORE_RESULTS_EXISTS ~= 0 then
             return res, "again"
@@ -1010,7 +999,7 @@ local function read_execute_result(self, sock)
         return res
     end
 
-    if typ ~= RESP_DATA then
+    if typ ~= "DATA" then
         return nil, "packet type " .. typ .. " not supported"
     --error( "packet type " .. typ .. " not supported" )
     end
@@ -1023,7 +1012,7 @@ local function read_execute_result(self, sock)
     local col
     while true do
         packet, typ, err = _recv_packet(self, sock)
-        if typ == RESP_EOF then
+        if typ == "EOF" then
             local warning_count, status_flags = _parse_eof_packet(packet)
             break
         end
@@ -1045,7 +1034,7 @@ local function read_execute_result(self, sock)
     local row
     while true do
         packet, typ, err = _recv_packet(self, sock)
-        if typ == RESP_EOF then
+        if typ == "EOF" then
             local warning_count, status_flags = _parse_eof_packet(packet)
             if status_flags & SERVER_MORE_RESULTS_EXISTS ~= 0 then
                 return rows, "again"
@@ -1104,7 +1093,7 @@ end
         err
 ]]
 function _M.execute(self, stmt, ...)
-    local querypacket, er = _compose_stmt_execute(self, stmt, CURSOR_TYPE_NO_CURSOR, {...})
+    local querypacket, er = _compose_stmt_execute(self, stmt, CURSOR_TYPE_NO_CURSOR, table.pack(...))
     if not querypacket then
         return {
             badresult = true,
