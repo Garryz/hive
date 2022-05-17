@@ -271,6 +271,7 @@ local function start()
 
     local c = system.launch(system.maincell, system.loader)
     if c then
+        print("[main cell]", c)
         cell.rawsend(c, 4, nil, nil, false)
     else
         error "launch main.lua failed"
