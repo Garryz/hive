@@ -175,52 +175,36 @@ static int lcallback(lua_State *L) {
 
 static cell *init_cell(lua_State *L, cell *c, const char *mainfile,
                        const char *loaderfile) {
-    auto _error = [](lua_State *L, cell *c) -> cell * {
-        scheduler_deletetask(L);
-        c->L = nullptr;
-        delete c;
-        return nullptr;
-    };
-
     int err = 0;
     if (loaderfile != nullptr) {
         err = luaL_loadfile(L, loaderfile);
         if (err) {
-            log_error("%d : %s", err, lua_tostring(L, -1));
-            lua_pop(L, 1);
-            return _error(L, c);
+            luaL_error(L, "%d : %s\n", err, lua_tostring(L, -1));
         }
 
         err = lua_pcall(L, 0, 0, 0);
         if (err) {
-            log_error("loader (%s) error %d : %s", loaderfile, err,
-                      lua_tostring(L, -1));
-            lua_pop(L, 1);
-            return _error(L, c);
+            luaL_error(L, "loader (%s) error %d : %s\n", loaderfile, err,
+                       lua_tostring(L, -1));
         }
     }
 
     err = luaL_loadfile(L, mainfile);
     if (err) {
-        log_error("%d : %s", err, lua_tostring(L, -1));
-        lua_pop(L, 1);
-        return _error(L, c);
+        luaL_error(L, "%d : %s\n", err, lua_tostring(L, -1));
     }
 
     err = lua_pcall(L, 0, 0, 0);
     if (err) {
-        log_error("new cell (%s) error %d : %s", mainfile, err,
-                  lua_tostring(L, -1));
-        lua_pop(L, 1);
-        return _error(L, c);
+        luaL_error(L, "new cell (%s) error %d : %s\n", mainfile, err,
+                   lua_tostring(L, -1));
     }
 
     lua_pushcfunction(L, traceback);   // upvalue 1
     lua_pushcfunction(L, data_unpack); // upvalue 2
     hive_getenv(L, "dispatcher");      // upvalue 3
     if (!lua_isfunction(L, -1)) {
-        log_error("set dispatcher first");
-        return _error(L, c);
+        luaL_error(L, "set dispatcher first\n");
     }
     lua_pushlightuserdata(L, c); // upvalue 4
     lua_pushcclosure(L, lcallback, 4);
@@ -479,6 +463,8 @@ void cell_release(cell *c) {
     c->ref.fetch_sub(1);
     if (c->ref.load() == 0) {
         globalmq_dec(c->gmq);
+        scheduler_deletetask(c->L);
+        c->L = nullptr;
         delete c;
     }
 }
