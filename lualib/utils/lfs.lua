@@ -31,6 +31,20 @@ local function getFiles(path, fileList, upperDir)
     end
 end
 
+function m.getLuaFiles(path)
+    local fileList = {}
+    getFiles(path, fileList)
+    local res = {}
+    -- 去掉.lua后缀
+    for _, file in ipairs(fileList) do
+        local luaFile = file:match("(.+).lua+$")
+        if luaFile then
+            table.insert(res, luaFile)
+        end
+    end
+    return res
+end
+
 function m.getFiles(path)
     local fileList = {}
     getFiles(path, fileList)
