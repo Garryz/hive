@@ -1,4 +1,4 @@
-# Copyright (c) 2018, Google Inc.
+# Copyright (c) 2022, Google Inc.
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -10,44 +10,43 @@
 # SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-# CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
+# CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-# This script exists to exercise breaking each of the FIPS tests. It builds
-# BoringSSL differently for each test and that can take a long time. Thus it's
-# run twice: once, from a BoringSSL source tree, with "build" as the sole
-# argument to run the builds, and then (from the same location) with no
-# arguments to run each script.
-#
-# Run it with /bin/bash, not /bin/sh, otherwise "read" may fail.
+# This script runs test_fips repeatedly with different FIPS tests broken. It is
+# intended to be observed to demonstrate that the various tests are working and
+# thus pauses for a keystroke between tests.
 
-set -x
+set -e
 
-TESTS="NONE ECDSA_PWCT CRNG RSA_PWCT AES_CBC AES_GCM DES SHA_1 SHA_256 SHA_512 RSA_SIG DRBG ECDSA_SIG Z_COMPUTATION TLS_KDF FFC_DH"
+TEST_FIPS_BIN="build/util/fipstools/test_fips"
 
-if [ "x$1" = "xbuild" ]; then
-	for test in $TESTS; do
-		rm -Rf build-$test
-		mkdir build-$test
-		pushd build-$test
-		cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=${HOME}/toolchain -DFIPS=1 -DFIPS_BREAK_TEST=${test} -DCMAKE_BUILD_TYPE=Release ..
-		ninja test_fips
-		popd
-	done
-
-	exit 0
+if [ ! -f $TEST_FIPS_BIN ]; then
+  echo "$TEST_FIPS_BIN is missing. Run this script from the top level of a"
+  echo "BoringSSL checkout and ensure that BoringSSL has been built in"
+  echo "build/ with -DFIPS_BREAK_TEST=TESTS passed to CMake."
+  exit 1
 fi
 
-for test in $TESTS; do
-	pushd build-$test
-	printf "\n\n\\x1b[1m$test\\x1b[0m\n"
-	./util/fipstools/cavp/test_fips
-	echo "Waiting for keypress..."
-	read
-	popd
-done
+KATS=$(go run util/fipstools/break-kat.go --list-tests)
 
-pushd build-NONE
-printf "\\x1b[1mIntegrity\\x1b[0m\n"
-go run ../util/fipstools/break-hash.go ./util/fipstools/cavp/test_fips ./util/fipstools/cavp/test_fips_broken
-./util/fipstools/cavp/test_fips_broken
-popd
+echo -e '\033[1mNormal output\033[0m'
+$TEST_FIPS_BIN
+read
+
+echo
+echo -e '\033[1mIntegrity test failure\033[0m'
+go run util/fipstools/break-hash.go $TEST_FIPS_BIN break-bin
+chmod u+x ./break-bin
+./break-bin || true
+rm ./break-bin
+read
+
+for kat in $KATS; do
+  echo
+  echo -e "\033[1mKAT failure ${kat}\033[0m"
+  go run util/fipstools/break-kat.go $TEST_FIPS_BIN $kat > break-bin
+  chmod u+x ./break-bin
+  ./break-bin || true
+  rm ./break-bin
+  read
+done

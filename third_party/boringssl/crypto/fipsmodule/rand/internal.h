@@ -16,7 +16,6 @@
 #define OPENSSL_HEADER_CRYPTO_RAND_INTERNAL_H
 
 #include <openssl/aes.h>
-#include <openssl/cpu.h>
 
 #include "../../internal.h"
 #include "../modes/internal.h"
@@ -65,15 +64,15 @@ void RAND_need_entropy(size_t bytes_needed);
 // system.
 void CRYPTO_sysrand(uint8_t *buf, size_t len);
 
-#if defined(OPENSSL_URANDOM)
-// CRYPTO_init_sysrand initializes long-lived resources needed to draw entropy
-// from the operating system.
-void CRYPTO_init_sysrand(void);
-
 // CRYPTO_sysrand_for_seed fills |len| bytes at |buf| with entropy from the
 // operating system. It may draw from the |GRND_RANDOM| pool on Android,
 // depending on the vendor's configuration.
 void CRYPTO_sysrand_for_seed(uint8_t *buf, size_t len);
+
+#if defined(OPENSSL_URANDOM)
+// CRYPTO_init_sysrand initializes long-lived resources needed to draw entropy
+// from the operating system.
+void CRYPTO_init_sysrand(void);
 
 // CRYPTO_sysrand_if_available fills |len| bytes at |buf| with entropy from the
 // operating system, or early /dev/urandom data, and returns 1, _if_ the entropy
@@ -83,10 +82,6 @@ void CRYPTO_sysrand_for_seed(uint8_t *buf, size_t len);
 int CRYPTO_sysrand_if_available(uint8_t *buf, size_t len);
 #else
 OPENSSL_INLINE void CRYPTO_init_sysrand(void) {}
-
-OPENSSL_INLINE void CRYPTO_sysrand_for_seed(uint8_t *buf, size_t len) {
-  CRYPTO_sysrand(buf, len);
-}
 
 OPENSSL_INLINE int CRYPTO_sysrand_if_available(uint8_t *buf, size_t len) {
   CRYPTO_sysrand(buf, len);
@@ -104,10 +99,7 @@ typedef struct {
   AES_KEY ks;
   block128_f block;
   ctr128_f ctr;
-  union {
-    uint8_t bytes[16];
-    uint32_t words[4];
-  } counter;
+  uint8_t counter[16];
   uint64_t reseed_counter;
 } CTR_DRBG_STATE;
 
@@ -148,15 +140,14 @@ OPENSSL_EXPORT void CTR_DRBG_clear(CTR_DRBG_STATE *drbg);
 #if defined(OPENSSL_X86_64) && !defined(OPENSSL_NO_ASM)
 
 OPENSSL_INLINE int have_rdrand(void) {
-  return (OPENSSL_ia32cap_get()[1] & (1u << 30)) != 0;
+  return CRYPTO_is_RDRAND_capable();
 }
 
 // have_fast_rdrand returns true if RDRAND is supported and it's reasonably
 // fast. Concretely the latter is defined by whether the chip is Intel (fast) or
 // not (assumed slow).
 OPENSSL_INLINE int have_fast_rdrand(void) {
-  const uint32_t *const ia32cap = OPENSSL_ia32cap_get();
-  return (ia32cap[1] & (1u << 30)) && (ia32cap[0] & (1u << 30));
+  return CRYPTO_is_RDRAND_capable() && CRYPTO_is_intel_cpu();
 }
 
 // CRYPTO_rdrand writes eight bytes of random data from the hardware RNG to

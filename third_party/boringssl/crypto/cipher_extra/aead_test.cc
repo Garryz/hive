@@ -154,6 +154,9 @@ static const struct KnownAEAD kAEADs[] = {
 
     {"AES_128_CCM_BLUETOOTH_8", EVP_aead_aes_128_ccm_bluetooth_8,
      "aes_128_ccm_bluetooth_8_tests.txt", 0},
+
+    {"AES_128_CCM_Matter", EVP_aead_aes_128_ccm_matter,
+     "aes_128_ccm_matter_tests.txt", 0},
 };
 
 class PerAEADTest : public testing::TestWithParam<KnownAEAD> {
@@ -1007,4 +1010,8 @@ TEST(AEADTest, WycheproofXChaCha20Poly1305) {
         t->IgnoreInstruction("keySize");
         RunWycheproofTestCase(t, EVP_aead_xchacha20_poly1305());
       });
+}
+
+TEST(AEADTest, FreeNull) {
+  EVP_AEAD_CTX_free(nullptr);
 }
