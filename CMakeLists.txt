@@ -1,6 +1,6 @@
 project(hive)
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.8)
 
 set(EXE ${CMAKE_CURRENT_SOURCE_DIR})
 set(LIB ${CMAKE_CURRENT_SOURCE_DIR}/luaclib)
