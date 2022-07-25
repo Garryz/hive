@@ -1,4 +1,12 @@
 #include "hive_scheduler.h"
+
+#include <atomic>
+#include <cassert>
+#include <chrono>
+#include <mutex>
+#include <thread>
+#include <vector>
+
 #include "concurrent_queue.h"
 #include "crash_dump.h"
 #include "hive_cell.h"
@@ -6,17 +14,15 @@
 #include "hive_log.h"
 #include "hive_seri.h"
 
-#include <atomic>
-#include <cassert>
-#include <chrono>
-#include <thread>
-#include <vector>
-
 static const lua_Integer DEFAULT_THREAD = 4;
 
 struct global_queue {
     std::atomic<int> *total;
     concurrent_queue<cell *> *queue;
+    std::mutex *mutex;
+    std::condition_variable *cv;
+    int thread{0};
+    int sleep{0};
 };
 
 struct timer {
@@ -36,14 +42,20 @@ cell *globalmq_pop(global_queue *q) {
     return c;
 }
 
-static void globalmq_init(global_queue *q) {
+static void globalmq_init(global_queue *q, int thread) {
     q->total = new std::atomic<int>{0};
     q->queue = new concurrent_queue<cell *>{};
+    q->mutex = new std::mutex;
+    q->cv = new std::condition_variable;
+    q->thread = thread;
+    q->sleep = 0;
 }
 
 static void globalmq_release(global_queue *q) {
     delete q->total;
     delete q->queue;
+    delete q->mutex;
+    delete q->cv;
 }
 
 void globalmq_inc(global_queue *q) { q->total->fetch_add(1); }
@@ -103,13 +115,19 @@ void scheduler_starttask(lua_State *L) {
 
 void scheduler_deletetask(lua_State *L) { lua_close(L); }
 
+static void wakeup(global_queue *gmq, int busy) {
+    if (gmq->sleep > gmq->thread - busy) {
+        // signal sleep worker, "spurious wakeup" is harmless
+        gmq->cv->notify_one();
+    }
+}
+
 static void _cell(global_queue *gmq, cell *c) {
     for (;;) {
-        if (!cell_dispatch_message(c)) {
-            std::this_thread::sleep_for(std::chrono::microseconds(1000));
-            if (globalmq_size(gmq) <= 0) {
-                return;
-            }
+        if (cell_dispatch_message(c)) {
+            wakeup(gmq, 0);
+        } else if (globalmq_size(gmq) <= 0) {
+            return;
         }
     }
 }
@@ -143,6 +161,7 @@ static void _updatetime(timer *t) {
 static void _timer(timer *t) {
     for (;;) {
         _updatetime(t);
+        wakeup(t->mq, t->mq->thread - 1);
         std::this_thread::sleep_for(std::chrono::microseconds(2500));
         if (globalmq_size(t->mq) <= 0) {
             return;
@@ -179,7 +198,15 @@ static void _worker(global_queue *gmq) {
     for (;;) {
         c = _message_dispatch(gmq, c);
         if (c == nullptr) {
-            std::this_thread::sleep_for(std::chrono::microseconds(1000));
+            {
+                std::unique_lock<std::mutex> locker(*gmq->mutex);
+                ++gmq->sleep;
+                // "spurious wakeup" is harmless,
+                // because _message_dispatch() can be call at any
+                // time.
+                gmq->cv->wait(locker);
+                --gmq->sleep;
+            }
             if (globalmq_size(gmq) <= 0) {
                 return;
             }
@@ -187,8 +214,7 @@ static void _worker(global_queue *gmq) {
     }
 }
 
-static void _start(global_queue *gmq, cell *sys, cell *socket, timer *t,
-                   int threadnum) {
+static void _start(global_queue *gmq, cell *sys, cell *socket, timer *t) {
     std::vector<std::thread> threads;
 
     threads.emplace_back(_cell, gmq, sys);
@@ -199,7 +225,7 @@ static void _start(global_queue *gmq, cell *sys, cell *socket, timer *t,
 
     threads.emplace_back(_timer, t);
 
-    for (int i = 0; i < threadnum; i++) {
+    for (int i = 0; i < gmq->thread; i++) {
         threads.emplace_back(_worker, gmq);
     }
 
@@ -244,7 +270,7 @@ int scheduler_start(lua_State *L) {
     hive_createenv(L);
     auto gmq = static_cast<global_queue *>(
         lua_newuserdatauv(L, sizeof(global_queue), 0));
-    globalmq_init(gmq);
+    globalmq_init(gmq, thread);
 
     lua_pushvalue(L, -1);
     hive_setenv(L, "message_queue");
@@ -272,7 +298,7 @@ int scheduler_start(lua_State *L) {
     auto t = static_cast<timer *>(lua_newuserdatauv(L, sizeof(timer), 0));
     timer_init(t, sys, gmq);
 
-    _start(gmq, sys, socket, t, thread);
+    _start(gmq, sys, socket, t);
     globalmq_release(gmq);
 
     return 0;
