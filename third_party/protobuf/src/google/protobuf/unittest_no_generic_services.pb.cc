@@ -16,41 +16,49 @@
 #include <google/protobuf/port_def.inc>
 
 PROTOBUF_PRAGMA_INIT_SEG
+
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = _pb::internal;
+
 namespace protobuf_unittest {
 namespace no_generic_services_test {
-constexpr TestMessage::TestMessage(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : a_(0){}
+PROTOBUF_CONSTEXPR TestMessage::TestMessage(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._extensions_)*/{}
+  , /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.a_)*/0} {}
 struct TestMessageDefaultTypeInternal {
-  constexpr TestMessageDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR TestMessageDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
   ~TestMessageDefaultTypeInternal() {}
   union {
     TestMessage _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT TestMessageDefaultTypeInternal _TestMessage_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 TestMessageDefaultTypeInternal _TestMessage_default_instance_;
 }  // namespace no_generic_services_test
 }  // namespace protobuf_unittest
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto[1];
-static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto[1];
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto = nullptr;
+static ::_pb::Metadata file_level_metadata_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto[1];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto[1];
+static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto = nullptr;
 
-const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::no_generic_services_test::TestMessage, _has_bits_),
+const uint32_t TableStruct_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::no_generic_services_test::TestMessage, _impl_._has_bits_),
   PROTOBUF_FIELD_OFFSET(::protobuf_unittest::no_generic_services_test::TestMessage, _internal_metadata_),
-  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::no_generic_services_test::TestMessage, _extensions_),
+  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::no_generic_services_test::TestMessage, _impl_._extensions_),
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::no_generic_services_test::TestMessage, a_),
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::no_generic_services_test::TestMessage, _impl_.a_),
   0,
 };
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 6, sizeof(::protobuf_unittest::no_generic_services_test::TestMessage)},
+static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  { 0, 7, -1, sizeof(::protobuf_unittest::no_generic_services_test::TestMessage)},
 };
 
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::protobuf_unittest::no_generic_services_test::_TestMessage_default_instance_),
+static const ::_pb::Message* const file_default_instances[] = {
+  &::protobuf_unittest::no_generic_services_test::_TestMessage_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -65,19 +73,21 @@ const char descriptor_table_protodef_google_2fprotobuf_2funittest_5fno_5fgeneric
   "_unittest.no_generic_services_test.TestM"
   "essage\030\350\007 \001(\005"
   ;
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto = {
-  false, false, 373, descriptor_table_protodef_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto, "google/protobuf/unittest_no_generic_services.proto", 
-  &descriptor_table_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto_once, nullptr, 0, 1,
-  schemas, file_default_instances, TableStruct_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto::offsets,
-  file_level_metadata_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto, file_level_enum_descriptors_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto, file_level_service_descriptors_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto,
+static ::_pbi::once_flag descriptor_table_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto = {
+    false, false, 373, descriptor_table_protodef_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto,
+    "google/protobuf/unittest_no_generic_services.proto",
+    &descriptor_table_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto_once, nullptr, 0, 1,
+    schemas, file_default_instances, TableStruct_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto::offsets,
+    file_level_metadata_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto, file_level_enum_descriptors_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto,
+    file_level_service_descriptors_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto,
 };
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto_getter() {
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto_getter() {
   return &descriptor_table_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto;
 }
 
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto(&descriptor_table_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto(&descriptor_table_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto);
 namespace protobuf_unittest {
 namespace no_generic_services_test {
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* TestEnum_descriptor() {
@@ -98,128 +108,139 @@ bool TestEnum_IsValid(int value) {
 
 class TestMessage::_Internal {
  public:
-  using HasBits = decltype(std::declval<TestMessage>()._has_bits_);
+  using HasBits = decltype(std::declval<TestMessage>()._impl_._has_bits_);
   static void set_has_a(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
 };
 
-TestMessage::TestMessage(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena),
-  _extensions_(arena) {
-  SharedCtor();
-  RegisterArenaDtor(arena);
+TestMessage::TestMessage(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
   // @@protoc_insertion_point(arena_constructor:protobuf_unittest.no_generic_services_test.TestMessage)
 }
 TestMessage::TestMessage(const TestMessage& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  TestMessage* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      /*decltype(_impl_._extensions_)*/{}
+    , decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.a_){}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _extensions_.MergeFrom(from._extensions_);
-  a_ = from.a_;
+  _impl_._extensions_.MergeFrom(internal_default_instance(), from._impl_._extensions_);
+  _this->_impl_.a_ = from._impl_.a_;
   // @@protoc_insertion_point(copy_constructor:protobuf_unittest.no_generic_services_test.TestMessage)
 }
 
-void TestMessage::SharedCtor() {
-a_ = 0;
+inline void TestMessage::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      /*decltype(_impl_._extensions_)*/{::_pbi::ArenaInitialized(), arena}
+    , decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.a_){0}
+  };
 }
 
 TestMessage::~TestMessage() {
   // @@protoc_insertion_point(destructor:protobuf_unittest.no_generic_services_test.TestMessage)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-void TestMessage::SharedDtor() {
+inline void TestMessage::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_._extensions_.~ExtensionSet();
 }
 
-void TestMessage::ArenaDtor(void* object) {
-  TestMessage* _this = reinterpret_cast< TestMessage* >(object);
-  (void)_this;
-}
-void TestMessage::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void TestMessage::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void TestMessage::Clear() {
 // @@protoc_insertion_point(message_clear_start:protobuf_unittest.no_generic_services_test.TestMessage)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _extensions_.Clear();
-  a_ = 0;
-  _has_bits_.Clear();
+  _impl_._extensions_.Clear();
+  _impl_.a_ = 0;
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* TestMessage::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* TestMessage::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional int32 a = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
           _Internal::set_has_a(&has_bits);
-          a_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.a_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else goto handle_unusual;
+        } else
+          goto handle_unusual;
         continue;
-      default: {
-      handle_unusual:
-        if ((tag == 0) || ((tag & 7) == 4)) {
-          CHK_(ptr);
-          ctx->SetLastTag(tag);
-          goto success;
-        }
-      if ((8000u <= tag)) {
-        ptr = _extensions_.ParseField(tag, ptr,
-            internal_default_instance(), &_internal_metadata_, ctx);
-        CHK_(ptr != nullptr);
-        continue;
-      }
-        ptr = UnknownFieldParse(tag,
-            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-            ptr, ctx);
-        CHK_(ptr != nullptr);
-        continue;
-      }
+      default:
+        goto handle_unusual;
     }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    if ((8000u <= tag)) {
+      ptr = _impl_._extensions_.ParseField(tag, ptr, internal_default_instance(), &_internal_metadata_, ctx);
+      CHK_(ptr != nullptr);
+      continue;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
   }  // while
-success:
-  _has_bits_.Or(has_bits);
+message_done:
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
-  goto success;
+  goto message_done;
 #undef CHK_
 }
 
-::PROTOBUF_NAMESPACE_ID::uint8* TestMessage::_InternalSerialize(
-    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+uint8_t* TestMessage::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:protobuf_unittest.no_generic_services_test.TestMessage)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional int32 a = 1;
   if (cached_has_bits & 0x00000001u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_a(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_a(), target);
   }
 
   // Extension range [1000, 536870912)
-  target = _extensions_._InternalSerialize(
-      1000, 536870912, target, stream);
+  target = _impl_._extensions_._InternalSerialize(
+  internal_default_instance(), 1000, 536870912, target, stream);
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:protobuf_unittest.no_generic_services_test.TestMessage)
@@ -230,62 +251,41 @@ size_t TestMessage::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:protobuf_unittest.no_generic_services_test.TestMessage)
   size_t total_size = 0;
 
-  total_size += _extensions_.ByteSize();
+  total_size += _impl_._extensions_.ByteSize();
 
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // optional int32 a = 1;
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
-        this->_internal_a());
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_a());
   }
 
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
-        _internal_metadata_, total_size, &_cached_size_);
-  }
-  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-void TestMessage::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:protobuf_unittest.no_generic_services_test.TestMessage)
-  GOOGLE_DCHECK_NE(&from, this);
-  const TestMessage* source =
-      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<TestMessage>(
-          &from);
-  if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:protobuf_unittest.no_generic_services_test.TestMessage)
-    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:protobuf_unittest.no_generic_services_test.TestMessage)
-    MergeFrom(*source);
-  }
-}
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData TestMessage::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    TestMessage::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*TestMessage::GetClassData() const { return &_class_data_; }
 
-void TestMessage::MergeFrom(const TestMessage& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:protobuf_unittest.no_generic_services_test.TestMessage)
-  GOOGLE_DCHECK_NE(&from, this);
-  _extensions_.MergeFrom(from._extensions_);
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+
+void TestMessage::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<TestMessage*>(&to_msg);
+  auto& from = static_cast<const TestMessage&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:protobuf_unittest.no_generic_services_test.TestMessage)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   if (from._internal_has_a()) {
-    _internal_set_a(from._internal_a());
+    _this->_internal_set_a(from._internal_a());
   }
-}
-
-void TestMessage::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:protobuf_unittest.no_generic_services_test.TestMessage)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
+  _this->_impl_._extensions_.MergeFrom(internal_default_instance(), from._impl_._extensions_);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void TestMessage::CopyFrom(const TestMessage& from) {
@@ -296,7 +296,7 @@ void TestMessage::CopyFrom(const TestMessage& from) {
 }
 
 bool TestMessage::IsInitialized() const {
-  if (!_extensions_.IsInitialized()) {
+  if (!_impl_._extensions_.IsInitialized()) {
     return false;
   }
 
@@ -305,26 +305,27 @@ bool TestMessage::IsInitialized() const {
 
 void TestMessage::InternalSwap(TestMessage* other) {
   using std::swap;
-  _extensions_.InternalSwap(&other->_extensions_);
+  _impl_._extensions_.InternalSwap(&other->_impl_._extensions_);
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  swap(a_, other->a_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  swap(_impl_.a_, other->_impl_.a_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata TestMessage::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto_getter, &descriptor_table_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto_once,
       file_level_metadata_google_2fprotobuf_2funittest_5fno_5fgeneric_5fservices_2eproto[0]);
 }
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::protobuf_unittest::no_generic_services_test::TestMessage,
-    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< ::PROTOBUF_NAMESPACE_ID::int32 >, 5, false >
-  test_extension(kTestExtensionFieldNumber, 0);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::protobuf_unittest::no_generic_services_test::TestMessage,
+    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< int32_t >, 5, false>
+  test_extension(kTestExtensionFieldNumber, 0, nullptr);
 
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace no_generic_services_test
 }  // namespace protobuf_unittest
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::protobuf_unittest::no_generic_services_test::TestMessage* Arena::CreateMaybeMessage< ::protobuf_unittest::no_generic_services_test::TestMessage >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::protobuf_unittest::no_generic_services_test::TestMessage*
+Arena::CreateMaybeMessage< ::protobuf_unittest::no_generic_services_test::TestMessage >(Arena* arena) {
   return Arena::CreateMessageInternal< ::protobuf_unittest::no_generic_services_test::TestMessage >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE

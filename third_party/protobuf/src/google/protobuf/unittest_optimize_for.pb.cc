@@ -16,90 +16,105 @@
 #include <google/protobuf/port_def.inc>
 
 PROTOBUF_PRAGMA_INIT_SEG
+
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = _pb::internal;
+
 namespace protobuf_unittest {
-constexpr TestOptimizedForSize::TestOptimizedForSize(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : msg_(nullptr)
-  , i_(0)
-  , _oneof_case_{}{}
+PROTOBUF_CONSTEXPR TestOptimizedForSize::TestOptimizedForSize(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._extensions_)*/{}
+  , /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.msg_)*/nullptr
+  , /*decltype(_impl_.i_)*/0
+  , /*decltype(_impl_.foo_)*/{}
+  , /*decltype(_impl_._oneof_case_)*/{}} {}
 struct TestOptimizedForSizeDefaultTypeInternal {
-  constexpr TestOptimizedForSizeDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR TestOptimizedForSizeDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
   ~TestOptimizedForSizeDefaultTypeInternal() {}
   union {
     TestOptimizedForSize _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT TestOptimizedForSizeDefaultTypeInternal _TestOptimizedForSize_default_instance_;
-constexpr TestRequiredOptimizedForSize::TestRequiredOptimizedForSize(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : x_(0){}
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 TestOptimizedForSizeDefaultTypeInternal _TestOptimizedForSize_default_instance_;
+PROTOBUF_CONSTEXPR TestRequiredOptimizedForSize::TestRequiredOptimizedForSize(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.x_)*/0} {}
 struct TestRequiredOptimizedForSizeDefaultTypeInternal {
-  constexpr TestRequiredOptimizedForSizeDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR TestRequiredOptimizedForSizeDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
   ~TestRequiredOptimizedForSizeDefaultTypeInternal() {}
   union {
     TestRequiredOptimizedForSize _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT TestRequiredOptimizedForSizeDefaultTypeInternal _TestRequiredOptimizedForSize_default_instance_;
-constexpr TestOptionalOptimizedForSize::TestOptionalOptimizedForSize(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : o_(nullptr){}
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 TestRequiredOptimizedForSizeDefaultTypeInternal _TestRequiredOptimizedForSize_default_instance_;
+PROTOBUF_CONSTEXPR TestOptionalOptimizedForSize::TestOptionalOptimizedForSize(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.o_)*/nullptr} {}
 struct TestOptionalOptimizedForSizeDefaultTypeInternal {
-  constexpr TestOptionalOptimizedForSizeDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR TestOptionalOptimizedForSizeDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
   ~TestOptionalOptimizedForSizeDefaultTypeInternal() {}
   union {
     TestOptionalOptimizedForSize _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT TestOptionalOptimizedForSizeDefaultTypeInternal _TestOptionalOptimizedForSize_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 TestOptionalOptimizedForSizeDefaultTypeInternal _TestOptionalOptimizedForSize_default_instance_;
 }  // namespace protobuf_unittest
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto[3];
-static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto = nullptr;
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto = nullptr;
+static ::_pb::Metadata file_level_metadata_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto[3];
+static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto = nullptr;
+static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto = nullptr;
 
-const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestOptimizedForSize, _has_bits_),
+const uint32_t TableStruct_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestOptimizedForSize, _impl_._has_bits_),
   PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestOptimizedForSize, _internal_metadata_),
-  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestOptimizedForSize, _extensions_),
-  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestOptimizedForSize, _oneof_case_[0]),
+  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestOptimizedForSize, _impl_._extensions_),
+  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestOptimizedForSize, _impl_._oneof_case_[0]),
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestOptimizedForSize, i_),
-  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestOptimizedForSize, msg_),
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestOptimizedForSize, foo_),
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestOptimizedForSize, _impl_.i_),
+  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestOptimizedForSize, _impl_.msg_),
+  ::_pbi::kInvalidFieldOffsetTag,
+  ::_pbi::kInvalidFieldOffsetTag,
+  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestOptimizedForSize, _impl_.foo_),
   1,
   0,
   ~0u,
   ~0u,
-  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestRequiredOptimizedForSize, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestRequiredOptimizedForSize, _impl_._has_bits_),
   PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestRequiredOptimizedForSize, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestRequiredOptimizedForSize, x_),
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestRequiredOptimizedForSize, _impl_.x_),
   0,
-  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestOptionalOptimizedForSize, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestOptionalOptimizedForSize, _impl_._has_bits_),
   PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestOptionalOptimizedForSize, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestOptionalOptimizedForSize, o_),
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::protobuf_unittest::TestOptionalOptimizedForSize, _impl_.o_),
   0,
 };
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 10, sizeof(::protobuf_unittest::TestOptimizedForSize)},
-  { 14, 20, sizeof(::protobuf_unittest::TestRequiredOptimizedForSize)},
-  { 21, 27, sizeof(::protobuf_unittest::TestOptionalOptimizedForSize)},
+static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  { 0, 11, -1, sizeof(::protobuf_unittest::TestOptimizedForSize)},
+  { 15, 22, -1, sizeof(::protobuf_unittest::TestRequiredOptimizedForSize)},
+  { 23, 30, -1, sizeof(::protobuf_unittest::TestOptionalOptimizedForSize)},
 };
 
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::protobuf_unittest::_TestOptimizedForSize_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::protobuf_unittest::_TestRequiredOptimizedForSize_default_instance_),
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::protobuf_unittest::_TestOptionalOptimizedForSize_default_instance_),
+static const ::_pb::Message* const file_default_instances[] = {
+  &::protobuf_unittest::_TestOptimizedForSize_default_instance_._instance,
+  &::protobuf_unittest::_TestRequiredOptimizedForSize_default_instance_._instance,
+  &::protobuf_unittest::_TestOptionalOptimizedForSize_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -119,29 +134,31 @@ const char descriptor_table_protodef_google_2fprotobuf_2funittest_5foptimize_5ff
   "otobuf_unittest.TestRequiredOptimizedFor"
   "SizeB\002H\002"
   ;
-static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto_deps[1] = {
+static const ::_pbi::DescriptorTable* const descriptor_table_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto_deps[1] = {
   &::descriptor_table_google_2fprotobuf_2funittest_2eproto,
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto = {
-  false, false, 568, descriptor_table_protodef_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto, "google/protobuf/unittest_optimize_for.proto", 
-  &descriptor_table_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto_once, descriptor_table_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto_deps, 1, 3,
-  schemas, file_default_instances, TableStruct_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto::offsets,
-  file_level_metadata_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto, file_level_enum_descriptors_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto, file_level_service_descriptors_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto,
+static ::_pbi::once_flag descriptor_table_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto = {
+    false, false, 568, descriptor_table_protodef_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto,
+    "google/protobuf/unittest_optimize_for.proto",
+    &descriptor_table_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto_once, descriptor_table_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto_deps, 1, 3,
+    schemas, file_default_instances, TableStruct_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto::offsets,
+    file_level_metadata_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto, file_level_enum_descriptors_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto,
+    file_level_service_descriptors_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto,
 };
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto_getter() {
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto_getter() {
   return &descriptor_table_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto;
 }
 
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto(&descriptor_table_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto(&descriptor_table_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto);
 namespace protobuf_unittest {
 
 // ===================================================================
 
 class TestOptimizedForSize::_Internal {
  public:
-  using HasBits = decltype(std::declval<TestOptimizedForSize>()._has_bits_);
+  using HasBits = decltype(std::declval<TestOptimizedForSize>()._impl_._has_bits_);
   static void set_has_i(HasBits* has_bits) {
     (*has_bits)[0] |= 2u;
   }
@@ -153,38 +170,44 @@ class TestOptimizedForSize::_Internal {
 
 const ::protobuf_unittest::ForeignMessage&
 TestOptimizedForSize::_Internal::msg(const TestOptimizedForSize* msg) {
-  return *msg->msg_;
+  return *msg->_impl_.msg_;
 }
 void TestOptimizedForSize::clear_msg() {
-  if (msg_ != nullptr) msg_->Clear();
-  _has_bits_[0] &= ~0x00000001u;
+  if (_impl_.msg_ != nullptr) _impl_.msg_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000001u;
 }
-TestOptimizedForSize::TestOptimizedForSize(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena),
-  _extensions_(arena) {
-  SharedCtor();
-  RegisterArenaDtor(arena);
+TestOptimizedForSize::TestOptimizedForSize(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
   // @@protoc_insertion_point(arena_constructor:protobuf_unittest.TestOptimizedForSize)
 }
 TestOptimizedForSize::TestOptimizedForSize(const TestOptimizedForSize& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  TestOptimizedForSize* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      /*decltype(_impl_._extensions_)*/{}
+    , decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.msg_){nullptr}
+    , decltype(_impl_.i_){}
+    , decltype(_impl_.foo_){}
+    , /*decltype(_impl_._oneof_case_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _extensions_.MergeFrom(from._extensions_);
+  _impl_._extensions_.MergeFrom(internal_default_instance(), from._impl_._extensions_);
   if (from._internal_has_msg()) {
-    msg_ = new ::protobuf_unittest::ForeignMessage(*from.msg_);
-  } else {
-    msg_ = nullptr;
+    _this->_impl_.msg_ = new ::protobuf_unittest::ForeignMessage(*from._impl_.msg_);
   }
-  i_ = from.i_;
+  _this->_impl_.i_ = from._impl_.i_;
   clear_has_foo();
   switch (from.foo_case()) {
     case kIntegerField: {
-      _internal_set_integer_field(from._internal_integer_field());
+      _this->_internal_set_integer_field(from._internal_integer_field());
       break;
     }
     case kStringField: {
-      _internal_set_string_field(from._internal_string_field());
+      _this->_internal_set_string_field(from._internal_string_field());
       break;
     }
     case FOO_NOT_SET: {
@@ -194,36 +217,42 @@ TestOptimizedForSize::TestOptimizedForSize(const TestOptimizedForSize& from)
   // @@protoc_insertion_point(copy_constructor:protobuf_unittest.TestOptimizedForSize)
 }
 
-void TestOptimizedForSize::SharedCtor() {
-::memset(reinterpret_cast<char*>(this) + static_cast<size_t>(
-    reinterpret_cast<char*>(&msg_) - reinterpret_cast<char*>(this)),
-    0, static_cast<size_t>(reinterpret_cast<char*>(&i_) -
-    reinterpret_cast<char*>(&msg_)) + sizeof(i_));
-clear_has_foo();
+inline void TestOptimizedForSize::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      /*decltype(_impl_._extensions_)*/{::_pbi::ArenaInitialized(), arena}
+    , decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.msg_){nullptr}
+    , decltype(_impl_.i_){0}
+    , decltype(_impl_.foo_){}
+    , /*decltype(_impl_._oneof_case_)*/{}
+  };
+  clear_has_foo();
 }
 
 TestOptimizedForSize::~TestOptimizedForSize() {
   // @@protoc_insertion_point(destructor:protobuf_unittest.TestOptimizedForSize)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-void TestOptimizedForSize::SharedDtor() {
+inline void TestOptimizedForSize::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete msg_;
+  _impl_._extensions_.~ExtensionSet();
+  if (this != internal_default_instance()) delete _impl_.msg_;
   if (has_foo()) {
     clear_foo();
   }
 }
 
-void TestOptimizedForSize::ArenaDtor(void* object) {
-  TestOptimizedForSize* _this = reinterpret_cast< TestOptimizedForSize* >(object);
-  (void)_this;
-}
-void TestOptimizedForSize::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void TestOptimizedForSize::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void TestOptimizedForSize::clear_foo() {
@@ -234,14 +263,14 @@ void TestOptimizedForSize::clear_foo() {
       break;
     }
     case kStringField: {
-      foo_.string_field_.Destroy(::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::EmptyDefault{}, GetArenaForAllocation());
+      _impl_.foo_.string_field_.Destroy();
       break;
     }
     case FOO_NOT_SET: {
       break;
     }
   }
-  _oneof_case_[0] = FOO_NOT_SET;
+  _impl_._oneof_case_[0] = FOO_NOT_SET;
 }
 
 
@@ -250,7 +279,7 @@ void TestOptimizedForSize::InternalSwap(TestOptimizedForSize* other) {
   GetReflection()->Swap(this, other);}
 
 ::PROTOBUF_NAMESPACE_ID::Metadata TestOptimizedForSize::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto_getter, &descriptor_table_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto_once,
       file_level_metadata_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto[0]);
 }
@@ -259,7 +288,7 @@ void TestOptimizedForSize::InternalSwap(TestOptimizedForSize* other) {
 
 class TestRequiredOptimizedForSize::_Internal {
  public:
-  using HasBits = decltype(std::declval<TestRequiredOptimizedForSize>()._has_bits_);
+  using HasBits = decltype(std::declval<TestRequiredOptimizedForSize>()._impl_._has_bits_);
   static void set_has_x(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
@@ -268,42 +297,51 @@ class TestRequiredOptimizedForSize::_Internal {
   }
 };
 
-TestRequiredOptimizedForSize::TestRequiredOptimizedForSize(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
-  SharedCtor();
-  RegisterArenaDtor(arena);
+TestRequiredOptimizedForSize::TestRequiredOptimizedForSize(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
   // @@protoc_insertion_point(arena_constructor:protobuf_unittest.TestRequiredOptimizedForSize)
 }
 TestRequiredOptimizedForSize::TestRequiredOptimizedForSize(const TestRequiredOptimizedForSize& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  TestRequiredOptimizedForSize* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.x_){}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  x_ = from.x_;
+  _this->_impl_.x_ = from._impl_.x_;
   // @@protoc_insertion_point(copy_constructor:protobuf_unittest.TestRequiredOptimizedForSize)
 }
 
-void TestRequiredOptimizedForSize::SharedCtor() {
-x_ = 0;
+inline void TestRequiredOptimizedForSize::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.x_){0}
+  };
 }
 
 TestRequiredOptimizedForSize::~TestRequiredOptimizedForSize() {
   // @@protoc_insertion_point(destructor:protobuf_unittest.TestRequiredOptimizedForSize)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-void TestRequiredOptimizedForSize::SharedDtor() {
+inline void TestRequiredOptimizedForSize::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void TestRequiredOptimizedForSize::ArenaDtor(void* object) {
-  TestRequiredOptimizedForSize* _this = reinterpret_cast< TestRequiredOptimizedForSize* >(object);
-  (void)_this;
-}
-void TestRequiredOptimizedForSize::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void TestRequiredOptimizedForSize::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void TestRequiredOptimizedForSize::InternalSwap(TestRequiredOptimizedForSize* other) {
@@ -311,7 +349,7 @@ void TestRequiredOptimizedForSize::InternalSwap(TestRequiredOptimizedForSize* ot
   GetReflection()->Swap(this, other);}
 
 ::PROTOBUF_NAMESPACE_ID::Metadata TestRequiredOptimizedForSize::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto_getter, &descriptor_table_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto_once,
       file_level_metadata_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto[1]);
 }
@@ -320,7 +358,7 @@ void TestRequiredOptimizedForSize::InternalSwap(TestRequiredOptimizedForSize* ot
 
 class TestOptionalOptimizedForSize::_Internal {
  public:
-  using HasBits = decltype(std::declval<TestOptionalOptimizedForSize>()._has_bits_);
+  using HasBits = decltype(std::declval<TestOptionalOptimizedForSize>()._impl_._has_bits_);
   static const ::protobuf_unittest::TestRequiredOptimizedForSize& o(const TestOptionalOptimizedForSize* msg);
   static void set_has_o(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
@@ -329,49 +367,56 @@ class TestOptionalOptimizedForSize::_Internal {
 
 const ::protobuf_unittest::TestRequiredOptimizedForSize&
 TestOptionalOptimizedForSize::_Internal::o(const TestOptionalOptimizedForSize* msg) {
-  return *msg->o_;
+  return *msg->_impl_.o_;
 }
-TestOptionalOptimizedForSize::TestOptionalOptimizedForSize(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
-  SharedCtor();
-  RegisterArenaDtor(arena);
+TestOptionalOptimizedForSize::TestOptionalOptimizedForSize(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
   // @@protoc_insertion_point(arena_constructor:protobuf_unittest.TestOptionalOptimizedForSize)
 }
 TestOptionalOptimizedForSize::TestOptionalOptimizedForSize(const TestOptionalOptimizedForSize& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  TestOptionalOptimizedForSize* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.o_){nullptr}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   if (from._internal_has_o()) {
-    o_ = new ::protobuf_unittest::TestRequiredOptimizedForSize(*from.o_);
-  } else {
-    o_ = nullptr;
+    _this->_impl_.o_ = new ::protobuf_unittest::TestRequiredOptimizedForSize(*from._impl_.o_);
   }
   // @@protoc_insertion_point(copy_constructor:protobuf_unittest.TestOptionalOptimizedForSize)
 }
 
-void TestOptionalOptimizedForSize::SharedCtor() {
-o_ = nullptr;
+inline void TestOptionalOptimizedForSize::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.o_){nullptr}
+  };
 }
 
 TestOptionalOptimizedForSize::~TestOptionalOptimizedForSize() {
   // @@protoc_insertion_point(destructor:protobuf_unittest.TestOptionalOptimizedForSize)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-void TestOptionalOptimizedForSize::SharedDtor() {
+inline void TestOptionalOptimizedForSize::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete o_;
+  if (this != internal_default_instance()) delete _impl_.o_;
 }
 
-void TestOptionalOptimizedForSize::ArenaDtor(void* object) {
-  TestOptionalOptimizedForSize* _this = reinterpret_cast< TestOptionalOptimizedForSize* >(object);
-  (void)_this;
-}
-void TestOptionalOptimizedForSize::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void TestOptionalOptimizedForSize::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void TestOptionalOptimizedForSize::InternalSwap(TestOptionalOptimizedForSize* other) {
@@ -379,33 +424,36 @@ void TestOptionalOptimizedForSize::InternalSwap(TestOptionalOptimizedForSize* ot
   GetReflection()->Swap(this, other);}
 
 ::PROTOBUF_NAMESPACE_ID::Metadata TestOptionalOptimizedForSize::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto_getter, &descriptor_table_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto_once,
       file_level_metadata_google_2fprotobuf_2funittest_5foptimize_5ffor_2eproto[2]);
 }
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
+#if !defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912)
 const int TestOptimizedForSize::kTestExtensionFieldNumber;
 #endif
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::protobuf_unittest::TestOptimizedForSize,
-    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< ::PROTOBUF_NAMESPACE_ID::int32 >, 5, false >
-  TestOptimizedForSize::test_extension(kTestExtensionFieldNumber, 0);
-#if !defined(_MSC_VER) || _MSC_VER >= 1900
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::protobuf_unittest::TestOptimizedForSize,
+    ::PROTOBUF_NAMESPACE_ID::internal::PrimitiveTypeTraits< int32_t >, 5, false>
+  TestOptimizedForSize::test_extension(kTestExtensionFieldNumber, 0, nullptr);
+#if !defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912)
 const int TestOptimizedForSize::kTestExtension2FieldNumber;
 #endif
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::protobuf_unittest::TestOptimizedForSize,
-    ::PROTOBUF_NAMESPACE_ID::internal::MessageTypeTraits< ::protobuf_unittest::TestRequiredOptimizedForSize >, 11, false >
-  TestOptimizedForSize::test_extension2(kTestExtension2FieldNumber, ::protobuf_unittest::TestRequiredOptimizedForSize::default_instance());
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 ::PROTOBUF_NAMESPACE_ID::internal::ExtensionIdentifier< ::protobuf_unittest::TestOptimizedForSize,
+    ::PROTOBUF_NAMESPACE_ID::internal::MessageTypeTraits< ::protobuf_unittest::TestRequiredOptimizedForSize >, 11, false>
+  TestOptimizedForSize::test_extension2(kTestExtension2FieldNumber, ::protobuf_unittest::TestRequiredOptimizedForSize::default_instance(), nullptr);
 
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace protobuf_unittest
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::protobuf_unittest::TestOptimizedForSize* Arena::CreateMaybeMessage< ::protobuf_unittest::TestOptimizedForSize >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::protobuf_unittest::TestOptimizedForSize*
+Arena::CreateMaybeMessage< ::protobuf_unittest::TestOptimizedForSize >(Arena* arena) {
   return Arena::CreateMessageInternal< ::protobuf_unittest::TestOptimizedForSize >(arena);
 }
-template<> PROTOBUF_NOINLINE ::protobuf_unittest::TestRequiredOptimizedForSize* Arena::CreateMaybeMessage< ::protobuf_unittest::TestRequiredOptimizedForSize >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::protobuf_unittest::TestRequiredOptimizedForSize*
+Arena::CreateMaybeMessage< ::protobuf_unittest::TestRequiredOptimizedForSize >(Arena* arena) {
   return Arena::CreateMessageInternal< ::protobuf_unittest::TestRequiredOptimizedForSize >(arena);
 }
-template<> PROTOBUF_NOINLINE ::protobuf_unittest::TestOptionalOptimizedForSize* Arena::CreateMaybeMessage< ::protobuf_unittest::TestOptionalOptimizedForSize >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::protobuf_unittest::TestOptionalOptimizedForSize*
+Arena::CreateMaybeMessage< ::protobuf_unittest::TestOptionalOptimizedForSize >(Arena* arena) {
   return Arena::CreateMessageInternal< ::protobuf_unittest::TestOptionalOptimizedForSize >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE

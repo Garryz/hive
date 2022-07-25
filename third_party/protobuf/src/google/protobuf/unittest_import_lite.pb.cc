@@ -13,19 +13,25 @@
 #include <google/protobuf/port_def.inc>
 
 PROTOBUF_PRAGMA_INIT_SEG
+
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = _pb::internal;
+
 namespace protobuf_unittest_import {
-constexpr ImportMessageLite::ImportMessageLite(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : d_(0){}
+PROTOBUF_CONSTEXPR ImportMessageLite::ImportMessageLite(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.d_)*/0} {}
 struct ImportMessageLiteDefaultTypeInternal {
-  constexpr ImportMessageLiteDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR ImportMessageLiteDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
   ~ImportMessageLiteDefaultTypeInternal() {}
   union {
     ImportMessageLite _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT ImportMessageLiteDefaultTypeInternal _ImportMessageLite_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ImportMessageLiteDefaultTypeInternal _ImportMessageLite_default_instance_;
 }  // namespace protobuf_unittest_import
 namespace protobuf_unittest_import {
 bool ImportEnumLite_IsValid(int value) {
@@ -88,111 +94,121 @@ bool ImportEnumLite_Parse(
 
 class ImportMessageLite::_Internal {
  public:
-  using HasBits = decltype(std::declval<ImportMessageLite>()._has_bits_);
+  using HasBits = decltype(std::declval<ImportMessageLite>()._impl_._has_bits_);
   static void set_has_d(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
 };
 
-ImportMessageLite::ImportMessageLite(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::MessageLite(arena) {
-  SharedCtor();
-  RegisterArenaDtor(arena);
+ImportMessageLite::ImportMessageLite(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::MessageLite(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
   // @@protoc_insertion_point(arena_constructor:protobuf_unittest_import.ImportMessageLite)
 }
 ImportMessageLite::ImportMessageLite(const ImportMessageLite& from)
-  : ::PROTOBUF_NAMESPACE_ID::MessageLite(),
-      _has_bits_(from._has_bits_) {
+  : ::PROTOBUF_NAMESPACE_ID::MessageLite() {
+  ImportMessageLite* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.d_){}};
+
   _internal_metadata_.MergeFrom<std::string>(from._internal_metadata_);
-  d_ = from.d_;
+  _this->_impl_.d_ = from._impl_.d_;
   // @@protoc_insertion_point(copy_constructor:protobuf_unittest_import.ImportMessageLite)
 }
 
-void ImportMessageLite::SharedCtor() {
-d_ = 0;
+inline void ImportMessageLite::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.d_){0}
+  };
 }
 
 ImportMessageLite::~ImportMessageLite() {
   // @@protoc_insertion_point(destructor:protobuf_unittest_import.ImportMessageLite)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<std::string>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<std::string>();
 }
 
-void ImportMessageLite::SharedDtor() {
+inline void ImportMessageLite::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
 }
 
-void ImportMessageLite::ArenaDtor(void* object) {
-  ImportMessageLite* _this = reinterpret_cast< ImportMessageLite* >(object);
-  (void)_this;
-}
-void ImportMessageLite::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void ImportMessageLite::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void ImportMessageLite::Clear() {
 // @@protoc_insertion_point(message_clear_start:protobuf_unittest_import.ImportMessageLite)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  d_ = 0;
-  _has_bits_.Clear();
+  _impl_.d_ = 0;
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<std::string>();
 }
 
-const char* ImportMessageLite::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* ImportMessageLite::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional int32 d = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
           _Internal::set_has_d(&has_bits);
-          d_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.d_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else goto handle_unusual;
+        } else
+          goto handle_unusual;
         continue;
-      default: {
-      handle_unusual:
-        if ((tag == 0) || ((tag & 7) == 4)) {
-          CHK_(ptr);
-          ctx->SetLastTag(tag);
-          goto success;
-        }
-        ptr = UnknownFieldParse(tag,
-            _internal_metadata_.mutable_unknown_fields<std::string>(),
-            ptr, ctx);
-        CHK_(ptr != nullptr);
-        continue;
-      }
+      default:
+        goto handle_unusual;
     }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<std::string>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
   }  // while
-success:
-  _has_bits_.Or(has_bits);
+message_done:
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
-  goto success;
+  goto message_done;
 #undef CHK_
 }
 
-::PROTOBUF_NAMESPACE_ID::uint8* ImportMessageLite::_InternalSerialize(
-    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+uint8_t* ImportMessageLite::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:protobuf_unittest_import.ImportMessageLite)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional int32 d = 1;
   if (cached_has_bits & 0x00000001u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_d(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_d(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -207,42 +223,41 @@ size_t ImportMessageLite::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:protobuf_unittest_import.ImportMessageLite)
   size_t total_size = 0;
 
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // optional int32 d = 1;
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
-        this->_internal_d());
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_d());
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     total_size += _internal_metadata_.unknown_fields<std::string>(::PROTOBUF_NAMESPACE_ID::internal::GetEmptyString).size();
   }
-  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  int cached_size = ::_pbi::ToCachedSize(total_size);
   SetCachedSize(cached_size);
   return total_size;
 }
 
 void ImportMessageLite::CheckTypeAndMergeFrom(
     const ::PROTOBUF_NAMESPACE_ID::MessageLite& from) {
-  MergeFrom(*::PROTOBUF_NAMESPACE_ID::internal::DownCast<const ImportMessageLite*>(
+  MergeFrom(*::_pbi::DownCast<const ImportMessageLite*>(
       &from));
 }
 
 void ImportMessageLite::MergeFrom(const ImportMessageLite& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:protobuf_unittest_import.ImportMessageLite)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom<std::string>(from._internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  ImportMessageLite* const _this = this;
+  // @@protoc_insertion_point(class_specific_merge_from_start:protobuf_unittest_import.ImportMessageLite)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   if (from._internal_has_d()) {
-    _internal_set_d(from._internal_d());
+    _this->_internal_set_d(from._internal_d());
   }
+  _this->_internal_metadata_.MergeFrom<std::string>(from._internal_metadata_);
 }
 
 void ImportMessageLite::CopyFrom(const ImportMessageLite& from) {
@@ -259,8 +274,8 @@ bool ImportMessageLite::IsInitialized() const {
 void ImportMessageLite::InternalSwap(ImportMessageLite* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  swap(d_, other->d_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  swap(_impl_.d_, other->_impl_.d_);
 }
 
 std::string ImportMessageLite::GetTypeName() const {
@@ -271,7 +286,8 @@ std::string ImportMessageLite::GetTypeName() const {
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace protobuf_unittest_import
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::protobuf_unittest_import::ImportMessageLite* Arena::CreateMaybeMessage< ::protobuf_unittest_import::ImportMessageLite >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::protobuf_unittest_import::ImportMessageLite*
+Arena::CreateMaybeMessage< ::protobuf_unittest_import::ImportMessageLite >(Arena* arena) {
   return Arena::CreateMessageInternal< ::protobuf_unittest_import::ImportMessageLite >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE

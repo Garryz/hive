@@ -1,5 +1,10 @@
 // This file is generated from the .proto files for the well-known
 // types. Do not edit!
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_lookup, 0, 0, 1)
+  ZEND_ARG_INFO(0, key)
+ZEND_END_ARG_INFO()
+
 static void google_protobuf_any_proto_AddDescriptor();
 static void google_protobuf_api_proto_AddDescriptor();
 static void google_protobuf_duration_proto_AddDescriptor();
@@ -61,46 +66,46 @@ static PHP_METHOD(google_protobuf_Any, __construct) {
 
 static PHP_METHOD(google_protobuf_Any, getTypeUrl) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "type_url");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "type_url");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Any, setTypeUrl) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "type_url");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "type_url");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Any, getValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Any, setValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_is, 0, 0, 1)
@@ -108,7 +113,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_is, 0, 0, 1)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry google_protobuf_Any_phpmethods[] = {
-  PHP_ME(google_protobuf_Any, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_Any, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Any, getTypeUrl, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Any, setTypeUrl, arginfo_setter, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Any, getValue, arginfo_void, ZEND_ACC_PUBLIC)
@@ -206,160 +211,160 @@ static PHP_METHOD(google_protobuf_Api, __construct) {
 
 static PHP_METHOD(google_protobuf_Api, getName) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "name");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "name");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Api, setName) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "name");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "name");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Api, getMethods) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "methods");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "methods");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Api, setMethods) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "methods");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "methods");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Api, getOptions) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "options");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "options");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Api, setOptions) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "options");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "options");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Api, getVersion) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "version");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "version");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Api, setVersion) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "version");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "version");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Api, getSourceContext) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "source_context");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "source_context");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Api, setSourceContext) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "source_context");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "source_context");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Api, getMixins) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "mixins");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "mixins");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Api, setMixins) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "mixins");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "mixins");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Api, getSyntax) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "syntax");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "syntax");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Api, setSyntax) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "syntax");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "syntax");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_Api_phpmethods[] = {
-  PHP_ME(google_protobuf_Api, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_Api, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Api, getName, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Api, setName, arginfo_setter, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Api, getMethods, arginfo_void, ZEND_ACC_PUBLIC)
@@ -400,160 +405,160 @@ static PHP_METHOD(google_protobuf_Method, __construct) {
 
 static PHP_METHOD(google_protobuf_Method, getName) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "name");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "name");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Method, setName) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "name");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "name");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Method, getRequestTypeUrl) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "request_type_url");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "request_type_url");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Method, setRequestTypeUrl) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "request_type_url");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "request_type_url");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Method, getRequestStreaming) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "request_streaming");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "request_streaming");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Method, setRequestStreaming) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "request_streaming");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "request_streaming");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Method, getResponseTypeUrl) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "response_type_url");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "response_type_url");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Method, setResponseTypeUrl) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "response_type_url");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "response_type_url");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Method, getResponseStreaming) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "response_streaming");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "response_streaming");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Method, setResponseStreaming) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "response_streaming");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "response_streaming");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Method, getOptions) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "options");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "options");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Method, setOptions) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "options");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "options");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Method, getSyntax) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "syntax");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "syntax");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Method, setSyntax) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "syntax");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "syntax");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_Method_phpmethods[] = {
-  PHP_ME(google_protobuf_Method, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_Method, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Method, getName, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Method, setName, arginfo_setter, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Method, getRequestTypeUrl, arginfo_void, ZEND_ACC_PUBLIC)
@@ -594,50 +599,50 @@ static PHP_METHOD(google_protobuf_Mixin, __construct) {
 
 static PHP_METHOD(google_protobuf_Mixin, getName) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "name");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "name");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Mixin, setName) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "name");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "name");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Mixin, getRoot) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "root");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "root");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Mixin, setRoot) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "root");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "root");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_Mixin_phpmethods[] = {
-  PHP_ME(google_protobuf_Mixin, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_Mixin, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Mixin, getName, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Mixin, setName, arginfo_setter, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Mixin, getRoot, arginfo_void, ZEND_ACC_PUBLIC)
@@ -709,50 +714,50 @@ static PHP_METHOD(google_protobuf_Duration, __construct) {
 
 static PHP_METHOD(google_protobuf_Duration, getSeconds) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "seconds");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "seconds");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Duration, setSeconds) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "seconds");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "seconds");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Duration, getNanos) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "nanos");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "nanos");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Duration, setNanos) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "nanos");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "nanos");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_Duration_phpmethods[] = {
-  PHP_ME(google_protobuf_Duration, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_Duration, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Duration, getSeconds, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Duration, setSeconds, arginfo_setter, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Duration, getNanos, arginfo_void, ZEND_ACC_PUBLIC)
@@ -821,7 +826,7 @@ static PHP_METHOD(google_protobuf_Empty, __construct) {
 }
 
 static zend_function_entry google_protobuf_Empty_phpmethods[] = {
-  PHP_ME(google_protobuf_Empty, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_Empty, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   ZEND_FE_END
 };
 
@@ -888,28 +893,28 @@ static PHP_METHOD(google_protobuf_FieldMask, __construct) {
 
 static PHP_METHOD(google_protobuf_FieldMask, getPaths) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "paths");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "paths");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_FieldMask, setPaths) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "paths");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "paths");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_FieldMask_phpmethods[] = {
-  PHP_ME(google_protobuf_FieldMask, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_FieldMask, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_FieldMask, getPaths, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_FieldMask, setPaths, arginfo_setter, ZEND_ACC_PUBLIC)
   ZEND_FE_END
@@ -979,28 +984,28 @@ static PHP_METHOD(google_protobuf_SourceContext, __construct) {
 
 static PHP_METHOD(google_protobuf_SourceContext, getFileName) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "file_name");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "file_name");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_SourceContext, setFileName) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "file_name");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "file_name");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_SourceContext_phpmethods[] = {
-  PHP_ME(google_protobuf_SourceContext, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_SourceContext, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_SourceContext, getFileName, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_SourceContext, setFileName, arginfo_setter, ZEND_ACC_PUBLIC)
   ZEND_FE_END
@@ -1086,28 +1091,28 @@ static PHP_METHOD(google_protobuf_Struct, __construct) {
 
 static PHP_METHOD(google_protobuf_Struct, getFields) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "fields");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "fields");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Struct, setFields) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "fields");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "fields");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_Struct_phpmethods[] = {
-  PHP_ME(google_protobuf_Struct, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_Struct, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Struct, getFields, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Struct, setFields, arginfo_setter, ZEND_ACC_PUBLIC)
   ZEND_FE_END
@@ -1136,50 +1141,50 @@ static PHP_METHOD(google_protobuf_Struct_FieldsEntry, __construct) {
 
 static PHP_METHOD(google_protobuf_Struct_FieldsEntry, getKey) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "key");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "key");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Struct_FieldsEntry, setKey) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "key");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "key");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Struct_FieldsEntry, getValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Struct_FieldsEntry, setValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_Struct_FieldsEntry_phpmethods[] = {
-  PHP_ME(google_protobuf_Struct_FieldsEntry, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_Struct_FieldsEntry, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Struct_FieldsEntry, getKey, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Struct_FieldsEntry, setKey, arginfo_setter, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Struct_FieldsEntry, getValue, arginfo_void, ZEND_ACC_PUBLIC)
@@ -1210,145 +1215,146 @@ static PHP_METHOD(google_protobuf_Value, __construct) {
 
 static PHP_METHOD(google_protobuf_Value, getNullValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "null_value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "null_value");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Value, setNullValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "null_value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "null_value");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Value, getNumberValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "number_value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "number_value");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Value, setNumberValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "number_value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "number_value");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Value, getStringValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "string_value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "string_value");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Value, setStringValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "string_value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "string_value");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Value, getBoolValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "bool_value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "bool_value");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Value, setBoolValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "bool_value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "bool_value");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Value, getStructValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "struct_value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "struct_value");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Value, setStructValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "struct_value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "struct_value");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Value, getListValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "list_value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "list_value");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Value, setListValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "list_value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "list_value");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Value, getKind) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_oneofdef *oneof = upb_msgdef_ntooz(intern->desc->msgdef,
-                                              "kind");
-  const upb_fielddef *field = upb_msg_whichoneof(intern->msg, oneof);
-  RETURN_STRING(field ? upb_fielddef_name(field) : "");
+  const upb_OneofDef *oneof = upb_MessageDef_FindOneofByName(
+      intern->desc->msgdef, "kind");
+  const upb_FieldDef *field = 
+      upb_Message_WhichOneof(intern->msg, oneof);
+  RETURN_STRING(field ? upb_FieldDef_Name(field) : "");
 }
 static zend_function_entry google_protobuf_Value_phpmethods[] = {
-  PHP_ME(google_protobuf_Value, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_Value, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Value, getNullValue, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Value, setNullValue, arginfo_setter, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Value, getNumberValue, arginfo_void, ZEND_ACC_PUBLIC)
@@ -1388,28 +1394,28 @@ static PHP_METHOD(google_protobuf_ListValue, __construct) {
 
 static PHP_METHOD(google_protobuf_ListValue, getValues) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "values");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "values");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_ListValue, setValues) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "values");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "values");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_ListValue_phpmethods[] = {
-  PHP_ME(google_protobuf_ListValue, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_ListValue, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_ListValue, getValues, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_ListValue, setValues, arginfo_setter, ZEND_ACC_PUBLIC)
   ZEND_FE_END
@@ -1433,49 +1439,50 @@ zend_class_entry* google_protobuf_NullValue_ce;
 
 PHP_METHOD(google_protobuf_NullValue, name) {
   google_protobuf_struct_proto_AddDescriptor();
-  const upb_symtab *symtab = DescriptorPool_GetSymbolTable();
-  const upb_enumdef *e = upb_symtab_lookupenum(symtab, "google.protobuf.NullValue");
-  const char *name;
+  const upb_DefPool *symtab = DescriptorPool_GetSymbolTable();
+  const upb_EnumDef *e = upb_DefPool_FindEnumByName(symtab, "google.protobuf.NullValue");
   zend_long value;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &value) ==
       FAILURE) {
     return;
   }
-  name = upb_enumdef_iton(e, value);
-  if (!name) {
+  const upb_EnumValueDef* ev =
+      upb_EnumDef_FindValueByNumber(e, value);
+  if (!ev) {
     zend_throw_exception_ex(NULL, 0,
                             "Google\\Protobuf\\NullValue has no name "
                             "defined for value " ZEND_LONG_FMT ".",
                             value);
     return;
   }
-  RETURN_STRING(name);
+  RETURN_STRING(upb_EnumValueDef_Name(ev));
 }
 
 PHP_METHOD(google_protobuf_NullValue, value) {
   google_protobuf_struct_proto_AddDescriptor();
-  const upb_symtab *symtab = DescriptorPool_GetSymbolTable();
-  const upb_enumdef *e = upb_symtab_lookupenum(symtab, "google.protobuf.NullValue");
+  const upb_DefPool *symtab = DescriptorPool_GetSymbolTable();
+  const upb_EnumDef *e = upb_DefPool_FindEnumByName(symtab, "google.protobuf.NullValue");
   char *name = NULL;
   size_t name_len;
-  int32_t num;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &name,
                             &name_len) == FAILURE) {
     return;
   }
-  if (!upb_enumdef_ntoi(e, name, name_len, &num)) {
+  const upb_EnumValueDef* ev = upb_EnumDef_FindValueByNameWithSize(
+      e, name, name_len);
+  if (!ev) {
     zend_throw_exception_ex(NULL, 0,
                             "Google\\Protobuf\\NullValue has no value "
                             "defined for name %s.",
                             name);
     return;
   }
-  RETURN_LONG(num);
+  RETURN_LONG(upb_EnumValueDef_Number(ev));
 }
 
 static zend_function_entry google_protobuf_NullValue_phpmethods[] = {
-  PHP_ME(google_protobuf_NullValue, name, arginfo_void, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-  PHP_ME(google_protobuf_NullValue, value, arginfo_void, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+  PHP_ME(google_protobuf_NullValue, name, arginfo_lookup, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+  PHP_ME(google_protobuf_NullValue, value, arginfo_lookup, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
   ZEND_FE_END
 };
 
@@ -1598,138 +1605,138 @@ static PHP_METHOD(google_protobuf_Type, __construct) {
 
 static PHP_METHOD(google_protobuf_Type, getName) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "name");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "name");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Type, setName) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "name");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "name");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Type, getFields) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "fields");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "fields");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Type, setFields) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "fields");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "fields");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Type, getOneofs) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "oneofs");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "oneofs");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Type, setOneofs) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "oneofs");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "oneofs");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Type, getOptions) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "options");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "options");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Type, setOptions) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "options");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "options");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Type, getSourceContext) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "source_context");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "source_context");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Type, setSourceContext) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "source_context");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "source_context");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Type, getSyntax) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "syntax");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "syntax");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Type, setSyntax) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "syntax");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "syntax");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_Type_phpmethods[] = {
-  PHP_ME(google_protobuf_Type, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_Type, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Type, getName, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Type, setName, arginfo_setter, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Type, getFields, arginfo_void, ZEND_ACC_PUBLIC)
@@ -1768,226 +1775,226 @@ static PHP_METHOD(google_protobuf_Field, __construct) {
 
 static PHP_METHOD(google_protobuf_Field, getKind) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "kind");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "kind");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Field, setKind) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "kind");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "kind");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Field, getCardinality) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "cardinality");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "cardinality");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Field, setCardinality) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "cardinality");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "cardinality");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Field, getNumber) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "number");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "number");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Field, setNumber) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "number");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "number");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Field, getName) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "name");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "name");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Field, setName) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "name");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "name");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Field, getTypeUrl) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "type_url");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "type_url");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Field, setTypeUrl) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "type_url");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "type_url");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Field, getOneofIndex) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "oneof_index");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "oneof_index");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Field, setOneofIndex) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "oneof_index");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "oneof_index");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Field, getPacked) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "packed");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "packed");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Field, setPacked) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "packed");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "packed");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Field, getOptions) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "options");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "options");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Field, setOptions) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "options");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "options");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Field, getJsonName) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "json_name");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "json_name");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Field, setJsonName) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "json_name");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "json_name");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Field, getDefaultValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "default_value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "default_value");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Field, setDefaultValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "default_value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "default_value");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_Field_phpmethods[] = {
-  PHP_ME(google_protobuf_Field, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_Field, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Field, getKind, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Field, setKind, arginfo_setter, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Field, getCardinality, arginfo_void, ZEND_ACC_PUBLIC)
@@ -2029,49 +2036,50 @@ zend_class_entry* google_protobuf_Field_Kind_ce;
 
 PHP_METHOD(google_protobuf_Field_Kind, name) {
   google_protobuf_type_proto_AddDescriptor();
-  const upb_symtab *symtab = DescriptorPool_GetSymbolTable();
-  const upb_enumdef *e = upb_symtab_lookupenum(symtab, "google.protobuf.Field.Kind");
-  const char *name;
+  const upb_DefPool *symtab = DescriptorPool_GetSymbolTable();
+  const upb_EnumDef *e = upb_DefPool_FindEnumByName(symtab, "google.protobuf.Field.Kind");
   zend_long value;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &value) ==
       FAILURE) {
     return;
   }
-  name = upb_enumdef_iton(e, value);
-  if (!name) {
+  const upb_EnumValueDef* ev =
+      upb_EnumDef_FindValueByNumber(e, value);
+  if (!ev) {
     zend_throw_exception_ex(NULL, 0,
                             "Google\\Protobuf\\Field\\Kind has no name "
                             "defined for value " ZEND_LONG_FMT ".",
                             value);
     return;
   }
-  RETURN_STRING(name);
+  RETURN_STRING(upb_EnumValueDef_Name(ev));
 }
 
 PHP_METHOD(google_protobuf_Field_Kind, value) {
   google_protobuf_type_proto_AddDescriptor();
-  const upb_symtab *symtab = DescriptorPool_GetSymbolTable();
-  const upb_enumdef *e = upb_symtab_lookupenum(symtab, "google.protobuf.Field.Kind");
+  const upb_DefPool *symtab = DescriptorPool_GetSymbolTable();
+  const upb_EnumDef *e = upb_DefPool_FindEnumByName(symtab, "google.protobuf.Field.Kind");
   char *name = NULL;
   size_t name_len;
-  int32_t num;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &name,
                             &name_len) == FAILURE) {
     return;
   }
-  if (!upb_enumdef_ntoi(e, name, name_len, &num)) {
+  const upb_EnumValueDef* ev = upb_EnumDef_FindValueByNameWithSize(
+      e, name, name_len);
+  if (!ev) {
     zend_throw_exception_ex(NULL, 0,
                             "Google\\Protobuf\\Field\\Kind has no value "
                             "defined for name %s.",
                             name);
     return;
   }
-  RETURN_LONG(num);
+  RETURN_LONG(upb_EnumValueDef_Number(ev));
 }
 
 static zend_function_entry google_protobuf_Field_Kind_phpmethods[] = {
-  PHP_ME(google_protobuf_Field_Kind, name, arginfo_void, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-  PHP_ME(google_protobuf_Field_Kind, value, arginfo_void, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+  PHP_ME(google_protobuf_Field_Kind, name, arginfo_lookup, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+  PHP_ME(google_protobuf_Field_Kind, value, arginfo_lookup, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
   ZEND_FE_END
 };
 
@@ -2128,49 +2136,50 @@ zend_class_entry* google_protobuf_Field_Cardinality_ce;
 
 PHP_METHOD(google_protobuf_Field_Cardinality, name) {
   google_protobuf_type_proto_AddDescriptor();
-  const upb_symtab *symtab = DescriptorPool_GetSymbolTable();
-  const upb_enumdef *e = upb_symtab_lookupenum(symtab, "google.protobuf.Field.Cardinality");
-  const char *name;
+  const upb_DefPool *symtab = DescriptorPool_GetSymbolTable();
+  const upb_EnumDef *e = upb_DefPool_FindEnumByName(symtab, "google.protobuf.Field.Cardinality");
   zend_long value;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &value) ==
       FAILURE) {
     return;
   }
-  name = upb_enumdef_iton(e, value);
-  if (!name) {
+  const upb_EnumValueDef* ev =
+      upb_EnumDef_FindValueByNumber(e, value);
+  if (!ev) {
     zend_throw_exception_ex(NULL, 0,
                             "Google\\Protobuf\\Field\\Cardinality has no name "
                             "defined for value " ZEND_LONG_FMT ".",
                             value);
     return;
   }
-  RETURN_STRING(name);
+  RETURN_STRING(upb_EnumValueDef_Name(ev));
 }
 
 PHP_METHOD(google_protobuf_Field_Cardinality, value) {
   google_protobuf_type_proto_AddDescriptor();
-  const upb_symtab *symtab = DescriptorPool_GetSymbolTable();
-  const upb_enumdef *e = upb_symtab_lookupenum(symtab, "google.protobuf.Field.Cardinality");
+  const upb_DefPool *symtab = DescriptorPool_GetSymbolTable();
+  const upb_EnumDef *e = upb_DefPool_FindEnumByName(symtab, "google.protobuf.Field.Cardinality");
   char *name = NULL;
   size_t name_len;
-  int32_t num;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &name,
                             &name_len) == FAILURE) {
     return;
   }
-  if (!upb_enumdef_ntoi(e, name, name_len, &num)) {
+  const upb_EnumValueDef* ev = upb_EnumDef_FindValueByNameWithSize(
+      e, name, name_len);
+  if (!ev) {
     zend_throw_exception_ex(NULL, 0,
                             "Google\\Protobuf\\Field\\Cardinality has no value "
                             "defined for name %s.",
                             name);
     return;
   }
-  RETURN_LONG(num);
+  RETURN_LONG(upb_EnumValueDef_Number(ev));
 }
 
 static zend_function_entry google_protobuf_Field_Cardinality_phpmethods[] = {
-  PHP_ME(google_protobuf_Field_Cardinality, name, arginfo_void, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-  PHP_ME(google_protobuf_Field_Cardinality, value, arginfo_void, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+  PHP_ME(google_protobuf_Field_Cardinality, name, arginfo_lookup, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+  PHP_ME(google_protobuf_Field_Cardinality, value, arginfo_lookup, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
   ZEND_FE_END
 };
 
@@ -2202,116 +2211,116 @@ static PHP_METHOD(google_protobuf_Enum, __construct) {
 
 static PHP_METHOD(google_protobuf_Enum, getName) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "name");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "name");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Enum, setName) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "name");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "name");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Enum, getEnumvalue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "enumvalue");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "enumvalue");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Enum, setEnumvalue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "enumvalue");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "enumvalue");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Enum, getOptions) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "options");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "options");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Enum, setOptions) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "options");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "options");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Enum, getSourceContext) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "source_context");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "source_context");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Enum, setSourceContext) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "source_context");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "source_context");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Enum, getSyntax) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "syntax");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "syntax");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Enum, setSyntax) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "syntax");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "syntax");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_Enum_phpmethods[] = {
-  PHP_ME(google_protobuf_Enum, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_Enum, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Enum, getName, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Enum, setName, arginfo_setter, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Enum, getEnumvalue, arginfo_void, ZEND_ACC_PUBLIC)
@@ -2348,72 +2357,72 @@ static PHP_METHOD(google_protobuf_EnumValue, __construct) {
 
 static PHP_METHOD(google_protobuf_EnumValue, getName) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "name");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "name");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_EnumValue, setName) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "name");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "name");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_EnumValue, getNumber) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "number");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "number");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_EnumValue, setNumber) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "number");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "number");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_EnumValue, getOptions) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "options");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "options");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_EnumValue, setOptions) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "options");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "options");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_EnumValue_phpmethods[] = {
-  PHP_ME(google_protobuf_EnumValue, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_EnumValue, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_EnumValue, getName, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_EnumValue, setName, arginfo_setter, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_EnumValue, getNumber, arginfo_void, ZEND_ACC_PUBLIC)
@@ -2446,50 +2455,50 @@ static PHP_METHOD(google_protobuf_Option, __construct) {
 
 static PHP_METHOD(google_protobuf_Option, getName) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "name");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "name");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Option, setName) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "name");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "name");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Option, getValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Option, setValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_Option_phpmethods[] = {
-  PHP_ME(google_protobuf_Option, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_Option, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Option, getName, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Option, setName, arginfo_setter, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Option, getValue, arginfo_void, ZEND_ACC_PUBLIC)
@@ -2515,49 +2524,50 @@ zend_class_entry* google_protobuf_Syntax_ce;
 
 PHP_METHOD(google_protobuf_Syntax, name) {
   google_protobuf_type_proto_AddDescriptor();
-  const upb_symtab *symtab = DescriptorPool_GetSymbolTable();
-  const upb_enumdef *e = upb_symtab_lookupenum(symtab, "google.protobuf.Syntax");
-  const char *name;
+  const upb_DefPool *symtab = DescriptorPool_GetSymbolTable();
+  const upb_EnumDef *e = upb_DefPool_FindEnumByName(symtab, "google.protobuf.Syntax");
   zend_long value;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "l", &value) ==
       FAILURE) {
     return;
   }
-  name = upb_enumdef_iton(e, value);
-  if (!name) {
+  const upb_EnumValueDef* ev =
+      upb_EnumDef_FindValueByNumber(e, value);
+  if (!ev) {
     zend_throw_exception_ex(NULL, 0,
                             "Google\\Protobuf\\Syntax has no name "
                             "defined for value " ZEND_LONG_FMT ".",
                             value);
     return;
   }
-  RETURN_STRING(name);
+  RETURN_STRING(upb_EnumValueDef_Name(ev));
 }
 
 PHP_METHOD(google_protobuf_Syntax, value) {
   google_protobuf_type_proto_AddDescriptor();
-  const upb_symtab *symtab = DescriptorPool_GetSymbolTable();
-  const upb_enumdef *e = upb_symtab_lookupenum(symtab, "google.protobuf.Syntax");
+  const upb_DefPool *symtab = DescriptorPool_GetSymbolTable();
+  const upb_EnumDef *e = upb_DefPool_FindEnumByName(symtab, "google.protobuf.Syntax");
   char *name = NULL;
   size_t name_len;
-  int32_t num;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "s", &name,
                             &name_len) == FAILURE) {
     return;
   }
-  if (!upb_enumdef_ntoi(e, name, name_len, &num)) {
+  const upb_EnumValueDef* ev = upb_EnumDef_FindValueByNameWithSize(
+      e, name, name_len);
+  if (!ev) {
     zend_throw_exception_ex(NULL, 0,
                             "Google\\Protobuf\\Syntax has no value "
                             "defined for name %s.",
                             name);
     return;
   }
-  RETURN_LONG(num);
+  RETURN_LONG(upb_EnumValueDef_Number(ev));
 }
 
 static zend_function_entry google_protobuf_Syntax_phpmethods[] = {
-  PHP_ME(google_protobuf_Syntax, name, arginfo_void, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
-  PHP_ME(google_protobuf_Syntax, value, arginfo_void, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+  PHP_ME(google_protobuf_Syntax, name, arginfo_lookup, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
+  PHP_ME(google_protobuf_Syntax, value, arginfo_lookup, ZEND_ACC_PUBLIC | ZEND_ACC_STATIC)
   ZEND_FE_END
 };
 
@@ -2626,46 +2636,46 @@ static PHP_METHOD(google_protobuf_Timestamp, __construct) {
 
 static PHP_METHOD(google_protobuf_Timestamp, getSeconds) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "seconds");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "seconds");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Timestamp, setSeconds) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "seconds");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "seconds");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static PHP_METHOD(google_protobuf_Timestamp, getNanos) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "nanos");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "nanos");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Timestamp, setNanos) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "nanos");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "nanos");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 ZEND_BEGIN_ARG_INFO_EX(arginfo_timestamp_fromdatetime, 0, 0, 1)
@@ -2673,7 +2683,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_timestamp_fromdatetime, 0, 0, 1)
 ZEND_END_ARG_INFO()
 
 static zend_function_entry google_protobuf_Timestamp_phpmethods[] = {
-  PHP_ME(google_protobuf_Timestamp, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_Timestamp, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Timestamp, getSeconds, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Timestamp, setSeconds, arginfo_setter, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Timestamp, getNanos, arginfo_void, ZEND_ACC_PUBLIC)
@@ -2756,28 +2766,28 @@ static PHP_METHOD(google_protobuf_DoubleValue, __construct) {
 
 static PHP_METHOD(google_protobuf_DoubleValue, getValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_DoubleValue, setValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_DoubleValue_phpmethods[] = {
-  PHP_ME(google_protobuf_DoubleValue, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_DoubleValue, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_DoubleValue, getValue, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_DoubleValue, setValue, arginfo_setter, ZEND_ACC_PUBLIC)
   ZEND_FE_END
@@ -2806,28 +2816,28 @@ static PHP_METHOD(google_protobuf_FloatValue, __construct) {
 
 static PHP_METHOD(google_protobuf_FloatValue, getValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_FloatValue, setValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_FloatValue_phpmethods[] = {
-  PHP_ME(google_protobuf_FloatValue, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_FloatValue, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_FloatValue, getValue, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_FloatValue, setValue, arginfo_setter, ZEND_ACC_PUBLIC)
   ZEND_FE_END
@@ -2856,28 +2866,28 @@ static PHP_METHOD(google_protobuf_Int64Value, __construct) {
 
 static PHP_METHOD(google_protobuf_Int64Value, getValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Int64Value, setValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_Int64Value_phpmethods[] = {
-  PHP_ME(google_protobuf_Int64Value, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_Int64Value, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Int64Value, getValue, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Int64Value, setValue, arginfo_setter, ZEND_ACC_PUBLIC)
   ZEND_FE_END
@@ -2906,28 +2916,28 @@ static PHP_METHOD(google_protobuf_UInt64Value, __construct) {
 
 static PHP_METHOD(google_protobuf_UInt64Value, getValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_UInt64Value, setValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_UInt64Value_phpmethods[] = {
-  PHP_ME(google_protobuf_UInt64Value, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_UInt64Value, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_UInt64Value, getValue, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_UInt64Value, setValue, arginfo_setter, ZEND_ACC_PUBLIC)
   ZEND_FE_END
@@ -2956,28 +2966,28 @@ static PHP_METHOD(google_protobuf_Int32Value, __construct) {
 
 static PHP_METHOD(google_protobuf_Int32Value, getValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_Int32Value, setValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_Int32Value_phpmethods[] = {
-  PHP_ME(google_protobuf_Int32Value, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_Int32Value, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Int32Value, getValue, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_Int32Value, setValue, arginfo_setter, ZEND_ACC_PUBLIC)
   ZEND_FE_END
@@ -3006,28 +3016,28 @@ static PHP_METHOD(google_protobuf_UInt32Value, __construct) {
 
 static PHP_METHOD(google_protobuf_UInt32Value, getValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_UInt32Value, setValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_UInt32Value_phpmethods[] = {
-  PHP_ME(google_protobuf_UInt32Value, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_UInt32Value, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_UInt32Value, getValue, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_UInt32Value, setValue, arginfo_setter, ZEND_ACC_PUBLIC)
   ZEND_FE_END
@@ -3056,28 +3066,28 @@ static PHP_METHOD(google_protobuf_BoolValue, __construct) {
 
 static PHP_METHOD(google_protobuf_BoolValue, getValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_BoolValue, setValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_BoolValue_phpmethods[] = {
-  PHP_ME(google_protobuf_BoolValue, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_BoolValue, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_BoolValue, getValue, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_BoolValue, setValue, arginfo_setter, ZEND_ACC_PUBLIC)
   ZEND_FE_END
@@ -3106,28 +3116,28 @@ static PHP_METHOD(google_protobuf_StringValue, __construct) {
 
 static PHP_METHOD(google_protobuf_StringValue, getValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_StringValue, setValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_StringValue_phpmethods[] = {
-  PHP_ME(google_protobuf_StringValue, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_StringValue, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_StringValue, getValue, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_StringValue, setValue, arginfo_setter, ZEND_ACC_PUBLIC)
   ZEND_FE_END
@@ -3156,28 +3166,28 @@ static PHP_METHOD(google_protobuf_BytesValue, __construct) {
 
 static PHP_METHOD(google_protobuf_BytesValue, getValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval ret;
   Message_get(intern, f, &ret);
-  RETURN_ZVAL(&ret, 1, 0);
+  RETURN_COPY_VALUE(&ret);
 }
 
 static PHP_METHOD(google_protobuf_BytesValue, setValue) {
   Message* intern = (Message*)Z_OBJ_P(getThis());
-  const upb_fielddef *f = upb_msgdef_ntofz(intern->desc->msgdef,
-                                           "value");
+  const upb_FieldDef *f = upb_MessageDef_FindFieldByName(
+      intern->desc->msgdef, "value");
   zval *val;
   if (zend_parse_parameters(ZEND_NUM_ARGS(), "z", &val)
       == FAILURE) {
     return;
   }
   Message_set(intern, f, val);
-  RETURN_ZVAL(getThis(), 1, 0);
+  RETURN_COPY(getThis());
 }
 
 static zend_function_entry google_protobuf_BytesValue_phpmethods[] = {
-  PHP_ME(google_protobuf_BytesValue, __construct, arginfo_void, ZEND_ACC_PUBLIC)
+  PHP_ME(google_protobuf_BytesValue, __construct, arginfo_construct, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_BytesValue, getValue, arginfo_void, ZEND_ACC_PUBLIC)
   PHP_ME(google_protobuf_BytesValue, setValue, arginfo_setter, ZEND_ACC_PUBLIC)
   ZEND_FE_END

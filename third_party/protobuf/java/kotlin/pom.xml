@@ -4,20 +4,19 @@
   <parent>
     <groupId>com.google.protobuf</groupId>
     <artifactId>protobuf-parent</artifactId>
-    <version>3.17.0</version>
+    <version>3.21.3</version>
   </parent>
 
   <artifactId>protobuf-kotlin</artifactId>
-  <packaging>bundle</packaging>
 
-  <name>Protocol Buffers [Core]</name>
+  <name>Protocol Buffers [Kotlin-Core]</name>
   <description>
-    Core Protocol Buffers library. Protocol Buffers are a way of encoding structured data in an
+    Kotlin core Protocol Buffers library. Protocol Buffers are a way of encoding structured data in an
     efficient yet extensible format.
   </description>
 
   <properties>
-    <kotlin.version>1.4.31</kotlin.version>
+    <kotlin.version>1.5.0</kotlin.version>
   </properties>
 
   <dependencies>
@@ -31,13 +30,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.easymock</groupId>
-      <artifactId>easymock</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.easymock</groupId>
-      <artifactId>easymockclassextension</artifactId>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -69,26 +63,6 @@
   </dependencies>
 
   <build>
-    <!-- Include core protos in the bundle as resources -->
-    <resources>
-      <resource>
-        <directory>${protobuf.source.dir}</directory>
-        <includes>
-          <include>google/protobuf/any.proto</include>
-          <include>google/protobuf/api.proto</include>
-          <include>google/protobuf/descriptor.proto</include>
-          <include>google/protobuf/duration.proto</include>
-          <include>google/protobuf/empty.proto</include>
-          <include>google/protobuf/field_mask.proto</include>
-          <include>google/protobuf/source_context.proto</include>
-          <include>google/protobuf/struct.proto</include>
-          <include>google/protobuf/timestamp.proto</include>
-          <include>google/protobuf/type.proto</include>
-          <include>google/protobuf/wrappers.proto</include>
-          <include>google/protobuf/compiler/plugin.proto</include>
-        </includes>
-      </resource>
-    </resources>
     <testResources>
       <testResource>
         <directory>${protobuf.source.dir}</directory>
@@ -218,21 +192,6 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>
-      <!-- OSGI bundle configuration -->
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <Automatic-Module-Name>com.google.protobuf</Automatic-Module-Name> <!-- Java9+ Jigsaw module name -->
-            <Bundle-DocURL>https://developers.google.com/protocol-buffers/</Bundle-DocURL>
-            <Bundle-SymbolicName>com.google.protobuf</Bundle-SymbolicName>
-            <Export-Package>com.google.protobuf;version=${project.version}</Export-Package>
-            <Import-Package>sun.misc;resolution:=optional,*</Import-Package>
-          </instructions>
-        </configuration>
       </plugin>
     </plugins>
   </build>

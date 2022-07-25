@@ -16,43 +16,50 @@
 #include <google/protobuf/port_def.inc>
 
 PROTOBUF_PRAGMA_INIT_SEG
-namespace proto2_preserve_unknown_enum_unittest {
-constexpr MyMessage::MyMessage(
-  ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized)
-  : repeated_e_()
-  , repeated_packed_e_()
-  , _repeated_packed_e_cached_byte_size_()
-  , repeated_packed_unexpected_e_()
-  , e_(0)
 
-  , _oneof_case_{}{}
+namespace _pb = ::PROTOBUF_NAMESPACE_ID;
+namespace _pbi = _pb::internal;
+
+namespace proto2_preserve_unknown_enum_unittest {
+PROTOBUF_CONSTEXPR MyMessage::MyMessage(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.repeated_e_)*/{}
+  , /*decltype(_impl_.repeated_packed_e_)*/{}
+  , /*decltype(_impl_._repeated_packed_e_cached_byte_size_)*/{0}
+  , /*decltype(_impl_.repeated_packed_unexpected_e_)*/{}
+  , /*decltype(_impl_.e_)*/0
+  , /*decltype(_impl_.o_)*/{}
+  , /*decltype(_impl_._oneof_case_)*/{}} {}
 struct MyMessageDefaultTypeInternal {
-  constexpr MyMessageDefaultTypeInternal()
-    : _instance(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR MyMessageDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
   ~MyMessageDefaultTypeInternal() {}
   union {
     MyMessage _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT MyMessageDefaultTypeInternal _MyMessage_default_instance_;
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 MyMessageDefaultTypeInternal _MyMessage_default_instance_;
 }  // namespace proto2_preserve_unknown_enum_unittest
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto[1];
-static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto[1];
-static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto = nullptr;
+static ::_pb::Metadata file_level_metadata_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto[1];
+static const ::_pb::EnumDescriptor* file_level_enum_descriptors_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto[1];
+static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto = nullptr;
 
-const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  PROTOBUF_FIELD_OFFSET(::proto2_preserve_unknown_enum_unittest::MyMessage, _has_bits_),
+const uint32_t TableStruct_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  PROTOBUF_FIELD_OFFSET(::proto2_preserve_unknown_enum_unittest::MyMessage, _impl_._has_bits_),
   PROTOBUF_FIELD_OFFSET(::proto2_preserve_unknown_enum_unittest::MyMessage, _internal_metadata_),
   ~0u,  // no _extensions_
-  PROTOBUF_FIELD_OFFSET(::proto2_preserve_unknown_enum_unittest::MyMessage, _oneof_case_[0]),
+  PROTOBUF_FIELD_OFFSET(::proto2_preserve_unknown_enum_unittest::MyMessage, _impl_._oneof_case_[0]),
   ~0u,  // no _weak_field_map_
-  PROTOBUF_FIELD_OFFSET(::proto2_preserve_unknown_enum_unittest::MyMessage, e_),
-  PROTOBUF_FIELD_OFFSET(::proto2_preserve_unknown_enum_unittest::MyMessage, repeated_e_),
-  PROTOBUF_FIELD_OFFSET(::proto2_preserve_unknown_enum_unittest::MyMessage, repeated_packed_e_),
-  PROTOBUF_FIELD_OFFSET(::proto2_preserve_unknown_enum_unittest::MyMessage, repeated_packed_unexpected_e_),
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  ::PROTOBUF_NAMESPACE_ID::internal::kInvalidFieldOffsetTag,
-  PROTOBUF_FIELD_OFFSET(::proto2_preserve_unknown_enum_unittest::MyMessage, o_),
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::proto2_preserve_unknown_enum_unittest::MyMessage, _impl_.e_),
+  PROTOBUF_FIELD_OFFSET(::proto2_preserve_unknown_enum_unittest::MyMessage, _impl_.repeated_e_),
+  PROTOBUF_FIELD_OFFSET(::proto2_preserve_unknown_enum_unittest::MyMessage, _impl_.repeated_packed_e_),
+  PROTOBUF_FIELD_OFFSET(::proto2_preserve_unknown_enum_unittest::MyMessage, _impl_.repeated_packed_unexpected_e_),
+  ::_pbi::kInvalidFieldOffsetTag,
+  ::_pbi::kInvalidFieldOffsetTag,
+  PROTOBUF_FIELD_OFFSET(::proto2_preserve_unknown_enum_unittest::MyMessage, _impl_.o_),
   0,
   ~0u,
   ~0u,
@@ -60,12 +67,12 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_google_2fprotobuf_2funittest_5
   ~0u,
   ~0u,
 };
-static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, 12, sizeof(::proto2_preserve_unknown_enum_unittest::MyMessage)},
+static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  { 0, 13, -1, sizeof(::proto2_preserve_unknown_enum_unittest::MyMessage)},
 };
 
-static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
-  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::proto2_preserve_unknown_enum_unittest::_MyMessage_default_instance_),
+static const ::_pb::Message* const file_default_instances[] = {
+  &::proto2_preserve_unknown_enum_unittest::_MyMessage_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -85,19 +92,21 @@ const char descriptor_table_protodef_google_2fprotobuf_2funittest_5fpreserve_5fu
   "est.MyEnumH\000B\003\n\001o*#\n\006MyEnum\022\007\n\003FOO\020\000\022\007\n\003"
   "BAR\020\001\022\007\n\003BAZ\020\002"
   ;
-static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto_once;
-const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto = {
-  false, false, 574, descriptor_table_protodef_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto, "google/protobuf/unittest_preserve_unknown_enum2.proto", 
-  &descriptor_table_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto_once, nullptr, 0, 1,
-  schemas, file_default_instances, TableStruct_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto::offsets,
-  file_level_metadata_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto, file_level_enum_descriptors_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto, file_level_service_descriptors_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto,
+static ::_pbi::once_flag descriptor_table_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto_once;
+const ::_pbi::DescriptorTable descriptor_table_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto = {
+    false, false, 574, descriptor_table_protodef_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto,
+    "google/protobuf/unittest_preserve_unknown_enum2.proto",
+    &descriptor_table_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto_once, nullptr, 0, 1,
+    schemas, file_default_instances, TableStruct_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto::offsets,
+    file_level_metadata_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto, file_level_enum_descriptors_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto,
+    file_level_service_descriptors_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto,
 };
-PROTOBUF_ATTRIBUTE_WEAK const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable* descriptor_table_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto_getter() {
+PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto_getter() {
   return &descriptor_table_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto;
 }
 
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY static ::PROTOBUF_NAMESPACE_ID::internal::AddDescriptorsRunner dynamic_init_dummy_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto(&descriptor_table_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto(&descriptor_table_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto);
 namespace proto2_preserve_unknown_enum_unittest {
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* MyEnum_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto);
@@ -119,37 +128,42 @@ bool MyEnum_IsValid(int value) {
 
 class MyMessage::_Internal {
  public:
-  using HasBits = decltype(std::declval<MyMessage>()._has_bits_);
+  using HasBits = decltype(std::declval<MyMessage>()._impl_._has_bits_);
   static void set_has_e(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
   }
 };
 
-MyMessage::MyMessage(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena),
-  repeated_e_(arena),
-  repeated_packed_e_(arena),
-  repeated_packed_unexpected_e_(arena) {
-  SharedCtor();
-  RegisterArenaDtor(arena);
+MyMessage::MyMessage(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
   // @@protoc_insertion_point(arena_constructor:proto2_preserve_unknown_enum_unittest.MyMessage)
 }
 MyMessage::MyMessage(const MyMessage& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(),
-      _has_bits_(from._has_bits_),
-      repeated_e_(from.repeated_e_),
-      repeated_packed_e_(from.repeated_packed_e_),
-      repeated_packed_unexpected_e_(from.repeated_packed_unexpected_e_) {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  MyMessage* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.repeated_e_){from._impl_.repeated_e_}
+    , decltype(_impl_.repeated_packed_e_){from._impl_.repeated_packed_e_}
+    , /*decltype(_impl_._repeated_packed_e_cached_byte_size_)*/{0}
+    , decltype(_impl_.repeated_packed_unexpected_e_){from._impl_.repeated_packed_unexpected_e_}
+    , decltype(_impl_.e_){}
+    , decltype(_impl_.o_){}
+    , /*decltype(_impl_._oneof_case_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  e_ = from.e_;
+  _this->_impl_.e_ = from._impl_.e_;
   clear_has_o();
   switch (from.o_case()) {
     case kOneofE1: {
-      _internal_set_oneof_e_1(from._internal_oneof_e_1());
+      _this->_internal_set_oneof_e_1(from._internal_oneof_e_1());
       break;
     }
     case kOneofE2: {
-      _internal_set_oneof_e_2(from._internal_oneof_e_2());
+      _this->_internal_set_oneof_e_2(from._internal_oneof_e_2());
       break;
     }
     case O_NOT_SET: {
@@ -159,32 +173,45 @@ MyMessage::MyMessage(const MyMessage& from)
   // @@protoc_insertion_point(copy_constructor:proto2_preserve_unknown_enum_unittest.MyMessage)
 }
 
-void MyMessage::SharedCtor() {
-e_ = 0;
-clear_has_o();
+inline void MyMessage::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.repeated_e_){arena}
+    , decltype(_impl_.repeated_packed_e_){arena}
+    , /*decltype(_impl_._repeated_packed_e_cached_byte_size_)*/{0}
+    , decltype(_impl_.repeated_packed_unexpected_e_){arena}
+    , decltype(_impl_.e_){0}
+    , decltype(_impl_.o_){}
+    , /*decltype(_impl_._oneof_case_)*/{}
+  };
+  clear_has_o();
 }
 
 MyMessage::~MyMessage() {
   // @@protoc_insertion_point(destructor:proto2_preserve_unknown_enum_unittest.MyMessage)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
   SharedDtor();
-  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-void MyMessage::SharedDtor() {
+inline void MyMessage::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.repeated_e_.~RepeatedField();
+  _impl_.repeated_packed_e_.~RepeatedField();
+  _impl_.repeated_packed_unexpected_e_.~RepeatedField();
   if (has_o()) {
     clear_o();
   }
 }
 
-void MyMessage::ArenaDtor(void* object) {
-  MyMessage* _this = reinterpret_cast< MyMessage* >(object);
-  (void)_this;
-}
-void MyMessage::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
-}
 void MyMessage::SetCachedSize(int size) const {
-  _cached_size_.Set(size);
+  _impl_._cached_size_.Set(size);
 }
 
 void MyMessage::clear_o() {
@@ -202,51 +229,52 @@ void MyMessage::clear_o() {
       break;
     }
   }
-  _oneof_case_[0] = O_NOT_SET;
+  _impl_._oneof_case_[0] = O_NOT_SET;
 }
 
 
 void MyMessage::Clear() {
 // @@protoc_insertion_point(message_clear_start:proto2_preserve_unknown_enum_unittest.MyMessage)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  repeated_e_.Clear();
-  repeated_packed_e_.Clear();
-  repeated_packed_unexpected_e_.Clear();
-  e_ = 0;
+  _impl_.repeated_e_.Clear();
+  _impl_.repeated_packed_e_.Clear();
+  _impl_.repeated_packed_unexpected_e_.Clear();
+  _impl_.e_ = 0;
   clear_o();
-  _has_bits_.Clear();
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* MyMessage::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+const char* MyMessage::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
-    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
-    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
       // optional .proto2_preserve_unknown_enum_unittest.MyEnum e = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
-          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
           if (PROTOBUF_PREDICT_TRUE(::proto2_preserve_unknown_enum_unittest::MyEnum_IsValid(val))) {
             _internal_set_e(static_cast<::proto2_preserve_unknown_enum_unittest::MyEnum>(val));
           } else {
             ::PROTOBUF_NAMESPACE_ID::internal::WriteVarint(1, val, mutable_unknown_fields());
           }
-        } else goto handle_unusual;
+        } else
+          goto handle_unusual;
         continue;
       // repeated .proto2_preserve_unknown_enum_unittest.MyEnum repeated_e = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
           ptr -= 1;
           do {
             ptr += 1;
-            ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+            uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
             CHK_(ptr);
             if (PROTOBUF_PREDICT_TRUE(::proto2_preserve_unknown_enum_unittest::MyEnum_IsValid(val))) {
               _internal_add_repeated_e(static_cast<::proto2_preserve_unknown_enum_unittest::MyEnum>(val));
@@ -255,33 +283,35 @@ const char* MyMessage::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::
             }
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<16>(ptr));
-        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18) {
+        } else if (static_cast<uint8_t>(tag) == 18) {
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedEnumParser<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(_internal_mutable_repeated_e(), ptr, ctx, ::proto2_preserve_unknown_enum_unittest::MyEnum_IsValid, &_internal_metadata_, 2);
           CHK_(ptr);
-        } else goto handle_unusual;
+        } else
+          goto handle_unusual;
         continue;
       // repeated .proto2_preserve_unknown_enum_unittest.MyEnum repeated_packed_e = 3 [packed = true];
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedEnumParser<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(_internal_mutable_repeated_packed_e(), ptr, ctx, ::proto2_preserve_unknown_enum_unittest::MyEnum_IsValid, &_internal_metadata_, 3);
           CHK_(ptr);
-        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24) {
-          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+        } else if (static_cast<uint8_t>(tag) == 24) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
           if (PROTOBUF_PREDICT_TRUE(::proto2_preserve_unknown_enum_unittest::MyEnum_IsValid(val))) {
             _internal_add_repeated_packed_e(static_cast<::proto2_preserve_unknown_enum_unittest::MyEnum>(val));
           } else {
             ::PROTOBUF_NAMESPACE_ID::internal::WriteVarint(3, val, mutable_unknown_fields());
           }
-        } else goto handle_unusual;
+        } else
+          goto handle_unusual;
         continue;
       // repeated .proto2_preserve_unknown_enum_unittest.MyEnum repeated_packed_unexpected_e = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 32)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
           ptr -= 1;
           do {
             ptr += 1;
-            ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+            uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
             CHK_(ptr);
             if (PROTOBUF_PREDICT_TRUE(::proto2_preserve_unknown_enum_unittest::MyEnum_IsValid(val))) {
               _internal_add_repeated_packed_unexpected_e(static_cast<::proto2_preserve_unknown_enum_unittest::MyEnum>(val));
@@ -290,113 +320,116 @@ const char* MyMessage::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::
             }
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<32>(ptr));
-        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 34) {
+        } else if (static_cast<uint8_t>(tag) == 34) {
           ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedEnumParser<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(_internal_mutable_repeated_packed_unexpected_e(), ptr, ctx, ::proto2_preserve_unknown_enum_unittest::MyEnum_IsValid, &_internal_metadata_, 4);
           CHK_(ptr);
-        } else goto handle_unusual;
+        } else
+          goto handle_unusual;
         continue;
       // .proto2_preserve_unknown_enum_unittest.MyEnum oneof_e_1 = 5;
       case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 40)) {
-          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
           if (PROTOBUF_PREDICT_TRUE(::proto2_preserve_unknown_enum_unittest::MyEnum_IsValid(val))) {
             _internal_set_oneof_e_1(static_cast<::proto2_preserve_unknown_enum_unittest::MyEnum>(val));
           } else {
             ::PROTOBUF_NAMESPACE_ID::internal::WriteVarint(5, val, mutable_unknown_fields());
           }
-        } else goto handle_unusual;
+        } else
+          goto handle_unusual;
         continue;
       // .proto2_preserve_unknown_enum_unittest.MyEnum oneof_e_2 = 6;
       case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 48)) {
-          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
+          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
           if (PROTOBUF_PREDICT_TRUE(::proto2_preserve_unknown_enum_unittest::MyEnum_IsValid(val))) {
             _internal_set_oneof_e_2(static_cast<::proto2_preserve_unknown_enum_unittest::MyEnum>(val));
           } else {
             ::PROTOBUF_NAMESPACE_ID::internal::WriteVarint(6, val, mutable_unknown_fields());
           }
-        } else goto handle_unusual;
+        } else
+          goto handle_unusual;
         continue;
-      default: {
-      handle_unusual:
-        if ((tag == 0) || ((tag & 7) == 4)) {
-          CHK_(ptr);
-          ctx->SetLastTag(tag);
-          goto success;
-        }
-        ptr = UnknownFieldParse(tag,
-            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-            ptr, ctx);
-        CHK_(ptr != nullptr);
-        continue;
-      }
+      default:
+        goto handle_unusual;
     }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
   }  // while
-success:
-  _has_bits_.Or(has_bits);
+message_done:
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
-  goto success;
+  goto message_done;
 #undef CHK_
 }
 
-::PROTOBUF_NAMESPACE_ID::uint8* MyMessage::_InternalSerialize(
-    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+uint8_t* MyMessage::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:proto2_preserve_unknown_enum_unittest.MyMessage)
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   // optional .proto2_preserve_unknown_enum_unittest.MyEnum e = 1;
   if (cached_has_bits & 0x00000001u) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
       1, this->_internal_e(), target);
   }
 
   // repeated .proto2_preserve_unknown_enum_unittest.MyEnum repeated_e = 2;
   for (int i = 0, n = this->_internal_repeated_e_size(); i < n; i++) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
         2, this->_internal_repeated_e(i), target);
   }
 
   // repeated .proto2_preserve_unknown_enum_unittest.MyEnum repeated_packed_e = 3 [packed = true];
   {
-    int byte_size = _repeated_packed_e_cached_byte_size_.load(std::memory_order_relaxed);
+    int byte_size = _impl_._repeated_packed_e_cached_byte_size_.load(std::memory_order_relaxed);
     if (byte_size > 0) {
       target = stream->WriteEnumPacked(
-          3, repeated_packed_e_, byte_size, target);
+          3, _impl_.repeated_packed_e_, byte_size, target);
     }
   }
 
   // repeated .proto2_preserve_unknown_enum_unittest.MyEnum repeated_packed_unexpected_e = 4;
   for (int i = 0, n = this->_internal_repeated_packed_unexpected_e_size(); i < n; i++) {
     target = stream->EnsureSpace(target);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
         4, this->_internal_repeated_packed_unexpected_e(i), target);
   }
 
   switch (o_case()) {
     case kOneofE1: {
       target = stream->EnsureSpace(target);
-      target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+      target = ::_pbi::WireFormatLite::WriteEnumToArray(
         5, this->_internal_oneof_e_1(), target);
       break;
     }
     case kOneofE2: {
       target = stream->EnsureSpace(target);
-      target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+      target = ::_pbi::WireFormatLite::WriteEnumToArray(
         6, this->_internal_oneof_e_2(), target);
       break;
     }
     default: ;
   }
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:proto2_preserve_unknown_enum_unittest.MyMessage)
@@ -407,7 +440,7 @@ size_t MyMessage::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:proto2_preserve_unknown_enum_unittest.MyMessage)
   size_t total_size = 0;
 
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
@@ -415,7 +448,7 @@ size_t MyMessage::ByteSizeLong() const {
   {
     size_t data_size = 0;
     unsigned int count = static_cast<unsigned int>(this->_internal_repeated_e_size());for (unsigned int i = 0; i < count; i++) {
-      data_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(
+      data_size += ::_pbi::WireFormatLite::EnumSize(
         this->_internal_repeated_e(static_cast<int>(i)));
     }
     total_size += (1UL * count) + data_size;
@@ -425,16 +458,15 @@ size_t MyMessage::ByteSizeLong() const {
   {
     size_t data_size = 0;
     unsigned int count = static_cast<unsigned int>(this->_internal_repeated_packed_e_size());for (unsigned int i = 0; i < count; i++) {
-      data_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(
+      data_size += ::_pbi::WireFormatLite::EnumSize(
         this->_internal_repeated_packed_e(static_cast<int>(i)));
     }
     if (data_size > 0) {
       total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
-            static_cast<::PROTOBUF_NAMESPACE_ID::int32>(data_size));
+        ::_pbi::WireFormatLite::Int32Size(static_cast<int32_t>(data_size));
     }
-    int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(data_size);
-    _repeated_packed_e_cached_byte_size_.store(cached_size,
+    int cached_size = ::_pbi::ToCachedSize(data_size);
+    _impl_._repeated_packed_e_cached_byte_size_.store(cached_size,
                                     std::memory_order_relaxed);
     total_size += data_size;
   }
@@ -443,93 +475,74 @@ size_t MyMessage::ByteSizeLong() const {
   {
     size_t data_size = 0;
     unsigned int count = static_cast<unsigned int>(this->_internal_repeated_packed_unexpected_e_size());for (unsigned int i = 0; i < count; i++) {
-      data_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(
+      data_size += ::_pbi::WireFormatLite::EnumSize(
         this->_internal_repeated_packed_unexpected_e(static_cast<int>(i)));
     }
     total_size += (1UL * count) + data_size;
   }
 
   // optional .proto2_preserve_unknown_enum_unittest.MyEnum e = 1;
-  cached_has_bits = _has_bits_[0];
+  cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_e());
+      ::_pbi::WireFormatLite::EnumSize(this->_internal_e());
   }
 
   switch (o_case()) {
     // .proto2_preserve_unknown_enum_unittest.MyEnum oneof_e_1 = 5;
     case kOneofE1: {
       total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_oneof_e_1());
+        ::_pbi::WireFormatLite::EnumSize(this->_internal_oneof_e_1());
       break;
     }
     // .proto2_preserve_unknown_enum_unittest.MyEnum oneof_e_2 = 6;
     case kOneofE2: {
       total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_oneof_e_2());
+        ::_pbi::WireFormatLite::EnumSize(this->_internal_oneof_e_2());
       break;
     }
     case O_NOT_SET: {
       break;
     }
   }
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
-        _internal_metadata_, total_size, &_cached_size_);
-  }
-  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
-  SetCachedSize(cached_size);
-  return total_size;
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-void MyMessage::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_merge_from_start:proto2_preserve_unknown_enum_unittest.MyMessage)
-  GOOGLE_DCHECK_NE(&from, this);
-  const MyMessage* source =
-      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<MyMessage>(
-          &from);
-  if (source == nullptr) {
-  // @@protoc_insertion_point(generalized_merge_from_cast_fail:proto2_preserve_unknown_enum_unittest.MyMessage)
-    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
-  } else {
-  // @@protoc_insertion_point(generalized_merge_from_cast_success:proto2_preserve_unknown_enum_unittest.MyMessage)
-    MergeFrom(*source);
-  }
-}
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData MyMessage::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    MyMessage::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*MyMessage::GetClassData() const { return &_class_data_; }
 
-void MyMessage::MergeFrom(const MyMessage& from) {
-// @@protoc_insertion_point(class_specific_merge_from_start:proto2_preserve_unknown_enum_unittest.MyMessage)
-  GOOGLE_DCHECK_NE(&from, this);
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+
+void MyMessage::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<MyMessage*>(&to_msg);
+  auto& from = static_cast<const MyMessage&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:proto2_preserve_unknown_enum_unittest.MyMessage)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  repeated_e_.MergeFrom(from.repeated_e_);
-  repeated_packed_e_.MergeFrom(from.repeated_packed_e_);
-  repeated_packed_unexpected_e_.MergeFrom(from.repeated_packed_unexpected_e_);
+  _this->_impl_.repeated_e_.MergeFrom(from._impl_.repeated_e_);
+  _this->_impl_.repeated_packed_e_.MergeFrom(from._impl_.repeated_packed_e_);
+  _this->_impl_.repeated_packed_unexpected_e_.MergeFrom(from._impl_.repeated_packed_unexpected_e_);
   if (from._internal_has_e()) {
-    _internal_set_e(from._internal_e());
+    _this->_internal_set_e(from._internal_e());
   }
   switch (from.o_case()) {
     case kOneofE1: {
-      _internal_set_oneof_e_1(from._internal_oneof_e_1());
+      _this->_internal_set_oneof_e_1(from._internal_oneof_e_1());
       break;
     }
     case kOneofE2: {
-      _internal_set_oneof_e_2(from._internal_oneof_e_2());
+      _this->_internal_set_oneof_e_2(from._internal_oneof_e_2());
       break;
     }
     case O_NOT_SET: {
       break;
     }
   }
-}
-
-void MyMessage::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
-// @@protoc_insertion_point(generalized_copy_from_start:proto2_preserve_unknown_enum_unittest.MyMessage)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void MyMessage::CopyFrom(const MyMessage& from) {
@@ -546,17 +559,17 @@ bool MyMessage::IsInitialized() const {
 void MyMessage::InternalSwap(MyMessage* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_has_bits_[0], other->_has_bits_[0]);
-  repeated_e_.InternalSwap(&other->repeated_e_);
-  repeated_packed_e_.InternalSwap(&other->repeated_packed_e_);
-  repeated_packed_unexpected_e_.InternalSwap(&other->repeated_packed_unexpected_e_);
-  swap(e_, other->e_);
-  swap(o_, other->o_);
-  swap(_oneof_case_[0], other->_oneof_case_[0]);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  _impl_.repeated_e_.InternalSwap(&other->_impl_.repeated_e_);
+  _impl_.repeated_packed_e_.InternalSwap(&other->_impl_.repeated_packed_e_);
+  _impl_.repeated_packed_unexpected_e_.InternalSwap(&other->_impl_.repeated_packed_unexpected_e_);
+  swap(_impl_.e_, other->_impl_.e_);
+  swap(_impl_.o_, other->_impl_.o_);
+  swap(_impl_._oneof_case_[0], other->_impl_._oneof_case_[0]);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata MyMessage::GetMetadata() const {
-  return ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(
+  return ::_pbi::AssignDescriptors(
       &descriptor_table_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto_getter, &descriptor_table_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto_once,
       file_level_metadata_google_2fprotobuf_2funittest_5fpreserve_5funknown_5fenum2_2eproto[0]);
 }
@@ -564,7 +577,8 @@ void MyMessage::InternalSwap(MyMessage* other) {
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace proto2_preserve_unknown_enum_unittest
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::proto2_preserve_unknown_enum_unittest::MyMessage* Arena::CreateMaybeMessage< ::proto2_preserve_unknown_enum_unittest::MyMessage >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::proto2_preserve_unknown_enum_unittest::MyMessage*
+Arena::CreateMaybeMessage< ::proto2_preserve_unknown_enum_unittest::MyMessage >(Arena* arena) {
   return Arena::CreateMessageInternal< ::proto2_preserve_unknown_enum_unittest::MyMessage >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
