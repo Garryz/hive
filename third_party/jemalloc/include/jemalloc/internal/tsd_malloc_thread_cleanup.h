@@ -21,7 +21,7 @@ tsd_cleanup_wrapper(void) {
 
 JEMALLOC_ALWAYS_INLINE bool
 tsd_boot0(void) {
-	_malloc_tsd_cleanup_register(&tsd_cleanup_wrapper);
+	malloc_tsd_cleanup_register(&tsd_cleanup_wrapper);
 	tsd_booted = true;
 	return false;
 }

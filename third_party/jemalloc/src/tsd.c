@@ -1,13 +1,16 @@
+#define JEMALLOC_TSD_C_
 #include "jemalloc/internal/jemalloc_preamble.h"
 #include "jemalloc/internal/jemalloc_internal_includes.h"
 
 #include "jemalloc/internal/assert.h"
-#include "jemalloc/internal/san.h"
 #include "jemalloc/internal/mutex.h"
 #include "jemalloc/internal/rtree.h"
 
 /******************************************************************************/
 /* Data. */
+
+static unsigned ncleanups;
+static malloc_tsd_cleanup_t cleanups[MALLOC_TSD_CLEANUPS_MAX];
 
 /* TSD_INITIALIZER triggers "-Wmissing-field-initializer" */
 JEMALLOC_DIAGNOSTIC_PUSH
@@ -71,7 +74,7 @@ tsd_in_nominal_list(tsd_t *tsd) {
 	 * out of it here.
 	 */
 	malloc_mutex_lock(TSDN_NULL, &tsd_nominal_tsds_lock);
-	ql_foreach(tsd_list, &tsd_nominal_tsds, TSD_MANGLE(tsd_link)) {
+	ql_foreach(tsd_list, &tsd_nominal_tsds, TSD_MANGLE(tcache).tsd_link) {
 		if (tsd == tsd_list) {
 			found = true;
 			break;
@@ -85,9 +88,9 @@ static void
 tsd_add_nominal(tsd_t *tsd) {
 	assert(!tsd_in_nominal_list(tsd));
 	assert(tsd_state_get(tsd) <= tsd_state_nominal_max);
-	ql_elm_new(tsd, TSD_MANGLE(tsd_link));
+	ql_elm_new(tsd, TSD_MANGLE(tcache).tsd_link);
 	malloc_mutex_lock(tsd_tsdn(tsd), &tsd_nominal_tsds_lock);
-	ql_tail_insert(&tsd_nominal_tsds, tsd, TSD_MANGLE(tsd_link));
+	ql_tail_insert(&tsd_nominal_tsds, tsd, TSD_MANGLE(tcache).tsd_link);
 	malloc_mutex_unlock(tsd_tsdn(tsd), &tsd_nominal_tsds_lock);
 }
 
@@ -96,7 +99,7 @@ tsd_remove_nominal(tsd_t *tsd) {
 	assert(tsd_in_nominal_list(tsd));
 	assert(tsd_state_get(tsd) <= tsd_state_nominal_max);
 	malloc_mutex_lock(tsd_tsdn(tsd), &tsd_nominal_tsds_lock);
-	ql_remove(&tsd_nominal_tsds, tsd, TSD_MANGLE(tsd_link));
+	ql_remove(&tsd_nominal_tsds, tsd, TSD_MANGLE(tcache).tsd_link);
 	malloc_mutex_unlock(tsd_tsdn(tsd), &tsd_nominal_tsds_lock);
 }
 
@@ -109,14 +112,11 @@ tsd_force_recompute(tsdn_t *tsdn) {
 	atomic_fence(ATOMIC_RELEASE);
 	malloc_mutex_lock(tsdn, &tsd_nominal_tsds_lock);
 	tsd_t *remote_tsd;
-	ql_foreach(remote_tsd, &tsd_nominal_tsds, TSD_MANGLE(tsd_link)) {
+	ql_foreach(remote_tsd, &tsd_nominal_tsds, TSD_MANGLE(tcache).tsd_link) {
 		assert(tsd_atomic_load(&remote_tsd->state, ATOMIC_RELAXED)
 		    <= tsd_state_nominal_max);
-		tsd_atomic_store(&remote_tsd->state,
-		    tsd_state_nominal_recompute, ATOMIC_RELAXED);
-		/* See comments in te_recompute_fast_threshold(). */
-		atomic_fence(ATOMIC_SEQ_CST);
-		te_next_event_fast_set_non_nominal(remote_tsd);
+		tsd_atomic_store(&remote_tsd->state, tsd_state_nominal_recompute,
+		    ATOMIC_RELAXED);
 	}
 	malloc_mutex_unlock(tsdn, &tsd_nominal_tsds_lock);
 }
@@ -175,8 +175,6 @@ tsd_slow_update(tsd_t *tsd) {
 		old_state = tsd_atomic_exchange(&tsd->state, new_state,
 		    ATOMIC_ACQUIRE);
 	} while (old_state == tsd_state_nominal_recompute);
-
-	te_recompute_fast_threshold(tsd);
 }
 
 void
@@ -209,26 +207,12 @@ tsd_state_set(tsd_t *tsd, uint8_t new_state) {
 			/*
 			 * This is the tricky case.  We're transitioning from
 			 * one nominal state to another.  The caller can't know
-			 * about any races that are occurring at the same time,
+			 * about any races that are occuring at the same time,
 			 * so we always have to recompute no matter what.
 			 */
 			tsd_slow_update(tsd);
 		}
 	}
-	te_recompute_fast_threshold(tsd);
-}
-
-static void
-tsd_prng_state_init(tsd_t *tsd) {
-	/*
-	 * A nondeterministic seed based on the address of tsd reduces
-	 * the likelihood of lockstep non-uniform cache index
-	 * utilization among identical concurrent processes, but at the
-	 * cost of test repeatability.  For debug builds, instead use a
-	 * deterministic seed.
-	 */
-	*tsd_prng_statep_get(tsd) = config_debug ? 0 :
-	    (uint64_t)(uintptr_t)tsd;
 }
 
 static bool
@@ -238,9 +222,17 @@ tsd_data_init(tsd_t *tsd) {
 	 * tcache initialization depends on it.
 	 */
 	rtree_ctx_data_init(tsd_rtree_ctxp_get_unsafe(tsd));
-	tsd_prng_state_init(tsd);
-	tsd_te_init(tsd); /* event_init may use the prng state above. */
-	tsd_san_init(tsd);
+
+	/*
+	 * A nondeterministic seed based on the address of tsd reduces
+	 * the likelihood of lockstep non-uniform cache index
+	 * utilization among identical concurrent processes, but at the
+	 * cost of test repeatability.  For debug builds, instead use a
+	 * deterministic seed.
+	 */
+	*tsd_offset_statep_get(tsd) = config_debug ? 0 :
+	    (uint64_t)(uintptr_t)tsd;
+
 	return tsd_tcache_enabled_data_init(tsd);
 }
 
@@ -250,6 +242,8 @@ assert_tsd_data_cleanup_done(tsd_t *tsd) {
 	assert(!tsd_in_nominal_list(tsd));
 	assert(*tsd_arenap_get_unsafe(tsd) == NULL);
 	assert(*tsd_iarenap_get_unsafe(tsd) == NULL);
+	assert(*tsd_arenas_tdata_bypassp_get_unsafe(tsd) == true);
+	assert(*tsd_arenas_tdatap_get_unsafe(tsd) == NULL);
 	assert(*tsd_tcache_enabledp_get_unsafe(tsd) == false);
 	assert(*tsd_prof_tdatap_get_unsafe(tsd) == NULL);
 }
@@ -264,11 +258,9 @@ tsd_data_init_nocleanup(tsd_t *tsd) {
 	 * We set up tsd in a way that no cleanup is needed.
 	 */
 	rtree_ctx_data_init(tsd_rtree_ctxp_get_unsafe(tsd));
+	*tsd_arenas_tdata_bypassp_get(tsd) = true;
 	*tsd_tcache_enabledp_get_unsafe(tsd) = false;
 	*tsd_reentrancy_levelp_get(tsd) = 1;
-	tsd_prng_state_init(tsd);
-	tsd_te_init(tsd); /* event_init may use the prng state above. */
-	tsd_san_init(tsd);
 	assert_tsd_data_cleanup_done(tsd);
 
 	return false;
@@ -334,9 +326,6 @@ malloc_tsd_dalloc(void *wrapper) {
 }
 
 #if defined(JEMALLOC_MALLOC_THREAD_CLEANUP) || defined(_WIN32)
-static unsigned ncleanups;
-static malloc_tsd_cleanup_t cleanups[MALLOC_TSD_CLEANUPS_MAX];
-
 #ifndef _WIN32
 JEMALLOC_EXPORT
 #endif
@@ -361,27 +350,23 @@ _malloc_thread_cleanup(void) {
 		}
 	} while (again);
 }
-
-#ifndef _WIN32
-JEMALLOC_EXPORT
 #endif
+
 void
-_malloc_tsd_cleanup_register(bool (*f)(void)) {
+malloc_tsd_cleanup_register(bool (*f)(void)) {
 	assert(ncleanups < MALLOC_TSD_CLEANUPS_MAX);
 	cleanups[ncleanups] = f;
 	ncleanups++;
 }
-
-#endif
 
 static void
 tsd_do_data_cleanup(tsd_t *tsd) {
 	prof_tdata_cleanup(tsd);
 	iarena_cleanup(tsd);
 	arena_cleanup(tsd);
+	arenas_tdata_cleanup(tsd);
 	tcache_cleanup(tsd);
 	witnesses_cleanup(tsd_witness_tsdp_get_unsafe(tsd));
-	*tsd_reentrancy_levelp_get(tsd) = 1;
 }
 
 void
@@ -402,7 +387,7 @@ tsd_cleanup(void *arg) {
 		 * is still called for testing and completeness.
 		 */
 		assert_tsd_data_cleanup_done(tsd);
-		JEMALLOC_FALLTHROUGH;
+		/* Fall through. */
 	case tsd_state_nominal:
 	case tsd_state_nominal_slow:
 		tsd_do_data_cleanup(tsd);
@@ -433,9 +418,7 @@ tsd_t *
 malloc_tsd_boot0(void) {
 	tsd_t *tsd;
 
-#if defined(JEMALLOC_MALLOC_THREAD_CLEANUP) || defined(_WIN32)
 	ncleanups = 0;
-#endif
 	if (malloc_mutex_init(&tsd_nominal_tsds_lock, "tsd_nominal_tsds_lock",
 	    WITNESS_RANK_OMIT, malloc_mutex_rank_exclusive)) {
 		return NULL;
@@ -444,6 +427,7 @@ malloc_tsd_boot0(void) {
 		return NULL;
 	}
 	tsd = tsd_fetch();
+	*tsd_arenas_tdata_bypassp_get(tsd) = true;
 	return tsd;
 }
 
@@ -453,6 +437,7 @@ malloc_tsd_boot1(void) {
 	tsd_t *tsd = tsd_fetch();
 	/* malloc_slow has been set properly.  Update tsd_slow. */
 	tsd_slow_update(tsd);
+	*tsd_arenas_tdata_bypassp_get(tsd) = false;
 }
 
 #ifdef _WIN32

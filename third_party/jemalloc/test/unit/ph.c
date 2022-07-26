@@ -3,12 +3,11 @@
 #include "jemalloc/internal/ph.h"
 
 typedef struct node_s node_t;
-ph_structs(heap, node_t);
 
 struct node_s {
 #define NODE_MAGIC 0x9823af7e
 	uint32_t magic;
-	heap_link_t link;
+	phn(node_t) link;
 	uint64_t key;
 };
 
@@ -31,28 +30,14 @@ node_cmp(const node_t *a, const node_t *b) {
 static int
 node_cmp_magic(const node_t *a, const node_t *b) {
 
-	expect_u32_eq(a->magic, NODE_MAGIC, "Bad magic");
-	expect_u32_eq(b->magic, NODE_MAGIC, "Bad magic");
+	assert_u32_eq(a->magic, NODE_MAGIC, "Bad magic");
+	assert_u32_eq(b->magic, NODE_MAGIC, "Bad magic");
 
 	return node_cmp(a, b);
 }
 
-ph_gen(static, heap, node_t, link, node_cmp_magic);
-
-static node_t *
-node_next_get(const node_t *node) {
-	return phn_next_get((node_t *)node, offsetof(node_t, link));
-}
-
-static node_t *
-node_prev_get(const node_t *node) {
-	return phn_prev_get((node_t *)node, offsetof(node_t, link));
-}
-
-static node_t *
-node_lchild_get(const node_t *node) {
-	return phn_lchild_get((node_t *)node, offsetof(node_t, link));
-}
+typedef ph(node_t) heap_t;
+ph_gen(static, heap_, heap_t, node_t, link, node_cmp_magic);
 
 static void
 node_print(const node_t *node, unsigned depth) {
@@ -64,14 +49,14 @@ node_print(const node_t *node, unsigned depth) {
 	}
 	malloc_printf("%2"FMTu64"\n", node->key);
 
-	leftmost_child = node_lchild_get(node);
+	leftmost_child = phn_lchild_get(node_t, link, node);
 	if (leftmost_child == NULL) {
 		return;
 	}
 	node_print(leftmost_child, depth + 1);
 
-	for (sibling = node_next_get(leftmost_child); sibling !=
-	    NULL; sibling = node_next_get(sibling)) {
+	for (sibling = phn_next_get(node_t, link, leftmost_child); sibling !=
+	    NULL; sibling = phn_next_get(node_t, link, sibling)) {
 		node_print(sibling, depth + 1);
 	}
 }
@@ -81,15 +66,16 @@ heap_print(const heap_t *heap) {
 	node_t *auxelm;
 
 	malloc_printf("vvv heap %p vvv\n", heap);
-	if (heap->ph.root == NULL) {
+	if (heap->ph_root == NULL) {
 		goto label_return;
 	}
 
-	node_print(heap->ph.root, 0);
+	node_print(heap->ph_root, 0);
 
-	for (auxelm = node_next_get(heap->ph.root); auxelm != NULL;
-	    auxelm = node_next_get(auxelm)) {
-		expect_ptr_eq(node_next_get(node_prev_get(auxelm)), auxelm,
+	for (auxelm = phn_next_get(node_t, link, heap->ph_root); auxelm != NULL;
+	    auxelm = phn_next_get(node_t, link, auxelm)) {
+		assert_ptr_eq(phn_next_get(node_t, link, phn_prev_get(node_t,
+		    link, auxelm)), auxelm,
 		    "auxelm's prev doesn't link to auxelm");
 		node_print(auxelm, 0);
 	}
@@ -104,21 +90,22 @@ node_validate(const node_t *node, const node_t *parent) {
 	node_t *leftmost_child, *sibling;
 
 	if (parent != NULL) {
-		expect_d_ge(node_cmp_magic(node, parent), 0,
+		assert_d_ge(node_cmp_magic(node, parent), 0,
 		    "Child is less than parent");
 	}
 
-	leftmost_child = node_lchild_get(node);
+	leftmost_child = phn_lchild_get(node_t, link, node);
 	if (leftmost_child == NULL) {
 		return nnodes;
 	}
-	expect_ptr_eq(node_prev_get(leftmost_child),
+	assert_ptr_eq((void *)phn_prev_get(node_t, link, leftmost_child),
 	    (void *)node, "Leftmost child does not link to node");
 	nnodes += node_validate(leftmost_child, node);
 
-	for (sibling = node_next_get(leftmost_child); sibling !=
-	    NULL; sibling = node_next_get(sibling)) {
-		expect_ptr_eq(node_next_get(node_prev_get(sibling)), sibling,
+	for (sibling = phn_next_get(node_t, link, leftmost_child); sibling !=
+	    NULL; sibling = phn_next_get(node_t, link, sibling)) {
+		assert_ptr_eq(phn_next_get(node_t, link, phn_prev_get(node_t,
+		    link, sibling)), sibling,
 		    "sibling's prev doesn't link to sibling");
 		nnodes += node_validate(sibling, node);
 	}
@@ -130,15 +117,16 @@ heap_validate(const heap_t *heap) {
 	unsigned nnodes = 0;
 	node_t *auxelm;
 
-	if (heap->ph.root == NULL) {
+	if (heap->ph_root == NULL) {
 		goto label_return;
 	}
 
-	nnodes += node_validate(heap->ph.root, NULL);
+	nnodes += node_validate(heap->ph_root, NULL);
 
-	for (auxelm = node_next_get(heap->ph.root); auxelm != NULL;
-	    auxelm = node_next_get(auxelm)) {
-		expect_ptr_eq(node_next_get(node_prev_get(auxelm)), auxelm,
+	for (auxelm = phn_next_get(node_t, link, heap->ph_root); auxelm != NULL;
+	    auxelm = phn_next_get(node_t, link, auxelm)) {
+		assert_ptr_eq(phn_next_get(node_t, link, phn_prev_get(node_t,
+		    link, auxelm)), auxelm,
 		    "auxelm's prev doesn't link to auxelm");
 		nnodes += node_validate(auxelm, NULL);
 	}
@@ -154,9 +142,9 @@ TEST_BEGIN(test_ph_empty) {
 	heap_t heap;
 
 	heap_new(&heap);
-	expect_true(heap_empty(&heap), "Heap should be empty");
-	expect_ptr_null(heap_first(&heap), "Unexpected node");
-	expect_ptr_null(heap_any(&heap), "Unexpected node");
+	assert_true(heap_empty(&heap), "Heap should be empty");
+	assert_ptr_null(heap_first(&heap), "Unexpected node");
+	assert_ptr_null(heap_any(&heap), "Unexpected node");
 }
 TEST_END
 
@@ -215,7 +203,7 @@ TEST_BEGIN(test_ph_random) {
 		for (j = 1; j <= NNODES; j++) {
 			/* Initialize heap and nodes. */
 			heap_new(&heap);
-			expect_u_eq(heap_validate(&heap), 0,
+			assert_u_eq(heap_validate(&heap), 0,
 			    "Incorrect node count");
 			for (k = 0; k < j; k++) {
 				nodes[k].magic = NODE_MAGIC;
@@ -226,34 +214,34 @@ TEST_BEGIN(test_ph_random) {
 			for (k = 0; k < j; k++) {
 				heap_insert(&heap, &nodes[k]);
 				if (i % 13 == 12) {
-					expect_ptr_not_null(heap_any(&heap),
+					assert_ptr_not_null(heap_any(&heap),
 					    "Heap should not be empty");
 					/* Trigger merging. */
-					expect_ptr_not_null(heap_first(&heap),
+					assert_ptr_not_null(heap_first(&heap),
 					    "Heap should not be empty");
 				}
-				expect_u_eq(heap_validate(&heap), k + 1,
+				assert_u_eq(heap_validate(&heap), k + 1,
 				    "Incorrect node count");
 			}
 
-			expect_false(heap_empty(&heap),
+			assert_false(heap_empty(&heap),
 			    "Heap should not be empty");
 
 			/* Remove nodes. */
 			switch (i % 6) {
 			case 0:
 				for (k = 0; k < j; k++) {
-					expect_u_eq(heap_validate(&heap), j - k,
+					assert_u_eq(heap_validate(&heap), j - k,
 					    "Incorrect node count");
 					node_remove(&heap, &nodes[k]);
-					expect_u_eq(heap_validate(&heap), j - k
+					assert_u_eq(heap_validate(&heap), j - k
 					    - 1, "Incorrect node count");
 				}
 				break;
 			case 1:
 				for (k = j; k > 0; k--) {
 					node_remove(&heap, &nodes[k-1]);
-					expect_u_eq(heap_validate(&heap), k - 1,
+					assert_u_eq(heap_validate(&heap), k - 1,
 					    "Incorrect node count");
 				}
 				break;
@@ -261,10 +249,10 @@ TEST_BEGIN(test_ph_random) {
 				node_t *prev = NULL;
 				for (k = 0; k < j; k++) {
 					node_t *node = node_remove_first(&heap);
-					expect_u_eq(heap_validate(&heap), j - k
+					assert_u_eq(heap_validate(&heap), j - k
 					    - 1, "Incorrect node count");
 					if (prev != NULL) {
-						expect_d_ge(node_cmp(node,
+						assert_d_ge(node_cmp(node,
 						    prev), 0,
 						    "Bad removal order");
 					}
@@ -275,15 +263,15 @@ TEST_BEGIN(test_ph_random) {
 				node_t *prev = NULL;
 				for (k = 0; k < j; k++) {
 					node_t *node = heap_first(&heap);
-					expect_u_eq(heap_validate(&heap), j - k,
+					assert_u_eq(heap_validate(&heap), j - k,
 					    "Incorrect node count");
 					if (prev != NULL) {
-						expect_d_ge(node_cmp(node,
+						assert_d_ge(node_cmp(node,
 						    prev), 0,
 						    "Bad removal order");
 					}
 					node_remove(&heap, node);
-					expect_u_eq(heap_validate(&heap), j - k
+					assert_u_eq(heap_validate(&heap), j - k
 					    - 1, "Incorrect node count");
 					prev = node;
 				}
@@ -291,17 +279,17 @@ TEST_BEGIN(test_ph_random) {
 			} case 4: {
 				for (k = 0; k < j; k++) {
 					node_remove_any(&heap);
-					expect_u_eq(heap_validate(&heap), j - k
+					assert_u_eq(heap_validate(&heap), j - k
 					    - 1, "Incorrect node count");
 				}
 				break;
 			} case 5: {
 				for (k = 0; k < j; k++) {
 					node_t *node = heap_any(&heap);
-					expect_u_eq(heap_validate(&heap), j - k,
+					assert_u_eq(heap_validate(&heap), j - k,
 					    "Incorrect node count");
 					node_remove(&heap, node);
-					expect_u_eq(heap_validate(&heap), j - k
+					assert_u_eq(heap_validate(&heap), j - k
 					    - 1, "Incorrect node count");
 				}
 				break;
@@ -309,11 +297,11 @@ TEST_BEGIN(test_ph_random) {
 				not_reached();
 			}
 
-			expect_ptr_null(heap_first(&heap),
+			assert_ptr_null(heap_first(&heap),
 			    "Heap should be empty");
-			expect_ptr_null(heap_any(&heap),
+			assert_ptr_null(heap_any(&heap),
 			    "Heap should be empty");
-			expect_true(heap_empty(&heap), "Heap should be empty");
+			assert_true(heap_empty(&heap), "Heap should be empty");
 		}
 	}
 	fini_gen_rand(sfmt);

@@ -1,3 +1,4 @@
+#define JEMALLOC_EXTENT_DSS_C_
 #include "jemalloc/internal/jemalloc_preamble.h"
 #include "jemalloc/internal/jemalloc_internal_includes.h"
 
@@ -108,7 +109,7 @@ extent_dss_max_update(void *new_addr) {
 void *
 extent_alloc_dss(tsdn_t *tsdn, arena_t *arena, void *new_addr, size_t size,
     size_t alignment, bool *zero, bool *commit) {
-	edata_t *gap;
+	extent_t *gap;
 
 	cassert(have_dss);
 	assert(size > 0);
@@ -122,7 +123,7 @@ extent_alloc_dss(tsdn_t *tsdn, arena_t *arena, void *new_addr, size_t size,
 		return NULL;
 	}
 
-	gap = edata_cache_get(tsdn, &arena->pa_shard.edata_cache);
+	gap = extent_alloc(tsdn, arena);
 	if (gap == NULL) {
 		return NULL;
 	}
@@ -140,8 +141,6 @@ extent_alloc_dss(tsdn_t *tsdn, arena_t *arena, void *new_addr, size_t size,
 				goto label_oom;
 			}
 
-			bool head_state = opt_retain ? EXTENT_IS_HEAD :
-			    EXTENT_NOT_HEAD;
 			/*
 			 * Compute how much page-aligned gap space (if any) is
 			 * necessary to satisfy alignment.  This space can be
@@ -154,12 +153,11 @@ extent_alloc_dss(tsdn_t *tsdn, arena_t *arena, void *new_addr, size_t size,
 			size_t gap_size_page = (uintptr_t)ret -
 			    (uintptr_t)gap_addr_page;
 			if (gap_size_page != 0) {
-				edata_init(gap, arena_ind_get(arena),
-				    gap_addr_page, gap_size_page, false,
-				    SC_NSIZES, extent_sn_next(
-					&arena->pa_shard.pac),
-				    extent_state_active, false, true,
-				    EXTENT_PAI_PAC, head_state);
+				extent_init(gap, arena, gap_addr_page,
+				    gap_size_page, false, SC_NSIZES,
+				    arena_extent_sn_next(arena),
+				    extent_state_active, false, true, true,
+				    EXTENT_NOT_HEAD);
 			}
 			/*
 			 * Compute the address just past the end of the desired
@@ -188,29 +186,25 @@ extent_alloc_dss(tsdn_t *tsdn, arena_t *arena, void *new_addr, size_t size,
 				extent_dss_extending_finish();
 
 				if (gap_size_page != 0) {
-					ehooks_t *ehooks = arena_get_ehooks(
-					    arena);
-					extent_dalloc_gap(tsdn,
-					    &arena->pa_shard.pac, ehooks, gap);
+					extent_dalloc_gap(tsdn, arena, gap);
 				} else {
-					edata_cache_put(tsdn,
-					    &arena->pa_shard.edata_cache, gap);
+					extent_dalloc(tsdn, arena, gap);
 				}
 				if (!*commit) {
 					*commit = pages_decommit(ret, size);
 				}
 				if (*zero && *commit) {
-					edata_t edata = {0};
-					ehooks_t *ehooks = arena_get_ehooks(
-					    arena);
+					extent_hooks_t *extent_hooks =
+					    EXTENT_HOOKS_INITIALIZER;
+					extent_t extent;
 
-					edata_init(&edata,
-					    arena_ind_get(arena), ret, size,
+					extent_init(&extent, arena, ret, size,
 					    size, false, SC_NSIZES,
 					    extent_state_active, false, true,
-					    EXTENT_PAI_PAC, head_state);
+					    true, EXTENT_NOT_HEAD);
 					if (extent_purge_forced_wrapper(tsdn,
-					    ehooks, &edata, 0, size)) {
+					    arena, &extent_hooks, &extent, 0,
+					    size)) {
 						memset(ret, 0, size);
 					}
 				}
@@ -230,7 +224,7 @@ extent_alloc_dss(tsdn_t *tsdn, arena_t *arena, void *new_addr, size_t size,
 	}
 label_oom:
 	extent_dss_extending_finish();
-	edata_cache_put(tsdn, &arena->pa_shard.edata_cache, gap);
+	extent_dalloc(tsdn, arena, gap);
 	return NULL;
 }
 

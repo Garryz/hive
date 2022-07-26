@@ -1,3 +1,4 @@
+#define JEMALLOC_MALLOC_IO_C_
 #include "jemalloc/internal/jemalloc_preamble.h"
 #include "jemalloc/internal/jemalloc_internal_includes.h"
 
@@ -52,6 +53,7 @@
 /******************************************************************************/
 /* Function prototypes for non-inline static functions. */
 
+static void wrtmessage(void *cbopaque, const char *s);
 #define U2S_BUFSIZE ((1U << (LG_SIZEOF_INTMAX_T + 3)) + 1)
 static char *u2s(uintmax_t x, unsigned base, bool uppercase, char *s,
     size_t *slen_p);
@@ -66,7 +68,7 @@ static char *x2s(uintmax_t x, bool alt_form, bool uppercase, char *s,
 /******************************************************************************/
 
 /* malloc_message() setup. */
-void
+static void
 wrtmessage(void *cbopaque, const char *s) {
 	malloc_write_fd(STDERR_FILENO, s, strlen(s));
 }
@@ -133,10 +135,10 @@ malloc_strtoumax(const char *restrict nptr, char **restrict endptr, int base) {
 			break;
 		case '-':
 			neg = true;
-			JEMALLOC_FALLTHROUGH;
+			/* Fall through. */
 		case '+':
 			p++;
-			JEMALLOC_FALLTHROUGH;
+			/* Fall through. */
 		default:
 			goto label_prefix;
 		}
@@ -287,7 +289,7 @@ d2s(intmax_t x, char sign, char *s, size_t *slen_p) {
 		if (!neg) {
 			break;
 		}
-		JEMALLOC_FALLTHROUGH;
+		/* Fall through. */
 	case ' ':
 	case '+':
 		s--;
@@ -321,7 +323,6 @@ x2s(uintmax_t x, bool alt_form, bool uppercase, char *s, size_t *slen_p) {
 	return s;
 }
 
-JEMALLOC_COLD
 size_t
 malloc_vsnprintf(char *str, size_t size, const char *format, va_list ap) {
 	size_t i;
@@ -347,11 +348,7 @@ malloc_vsnprintf(char *str, size_t size, const char *format, va_list ap) {
 	if (!left_justify && pad_len != 0) {				\
 		size_t j;						\
 		for (j = 0; j < pad_len; j++) {				\
-			if (pad_zero) {					\
-				APPEND_C('0');				\
-			} else {					\
-				APPEND_C(' ');				\
-			}						\
+			APPEND_C(' ');					\
 		}							\
 	}								\
 	/* Value. */							\
@@ -423,8 +420,6 @@ malloc_vsnprintf(char *str, size_t size, const char *format, va_list ap) {
 			unsigned char len = '?';
 			char *s;
 			size_t slen;
-			bool first_width_digit = true;
-			bool pad_zero = false;
 
 			f++;
 			/* Flags. */
@@ -461,12 +456,7 @@ malloc_vsnprintf(char *str, size_t size, const char *format, va_list ap) {
 					width = -width;
 				}
 				break;
-			case '0':
-				if (first_width_digit) {
-					pad_zero = true;
-				}
-				JEMALLOC_FALLTHROUGH;
-			case '1': case '2': case '3': case '4':
+			case '0': case '1': case '2': case '3': case '4':
 			case '5': case '6': case '7': case '8': case '9': {
 				uintmax_t uwidth;
 				set_errno(0);
@@ -474,7 +464,6 @@ malloc_vsnprintf(char *str, size_t size, const char *format, va_list ap) {
 				assert(uwidth != UINTMAX_MAX || get_errno() !=
 				    ERANGE);
 				width = (int)uwidth;
-				first_width_digit = false;
 				break;
 			} default:
 				break;
@@ -531,18 +520,6 @@ malloc_vsnprintf(char *str, size_t size, const char *format, va_list ap) {
 			case 'd': case 'i': {
 				intmax_t val JEMALLOC_CC_SILENCE_INIT(0);
 				char buf[D2S_BUFSIZE];
-
-				/*
-				 * Outputting negative, zero-padded numbers
-				 * would require a nontrivial rework of the
-				 * interaction between the width and padding
-				 * (since 0 padding goes between the '-' and the
-				 * number, while ' ' padding goes either before
-				 * the - or after the number.  Since we
-				 * currently don't ever need 0-padded negative
-				 * numbers, just don't bother supporting it.
-				 */
-				assert(!pad_zero);
 
 				GET_ARG_NUMERIC(val, len);
 				s = d2s(val, (plus_plus ? '+' : (plus_space ?
@@ -643,8 +620,8 @@ malloc_snprintf(char *str, size_t size, const char *format, ...) {
 }
 
 void
-malloc_vcprintf(write_cb_t *write_cb, void *cbopaque, const char *format,
-    va_list ap) {
+malloc_vcprintf(void (*write_cb)(void *, const char *), void *cbopaque,
+    const char *format, va_list ap) {
 	char buf[MALLOC_PRINTF_BUFSIZE];
 
 	if (write_cb == NULL) {
@@ -667,7 +644,8 @@ malloc_vcprintf(write_cb_t *write_cb, void *cbopaque, const char *format,
  */
 JEMALLOC_FORMAT_PRINTF(3, 4)
 void
-malloc_cprintf(write_cb_t *write_cb, void *cbopaque, const char *format, ...) {
+malloc_cprintf(void (*write_cb)(void *, const char *), void *cbopaque,
+    const char *format, ...) {
 	va_list ap;
 
 	va_start(ap, format);

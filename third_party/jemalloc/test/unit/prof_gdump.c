@@ -1,11 +1,9 @@
 #include "test/jemalloc_test.h"
 
-#include "jemalloc/internal/prof_sys.h"
-
 static bool did_prof_dump_open;
 
 static int
-prof_dump_open_file_intercept(const char *filename, int mode) {
+prof_dump_open_intercept(bool propagate_err, const char *filename) {
 	int fd;
 
 	did_prof_dump_open = true;
@@ -17,7 +15,6 @@ prof_dump_open_file_intercept(const char *filename, int mode) {
 }
 
 TEST_BEGIN(test_gdump) {
-	test_skip_if(opt_hpa);
 	bool active, gdump, gdump_old;
 	void *p, *q, *r, *s;
 	size_t sz;
@@ -25,43 +22,43 @@ TEST_BEGIN(test_gdump) {
 	test_skip_if(!config_prof);
 
 	active = true;
-	expect_d_eq(mallctl("prof.active", NULL, NULL, (void *)&active,
+	assert_d_eq(mallctl("prof.active", NULL, NULL, (void *)&active,
 	    sizeof(active)), 0,
 	    "Unexpected mallctl failure while activating profiling");
 
-	prof_dump_open_file = prof_dump_open_file_intercept;
+	prof_dump_open = prof_dump_open_intercept;
 
 	did_prof_dump_open = false;
 	p = mallocx((1U << SC_LG_LARGE_MINCLASS), 0);
-	expect_ptr_not_null(p, "Unexpected mallocx() failure");
-	expect_true(did_prof_dump_open, "Expected a profile dump");
+	assert_ptr_not_null(p, "Unexpected mallocx() failure");
+	assert_true(did_prof_dump_open, "Expected a profile dump");
 
 	did_prof_dump_open = false;
 	q = mallocx((1U << SC_LG_LARGE_MINCLASS), 0);
-	expect_ptr_not_null(q, "Unexpected mallocx() failure");
-	expect_true(did_prof_dump_open, "Expected a profile dump");
+	assert_ptr_not_null(q, "Unexpected mallocx() failure");
+	assert_true(did_prof_dump_open, "Expected a profile dump");
 
 	gdump = false;
 	sz = sizeof(gdump_old);
-	expect_d_eq(mallctl("prof.gdump", (void *)&gdump_old, &sz,
+	assert_d_eq(mallctl("prof.gdump", (void *)&gdump_old, &sz,
 	    (void *)&gdump, sizeof(gdump)), 0,
 	    "Unexpected mallctl failure while disabling prof.gdump");
 	assert(gdump_old);
 	did_prof_dump_open = false;
 	r = mallocx((1U << SC_LG_LARGE_MINCLASS), 0);
-	expect_ptr_not_null(q, "Unexpected mallocx() failure");
-	expect_false(did_prof_dump_open, "Unexpected profile dump");
+	assert_ptr_not_null(q, "Unexpected mallocx() failure");
+	assert_false(did_prof_dump_open, "Unexpected profile dump");
 
 	gdump = true;
 	sz = sizeof(gdump_old);
-	expect_d_eq(mallctl("prof.gdump", (void *)&gdump_old, &sz,
+	assert_d_eq(mallctl("prof.gdump", (void *)&gdump_old, &sz,
 	    (void *)&gdump, sizeof(gdump)), 0,
 	    "Unexpected mallctl failure while enabling prof.gdump");
 	assert(!gdump_old);
 	did_prof_dump_open = false;
 	s = mallocx((1U << SC_LG_LARGE_MINCLASS), 0);
-	expect_ptr_not_null(q, "Unexpected mallocx() failure");
-	expect_true(did_prof_dump_open, "Expected a profile dump");
+	assert_ptr_not_null(q, "Unexpected mallocx() failure");
+	assert_true(did_prof_dump_open, "Expected a profile dump");
 
 	dallocx(p, 0);
 	dallocx(q, 0);

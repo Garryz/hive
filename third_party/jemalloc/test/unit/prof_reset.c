@@ -1,10 +1,7 @@
 #include "test/jemalloc_test.h"
 
-#include "jemalloc/internal/prof_data.h"
-#include "jemalloc/internal/prof_sys.h"
-
 static int
-prof_dump_open_file_intercept(const char *filename, int mode) {
+prof_dump_open_intercept(bool propagate_err, const char *filename) {
 	int fd;
 
 	fd = open("/dev/null", O_WRONLY);
@@ -15,53 +12,54 @@ prof_dump_open_file_intercept(const char *filename, int mode) {
 
 static void
 set_prof_active(bool active) {
-	expect_d_eq(mallctl("prof.active", NULL, NULL, (void *)&active,
+	assert_d_eq(mallctl("prof.active", NULL, NULL, (void *)&active,
 	    sizeof(active)), 0, "Unexpected mallctl failure");
 }
 
 static size_t
 get_lg_prof_sample(void) {
-	size_t ret;
+	size_t lg_prof_sample;
 	size_t sz = sizeof(size_t);
 
-	expect_d_eq(mallctl("prof.lg_sample", (void *)&ret, &sz, NULL, 0), 0,
+	assert_d_eq(mallctl("prof.lg_sample", (void *)&lg_prof_sample, &sz,
+	    NULL, 0), 0,
 	    "Unexpected mallctl failure while reading profiling sample rate");
-	return ret;
+	return lg_prof_sample;
 }
 
 static void
-do_prof_reset(size_t lg_prof_sample_input) {
-	expect_d_eq(mallctl("prof.reset", NULL, NULL,
-	    (void *)&lg_prof_sample_input, sizeof(size_t)), 0,
+do_prof_reset(size_t lg_prof_sample) {
+	assert_d_eq(mallctl("prof.reset", NULL, NULL,
+	    (void *)&lg_prof_sample, sizeof(size_t)), 0,
 	    "Unexpected mallctl failure while resetting profile data");
-	expect_zu_eq(lg_prof_sample_input, get_lg_prof_sample(),
+	assert_zu_eq(lg_prof_sample, get_lg_prof_sample(),
 	    "Expected profile sample rate change");
 }
 
 TEST_BEGIN(test_prof_reset_basic) {
-	size_t lg_prof_sample_orig, lg_prof_sample_cur, lg_prof_sample_next;
+	size_t lg_prof_sample_orig, lg_prof_sample, lg_prof_sample_next;
 	size_t sz;
 	unsigned i;
 
 	test_skip_if(!config_prof);
 
 	sz = sizeof(size_t);
-	expect_d_eq(mallctl("opt.lg_prof_sample", (void *)&lg_prof_sample_orig,
+	assert_d_eq(mallctl("opt.lg_prof_sample", (void *)&lg_prof_sample_orig,
 	    &sz, NULL, 0), 0,
 	    "Unexpected mallctl failure while reading profiling sample rate");
-	expect_zu_eq(lg_prof_sample_orig, 0,
+	assert_zu_eq(lg_prof_sample_orig, 0,
 	    "Unexpected profiling sample rate");
-	lg_prof_sample_cur = get_lg_prof_sample();
-	expect_zu_eq(lg_prof_sample_orig, lg_prof_sample_cur,
+	lg_prof_sample = get_lg_prof_sample();
+	assert_zu_eq(lg_prof_sample_orig, lg_prof_sample,
 	    "Unexpected disagreement between \"opt.lg_prof_sample\" and "
 	    "\"prof.lg_sample\"");
 
 	/* Test simple resets. */
 	for (i = 0; i < 2; i++) {
-		expect_d_eq(mallctl("prof.reset", NULL, NULL, NULL, 0), 0,
+		assert_d_eq(mallctl("prof.reset", NULL, NULL, NULL, 0), 0,
 		    "Unexpected mallctl failure while resetting profile data");
-		lg_prof_sample_cur = get_lg_prof_sample();
-		expect_zu_eq(lg_prof_sample_orig, lg_prof_sample_cur,
+		lg_prof_sample = get_lg_prof_sample();
+		assert_zu_eq(lg_prof_sample_orig, lg_prof_sample,
 		    "Unexpected profile sample rate change");
 	}
 
@@ -69,42 +67,64 @@ TEST_BEGIN(test_prof_reset_basic) {
 	lg_prof_sample_next = 1;
 	for (i = 0; i < 2; i++) {
 		do_prof_reset(lg_prof_sample_next);
-		lg_prof_sample_cur = get_lg_prof_sample();
-		expect_zu_eq(lg_prof_sample_cur, lg_prof_sample_next,
+		lg_prof_sample = get_lg_prof_sample();
+		assert_zu_eq(lg_prof_sample, lg_prof_sample_next,
 		    "Expected profile sample rate change");
 		lg_prof_sample_next = lg_prof_sample_orig;
 	}
 
 	/* Make sure the test code restored prof.lg_sample. */
-	lg_prof_sample_cur = get_lg_prof_sample();
-	expect_zu_eq(lg_prof_sample_orig, lg_prof_sample_cur,
+	lg_prof_sample = get_lg_prof_sample();
+	assert_zu_eq(lg_prof_sample_orig, lg_prof_sample,
 	    "Unexpected disagreement between \"opt.lg_prof_sample\" and "
 	    "\"prof.lg_sample\"");
 }
 TEST_END
 
+bool prof_dump_header_intercepted = false;
+prof_cnt_t cnt_all_copy = {0, 0, 0, 0};
+static bool
+prof_dump_header_intercept(tsdn_t *tsdn, bool propagate_err,
+    const prof_cnt_t *cnt_all) {
+	prof_dump_header_intercepted = true;
+	memcpy(&cnt_all_copy, cnt_all, sizeof(prof_cnt_t));
+
+	return false;
+}
+
 TEST_BEGIN(test_prof_reset_cleanup) {
+	void *p;
+	prof_dump_header_t *prof_dump_header_orig;
+
 	test_skip_if(!config_prof);
 
 	set_prof_active(true);
 
-	expect_zu_eq(prof_bt_count(), 0, "Expected 0 backtraces");
-	void *p = mallocx(1, 0);
-	expect_ptr_not_null(p, "Unexpected mallocx() failure");
-	expect_zu_eq(prof_bt_count(), 1, "Expected 1 backtrace");
+	assert_zu_eq(prof_bt_count(), 0, "Expected 0 backtraces");
+	p = mallocx(1, 0);
+	assert_ptr_not_null(p, "Unexpected mallocx() failure");
+	assert_zu_eq(prof_bt_count(), 1, "Expected 1 backtrace");
 
-	prof_cnt_t cnt_all;
-	prof_cnt_all(&cnt_all);
-	expect_u64_eq(cnt_all.curobjs, 1, "Expected 1 allocation");
+	prof_dump_header_orig = prof_dump_header;
+	prof_dump_header = prof_dump_header_intercept;
+	assert_false(prof_dump_header_intercepted, "Unexpected intercept");
 
-	expect_d_eq(mallctl("prof.reset", NULL, NULL, NULL, 0), 0,
+	assert_d_eq(mallctl("prof.dump", NULL, NULL, NULL, 0),
+	    0, "Unexpected error while dumping heap profile");
+	assert_true(prof_dump_header_intercepted, "Expected intercept");
+	assert_u64_eq(cnt_all_copy.curobjs, 1, "Expected 1 allocation");
+
+	assert_d_eq(mallctl("prof.reset", NULL, NULL, NULL, 0), 0,
 	    "Unexpected error while resetting heap profile data");
-	prof_cnt_all(&cnt_all);
-	expect_u64_eq(cnt_all.curobjs, 0, "Expected 0 allocations");
-	expect_zu_eq(prof_bt_count(), 1, "Expected 1 backtrace");
+	assert_d_eq(mallctl("prof.dump", NULL, NULL, NULL, 0),
+	    0, "Unexpected error while dumping heap profile");
+	assert_u64_eq(cnt_all_copy.curobjs, 0, "Expected 0 allocations");
+	assert_zu_eq(prof_bt_count(), 1, "Expected 1 backtrace");
+
+	prof_dump_header = prof_dump_header_orig;
 
 	dallocx(p, 0);
-	expect_zu_eq(prof_bt_count(), 0, "Expected 0 backtraces");
+	assert_zu_eq(prof_bt_count(), 0, "Expected 0 backtraces");
 
 	set_prof_active(false);
 }
@@ -125,13 +145,13 @@ thd_start(void *varg) {
 
 	for (i = 0; i < NALLOCS_PER_THREAD; i++) {
 		if (i % RESET_INTERVAL == 0) {
-			expect_d_eq(mallctl("prof.reset", NULL, NULL, NULL, 0),
+			assert_d_eq(mallctl("prof.reset", NULL, NULL, NULL, 0),
 			    0, "Unexpected error while resetting heap profile "
 			    "data");
 		}
 
 		if (i % DUMP_INTERVAL == 0) {
-			expect_d_eq(mallctl("prof.dump", NULL, NULL, NULL, 0),
+			assert_d_eq(mallctl("prof.dump", NULL, NULL, NULL, 0),
 			    0, "Unexpected error while dumping heap profile");
 		}
 
@@ -142,7 +162,7 @@ thd_start(void *varg) {
 				*pp = NULL;
 			}
 			*pp = btalloc(1, thd_ind*NALLOCS_PER_THREAD + i);
-			expect_ptr_not_null(*pp,
+			assert_ptr_not_null(*pp,
 			    "Unexpected btalloc() failure");
 		}
 	}
@@ -169,7 +189,7 @@ TEST_BEGIN(test_prof_reset) {
 	test_skip_if(!config_prof);
 
 	bt_count = prof_bt_count();
-	expect_zu_eq(bt_count, 0,
+	assert_zu_eq(bt_count, 0,
 	    "Unexpected pre-existing tdata structures");
 	tdata_count = prof_tdata_count();
 
@@ -186,9 +206,9 @@ TEST_BEGIN(test_prof_reset) {
 		thd_join(thds[i], NULL);
 	}
 
-	expect_zu_eq(prof_bt_count(), bt_count,
+	assert_zu_eq(prof_bt_count(), bt_count,
 	    "Unexpected bactrace count change");
-	expect_zu_eq(prof_tdata_count(), tdata_count,
+	assert_zu_eq(prof_tdata_count(), tdata_count,
 	    "Unexpected remaining tdata structures");
 
 	set_prof_active(false);
@@ -226,19 +246,19 @@ TEST_BEGIN(test_xallocx) {
 
 		/* Allocate small object (which will be promoted). */
 		p = ptrs[i] = mallocx(1, 0);
-		expect_ptr_not_null(p, "Unexpected mallocx() failure");
+		assert_ptr_not_null(p, "Unexpected mallocx() failure");
 
 		/* Reset profiling. */
 		do_prof_reset(0);
 
 		/* Perform successful xallocx(). */
 		sz = sallocx(p, 0);
-		expect_zu_eq(xallocx(p, sz, 0, 0), sz,
+		assert_zu_eq(xallocx(p, sz, 0, 0), sz,
 		    "Unexpected xallocx() failure");
 
 		/* Perform unsuccessful xallocx(). */
 		nsz = nallocx(sz+1, 0);
-		expect_zu_eq(xallocx(p, nsz, 0, 0), sz,
+		assert_zu_eq(xallocx(p, nsz, 0, 0), sz,
 		    "Unexpected xallocx() success");
 	}
 
@@ -256,7 +276,7 @@ TEST_END
 int
 main(void) {
 	/* Intercept dumping prior to running any tests. */
-	prof_dump_open_file = prof_dump_open_file_intercept;
+	prof_dump_open = prof_dump_open_intercept;
 
 	return test_no_reentrancy(
 	    test_prof_reset_basic,
