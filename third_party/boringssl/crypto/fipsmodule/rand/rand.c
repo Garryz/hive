@@ -23,6 +23,7 @@
 #endif
 
 #include <openssl/chacha.h>
+#include <openssl/cpu.h>
 #include <openssl/mem.h>
 #include <openssl/type_check.h>
 
@@ -170,11 +171,11 @@ void CRYPTO_get_seed_entropy(uint8_t *out_entropy, size_t out_entropy_len,
     CRYPTO_sysrand_for_seed(out_entropy, out_entropy_len);
   }
 
-  if (boringssl_fips_break_test("CRNG")) {
-    // This breaks the "continuous random number generator test" defined in FIPS
-    // 140-2, section 4.9.2, and implemented in |rand_get_seed|.
-    OPENSSL_memset(out_entropy, 0, out_entropy_len);
-  }
+#if defined(BORINGSSL_FIPS_BREAK_CRNG)
+  // This breaks the "continuous random number generator test" defined in FIPS
+  // 140-2, section 4.9.2, and implemented in |rand_get_seed|.
+  OPENSSL_memset(out_entropy, 0, out_entropy_len);
+#endif
 }
 
 // In passive entropy mode, entropy is supplied from outside of the module via
@@ -292,7 +293,7 @@ static void rand_get_seed(struct rand_thread_state *state,
                           int *out_used_cpu) {
   // If not in FIPS mode, we don't overread from the system entropy source and
   // we don't depend only on the hardware RDRAND.
-  CRYPTO_sysrand_for_seed(seed, CTR_DRBG_ENTROPY_LEN);
+  CRYPTO_sysrand(seed, CTR_DRBG_ENTROPY_LEN);
   *out_used_cpu = 0;
 }
 
@@ -355,7 +356,7 @@ void RAND_bytes_with_additional_data(uint8_t *out, size_t out_len,
     int used_cpu;
     rand_get_seed(state, seed, &used_cpu);
 
-    uint8_t personalization[CTR_DRBG_ENTROPY_LEN] = {0};
+    uint8_t personalization[CTR_DRBG_ENTROPY_LEN];
     size_t personalization_len = 0;
 #if defined(OPENSSL_URANDOM)
     // If we used RDRAND, also opportunistically read from the system. This

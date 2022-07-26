@@ -66,8 +66,6 @@
 
 #include "../../internal.h"
 #include "../bn/internal.h"
-#include "../service_indicator/internal.h"
-#include "internal.h"
 
 
 #define OPENSSL_DH_MAX_MODULUS_BITS 10000
@@ -188,8 +186,6 @@ int DH_set_length(DH *dh, unsigned priv_length) {
 }
 
 int DH_generate_key(DH *dh) {
-  boringssl_ensure_ffdh_self_test();
-
   int ok = 0;
   int generate_new_key = 0;
   BN_CTX *ctx = NULL;
@@ -326,8 +322,7 @@ static int dh_compute_key(DH *dh, BIGNUM *out_shared_key,
   return ret;
 }
 
-int dh_compute_key_padded_no_self_test(unsigned char *out,
-                                       const BIGNUM *peers_key, DH *dh) {
+int DH_compute_key_padded(unsigned char *out, const BIGNUM *peers_key, DH *dh) {
   BN_CTX *ctx = BN_CTX_new();
   if (ctx == NULL) {
     return -1;
@@ -348,15 +343,7 @@ int dh_compute_key_padded_no_self_test(unsigned char *out,
   return ret;
 }
 
-int DH_compute_key_padded(unsigned char *out, const BIGNUM *peers_key, DH *dh) {
-  boringssl_ensure_ffdh_self_test();
-
-  return dh_compute_key_padded_no_self_test(out, peers_key, dh);
-}
-
 int DH_compute_key(unsigned char *out, const BIGNUM *peers_key, DH *dh) {
-  boringssl_ensure_ffdh_self_test();
-
   BN_CTX *ctx = BN_CTX_new();
   if (ctx == NULL) {
     return -1;
@@ -384,8 +371,6 @@ int DH_compute_key_hashed(DH *dh, uint8_t *out, size_t *out_len,
     return 0;
   }
 
-  FIPS_service_indicator_lock_state();
-
   int ret = 0;
   const size_t dh_len = DH_size(dh);
   uint8_t *shared_bytes = OPENSSL_malloc(dh_len);
@@ -407,7 +392,6 @@ int DH_compute_key_hashed(DH *dh, uint8_t *out, size_t *out_len,
   ret = 1;
 
  err:
-  FIPS_service_indicator_unlock_state();
   OPENSSL_free(shared_bytes);
   return ret;
 }

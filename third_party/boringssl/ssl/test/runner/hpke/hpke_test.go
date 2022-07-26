@@ -38,7 +38,7 @@ var (
 
 // Simple round-trip test for fixed inputs.
 func TestRoundTrip(t *testing.T) {
-	publicKeyR, secretKeyR, err := GenerateKeyPairX25519()
+	publicKeyR, secretKeyR, err := GenerateKeyPair()
 	if err != nil {
 		t.Errorf("failed to generate key pair: %s", err)
 		return
@@ -86,9 +86,9 @@ type HpkeTestVector struct {
 	Exports     []ExportTestVector     `json:"exports"`
 }
 type EncryptionTestVector struct {
-	Plaintext      HexString `json:"pt"`
+	Plaintext      HexString `json:"plaintext"`
 	AdditionalData HexString `json:"aad"`
-	Ciphertext     HexString `json:"ct"`
+	Ciphertext     HexString `json:"ciphertext"`
 }
 type ExportTestVector struct {
 	ExportContext HexString `json:"exporter_context"`

@@ -26,7 +26,6 @@
 #include <openssl/bytestring.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
-#include <openssl/hpke.h>
 #include <openssl/rand.h>
 #include <openssl/rsa.h>
 #include <openssl/ssl.h>
@@ -231,7 +230,17 @@ const uint8_t kALPNProtocols[] = {
     0x01, 'a', 0x02, 'a', 'a', 0x03, 'a', 'a', 'a',
 };
 
-const uint8_t kECHKey[] = {
+const uint8_t kECHServerConfig[] = {
+    0xfe, 0x0a, 0x00, 0x47, 0x2a, 0x00, 0x20, 0x00, 0x20, 0x6c, 0x55,
+    0x96, 0x41, 0x3d, 0x12, 0x4e, 0x63, 0x3d, 0x39, 0x7a, 0xe9, 0xbc,
+    0xec, 0xb2, 0x55, 0xd0, 0xe6, 0xaa, 0xbd, 0xa9, 0x79, 0xb8, 0x86,
+    0x9a, 0x13, 0x61, 0xc6, 0x69, 0xac, 0xb4, 0x21, 0x00, 0x0c, 0x00,
+    0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x03,
+    0x00, 0x10, 0x00, 0x0e, 0x70, 0x75, 0x62, 0x6c, 0x69, 0x63, 0x2e,
+    0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x00, 0x00,
+};
+
+const uint8_t kECHServerConfigPrivateKey[] = {
     0x35, 0x6d, 0x45, 0x06, 0xb3, 0x88, 0x89, 0x2e, 0xd6, 0x87, 0x84,
     0xd2, 0x2d, 0x6f, 0x83, 0x48, 0xad, 0xf2, 0xfd, 0x08, 0x51, 0x73,
     0x10, 0xa0, 0xb8, 0xdd, 0xe9, 0x96, 0x6a, 0xde, 0xbc, 0x82,
@@ -446,23 +455,18 @@ class TLSFuzzer {
     SSL_CTX_set_tls_channel_id_enabled(ctx_.get(), 1);
 
     if (role_ == kServer) {
-      bssl::UniquePtr<SSL_ECH_KEYS> keys(SSL_ECH_KEYS_new());
-      bssl::ScopedEVP_HPKE_KEY key;
-      uint8_t *ech_config;
-      size_t ech_config_len;
-      if (!keys ||
-          !EVP_HPKE_KEY_init(key.get(), EVP_hpke_x25519_hkdf_sha256(), kECHKey,
-                             sizeof(kECHKey)) ||
-          // Match |echConfig| in |addEncryptedClientHelloTests| from runner.go.
-          !SSL_marshal_ech_config(&ech_config, &ech_config_len,
-                                  /*config_id=*/42, key.get(), "public.example",
-                                  /*max_name_len=*/64)) {
+      bssl::UniquePtr<SSL_ECH_SERVER_CONFIG_LIST> config_list(
+          SSL_ECH_SERVER_CONFIG_LIST_new());
+      if (!config_list) {
         return false;
       }
-      bssl::UniquePtr<uint8_t> free_ech_config(ech_config);
-      if (!SSL_ECH_KEYS_add(keys.get(), /*is_retry_config=*/true, ech_config,
-                            ech_config_len, key.get()) ||
-          !SSL_CTX_set1_ech_keys(ctx_.get(), keys.get())) {
+      if (!SSL_ECH_SERVER_CONFIG_LIST_add(
+              config_list.get(), /*is_retry_config=*/true, kECHServerConfig,
+              sizeof(kECHServerConfig), kECHServerConfigPrivateKey,
+              sizeof(kECHServerConfigPrivateKey))) {
+        return false;
+      }
+      if (!SSL_CTX_set1_ech_server_config_list(ctx_.get(), config_list.get())) {
         return false;
       }
     }

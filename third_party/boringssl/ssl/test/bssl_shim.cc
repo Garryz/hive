@@ -407,9 +407,9 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
   }
 
   if (config->expect_version != 0 &&
-      SSL_version(ssl) != int{config->expect_version}) {
+      SSL_version(ssl) != config->expect_version) {
     fprintf(stderr, "want version %04x, got %04x\n", config->expect_version,
-            static_cast<uint16_t>(SSL_version(ssl)));
+            SSL_version(ssl));
     return false;
   }
 
@@ -575,9 +575,9 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
 
   if (config->expect_curve_id != 0) {
     uint16_t curve_id = SSL_get_curve_id(ssl);
-    if (config->expect_curve_id != curve_id) {
+    if (static_cast<uint16_t>(config->expect_curve_id) != curve_id) {
       fprintf(stderr, "curve_id was %04x, wanted %04x\n", curve_id,
-              config->expect_curve_id);
+              static_cast<uint16_t>(config->expect_curve_id));
       return false;
     }
   }
@@ -585,24 +585,24 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
   uint16_t cipher_id = SSL_CIPHER_get_protocol_id(SSL_get_current_cipher(ssl));
   if (config->expect_cipher_aes != 0 &&
       EVP_has_aes_hardware() &&
-      config->expect_cipher_aes != cipher_id) {
+      static_cast<uint16_t>(config->expect_cipher_aes) != cipher_id) {
     fprintf(stderr, "Cipher ID was %04x, wanted %04x (has AES hardware)\n",
-            cipher_id, config->expect_cipher_aes);
+            cipher_id, static_cast<uint16_t>(config->expect_cipher_aes));
     return false;
   }
 
   if (config->expect_cipher_no_aes != 0 &&
       !EVP_has_aes_hardware() &&
-      config->expect_cipher_no_aes != cipher_id) {
+      static_cast<uint16_t>(config->expect_cipher_no_aes) != cipher_id) {
     fprintf(stderr, "Cipher ID was %04x, wanted %04x (no AES hardware)\n",
-            cipher_id, config->expect_cipher_no_aes);
+            cipher_id, static_cast<uint16_t>(config->expect_cipher_no_aes));
     return false;
   }
 
   if (config->expect_cipher != 0 &&
-      config->expect_cipher != cipher_id) {
+      static_cast<uint16_t>(config->expect_cipher) != cipher_id) {
     fprintf(stderr, "Cipher ID was %04x, wanted %04x\n", cipher_id,
-            config->expect_cipher);
+            static_cast<uint16_t>(config->expect_cipher));
     return false;
   }
 
@@ -657,12 +657,6 @@ static bool CheckHandshakeProperties(SSL *ssl, bool is_resume,
       (config->expect_no_hrr && SSL_used_hello_retry_request(ssl))) {
     fprintf(stderr, "Got %sHRR, but wanted opposite.\n",
             SSL_used_hello_retry_request(ssl) ? "" : "no ");
-    return false;
-  }
-
-  if (config->expect_ech_accept != !!SSL_ech_accepted(ssl)) {
-    fprintf(stderr, "ECH was %saccepted, but wanted opposite.\n",
-            SSL_ech_accepted(ssl) ? "" : "not ");
     return false;
   }
 
@@ -809,42 +803,7 @@ static bool DoConnection(bssl::UniquePtr<SSL_SESSION> *out_session,
     }
 
     assert(!config->handoff);
-    config = retry_config;
     ret = DoExchange(out_session, &ssl, retry_config, is_resume, true, writer);
-  }
-
-  // An ECH rejection appears as a failed connection. Note |ssl| may use a
-  // different config on ECH rejection.
-  if (config->expect_no_ech_retry_configs ||
-      !config->expect_ech_retry_configs.empty()) {
-    bssl::Span<const uint8_t> expected =
-        config->expect_no_ech_retry_configs
-            ? bssl::Span<const uint8_t>()
-            : bssl::MakeConstSpan(reinterpret_cast<const uint8_t *>(
-                                      config->expect_ech_retry_configs.data()),
-                                  config->expect_ech_retry_configs.size());
-    if (ret) {
-      fprintf(stderr, "Expected ECH rejection, but connection succeeded.\n");
-      return false;
-    }
-    uint32_t err = ERR_peek_error();
-    if (SSL_get_error(ssl.get(), -1) != SSL_ERROR_SSL ||
-        ERR_GET_LIB(err) != ERR_LIB_SSL ||
-        ERR_GET_REASON(err) != SSL_R_ECH_REJECTED) {
-      fprintf(stderr, "Expected ECH rejection, but connection succeeded.\n");
-      return false;
-    }
-    const uint8_t *retry_configs;
-    size_t retry_configs_len;
-    SSL_get0_ech_retry_configs(ssl.get(), &retry_configs, &retry_configs_len);
-    if (bssl::MakeConstSpan(retry_configs, retry_configs_len) != expected) {
-      fprintf(stderr, "ECH retry configs did not match expectations.\n");
-      // Clear the error queue. Otherwise |SSL_R_ECH_REJECTED| will be printed
-      // to stderr and the test framework will think the test had the expected
-      // expectations.
-      ERR_clear_error();
-      return false;
-    }
   }
 
   if (!ret) {

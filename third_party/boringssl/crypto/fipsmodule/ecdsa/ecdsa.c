@@ -64,12 +64,12 @@
 #include "../../internal.h"
 #include "../bn/internal.h"
 #include "../ec/internal.h"
-#include "../service_indicator/internal.h"
 #include "internal.h"
 
 
 // digest_to_scalar interprets |digest_len| bytes from |digest| as a scalar for
-// ECDSA.
+// ECDSA. Note this value is not fully reduced modulo the order, only the
+// correct number of bits.
 static void digest_to_scalar(const EC_GROUP *group, EC_SCALAR *out,
                              const uint8_t *digest, size_t digest_len) {
   const BIGNUM *order = &group->order;
@@ -79,7 +79,10 @@ static void digest_to_scalar(const EC_GROUP *group, EC_SCALAR *out,
   if (digest_len > num_bytes) {
     digest_len = num_bytes;
   }
-  bn_big_endian_to_words(out->words, order->width, digest, digest_len);
+  OPENSSL_memset(out, 0, sizeof(EC_SCALAR));
+  for (size_t i = 0; i < digest_len; i++) {
+    out->bytes[i] = digest[digest_len - 1 - i];
+  }
 
   // If it is still too long, truncate remaining bits with a shift.
   if (8 * digest_len > num_bits) {
@@ -149,8 +152,8 @@ int ECDSA_SIG_set0(ECDSA_SIG *sig, BIGNUM *r, BIGNUM *s) {
   return 1;
 }
 
-int ecdsa_do_verify_no_self_test(const uint8_t *digest, size_t digest_len,
-                                 const ECDSA_SIG *sig, const EC_KEY *eckey) {
+int ECDSA_do_verify(const uint8_t *digest, size_t digest_len,
+                    const ECDSA_SIG *sig, const EC_KEY *eckey) {
   const EC_GROUP *group = EC_KEY_get0_group(eckey);
   const EC_POINT *pub_key = EC_KEY_get0_public_key(eckey);
   if (group == NULL || pub_key == NULL || sig == NULL) {
@@ -194,13 +197,6 @@ int ecdsa_do_verify_no_self_test(const uint8_t *digest, size_t digest_len,
   }
 
   return 1;
-}
-
-int ECDSA_do_verify(const uint8_t *digest, size_t digest_len,
-                    const ECDSA_SIG *sig, const EC_KEY *eckey) {
-  boringssl_ensure_ecc_self_test();
-
-  return ecdsa_do_verify_no_self_test(digest, digest_len, sig, eckey);
 }
 
 static ECDSA_SIG *ecdsa_sign_impl(const EC_GROUP *group, int *out_retry,
@@ -297,16 +293,12 @@ ECDSA_SIG *ecdsa_sign_with_nonce_for_known_answer_test(const uint8_t *digest,
 ECDSA_SIG *ECDSA_sign_with_nonce_and_leak_private_key_for_testing(
     const uint8_t *digest, size_t digest_len, const EC_KEY *eckey,
     const uint8_t *nonce, size_t nonce_len) {
-  boringssl_ensure_ecc_self_test();
-
   return ecdsa_sign_with_nonce_for_known_answer_test(digest, digest_len, eckey,
                                                      nonce, nonce_len);
 }
 
 ECDSA_SIG *ECDSA_do_sign(const uint8_t *digest, size_t digest_len,
                          const EC_KEY *eckey) {
-  boringssl_ensure_ecc_self_test();
-
   if (eckey->ecdsa_meth && eckey->ecdsa_meth->sign) {
     OPENSSL_PUT_ERROR(ECDSA, ECDSA_R_NOT_IMPLEMENTED);
     return NULL;
@@ -324,9 +316,6 @@ ECDSA_SIG *ECDSA_do_sign(const uint8_t *digest, size_t digest_len,
   // into the RBG. This is a hardening measure against entropy failure.
   OPENSSL_STATIC_ASSERT(SHA512_DIGEST_LENGTH >= 32,
                         "additional_data is too large for SHA-512");
-
-  FIPS_service_indicator_lock_state();
-
   SHA512_CTX sha;
   uint8_t additional_data[SHA512_DIGEST_LENGTH];
   SHA512_Init(&sha);
@@ -334,22 +323,17 @@ ECDSA_SIG *ECDSA_do_sign(const uint8_t *digest, size_t digest_len,
   SHA512_Update(&sha, digest, digest_len);
   SHA512_Final(additional_data, &sha);
 
-  ECDSA_SIG *ret = NULL;
   for (;;) {
     EC_SCALAR k;
     if (!ec_random_nonzero_scalar(group, &k, additional_data)) {
-      ret = NULL;
-      goto out;
+      return NULL;
     }
 
     int retry;
-    ret = ecdsa_sign_impl(group, &retry, priv_key, &k, digest, digest_len);
-    if (ret != NULL || !retry) {
-      goto out;
+    ECDSA_SIG *sig =
+        ecdsa_sign_impl(group, &retry, priv_key, &k, digest, digest_len);
+    if (sig != NULL || !retry) {
+      return sig;
     }
   }
-
-out:
-  FIPS_service_indicator_unlock_state();
-  return ret;
 }

@@ -30,7 +30,7 @@
 #include "../internal.h"
 
 
-// This file implements RFC 9180.
+// This file implements draft-irtf-cfrg-hpke-08.
 
 #define MAX_SEED_LEN X25519_PRIVATE_KEY_LEN
 #define MAX_SHARED_SECRET_LEN SHA256_DIGEST_LENGTH
@@ -38,11 +38,9 @@
 struct evp_hpke_kem_st {
   uint16_t id;
   size_t public_key_len;
-  size_t private_key_len;
   size_t seed_len;
-  int (*init_key)(EVP_HPKE_KEY *key, const uint8_t *priv_key,
-                  size_t priv_key_len);
-  int (*generate_key)(EVP_HPKE_KEY *key);
+  int (*init_key)(EVP_HPKE_KEY *key, const EVP_HPKE_KEM *kem,
+                  const uint8_t *priv_key, size_t priv_key_len);
   int (*encap_with_seed)(const EVP_HPKE_KEM *kem, uint8_t *out_shared_secret,
                          size_t *out_shared_secret_len, uint8_t *out_enc,
                          size_t *out_enc_len, size_t max_enc,
@@ -115,7 +113,7 @@ static int hpke_labeled_expand(const EVP_MD *hkdf_md, uint8_t *out_key,
 // KEM implementations.
 
 // dhkem_extract_and_expand implements the ExtractAndExpand operation in the
-// DHKEM construction. See section 4.1 of RFC 9180.
+// DHKEM construction. See section 4.1 of draft-irtf-cfrg-hpke-08.
 static int dhkem_extract_and_expand(uint16_t kem_id, const EVP_MD *hkdf_md,
                                     uint8_t *out_key, size_t out_len,
                                     const uint8_t *dh, size_t dh_len,
@@ -132,8 +130,8 @@ static int dhkem_extract_and_expand(uint16_t kem_id, const EVP_MD *hkdf_md,
                              kem_context_len);
 }
 
-static int x25519_init_key(EVP_HPKE_KEY *key, const uint8_t *priv_key,
-                           size_t priv_key_len) {
+static int x25519_init_key(EVP_HPKE_KEY *key, const EVP_HPKE_KEM *kem,
+                           const uint8_t *priv_key, size_t priv_key_len) {
   if (priv_key_len != X25519_PRIVATE_KEY_LEN) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);
     return 0;
@@ -141,11 +139,6 @@ static int x25519_init_key(EVP_HPKE_KEY *key, const uint8_t *priv_key,
 
   OPENSSL_memcpy(key->private_key, priv_key, priv_key_len);
   X25519_public_from_private(key->public_key, priv_key);
-  return 1;
-}
-
-static int x25519_generate_key(EVP_HPKE_KEY *key) {
-  X25519_keypair(key->public_key, key->private_key);
   return 1;
 }
 
@@ -214,10 +207,8 @@ const EVP_HPKE_KEM *EVP_hpke_x25519_hkdf_sha256(void) {
   static const EVP_HPKE_KEM kKEM = {
       /*id=*/EVP_HPKE_DHKEM_X25519_HKDF_SHA256,
       /*public_key_len=*/X25519_PUBLIC_VALUE_LEN,
-      /*private_key_len=*/X25519_PRIVATE_KEY_LEN,
       /*seed_len=*/X25519_PRIVATE_KEY_LEN,
       x25519_init_key,
-      x25519_generate_key,
       x25519_encap_with_seed,
       x25519_decap,
   };
@@ -235,52 +226,15 @@ void EVP_HPKE_KEY_cleanup(EVP_HPKE_KEY *key) {
   // future.
 }
 
-EVP_HPKE_KEY *EVP_HPKE_KEY_new(void) {
-  EVP_HPKE_KEY *key = OPENSSL_malloc(sizeof(EVP_HPKE_KEY));
-  if (key == NULL) {
-    OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);
-    return NULL;
-  }
-  EVP_HPKE_KEY_zero(key);
-  return key;
-}
-
-void EVP_HPKE_KEY_free(EVP_HPKE_KEY *key) {
-  if (key != NULL) {
-    EVP_HPKE_KEY_cleanup(key);
-    OPENSSL_free(key);
-  }
-}
-
-int EVP_HPKE_KEY_copy(EVP_HPKE_KEY *dst, const EVP_HPKE_KEY *src) {
-  // For now, |EVP_HPKE_KEY| is trivially copyable.
-  OPENSSL_memcpy(dst, src, sizeof(EVP_HPKE_KEY));
-  return 1;
-}
-
 int EVP_HPKE_KEY_init(EVP_HPKE_KEY *key, const EVP_HPKE_KEM *kem,
                       const uint8_t *priv_key, size_t priv_key_len) {
   EVP_HPKE_KEY_zero(key);
   key->kem = kem;
-  if (!kem->init_key(key, priv_key, priv_key_len)) {
+  if (!kem->init_key(key, kem, priv_key, priv_key_len)) {
     key->kem = NULL;
     return 0;
   }
   return 1;
-}
-
-int EVP_HPKE_KEY_generate(EVP_HPKE_KEY *key, const EVP_HPKE_KEM *kem) {
-  EVP_HPKE_KEY_zero(key);
-  key->kem = kem;
-  if (!kem->generate_key(key)) {
-    key->kem = NULL;
-    return 0;
-  }
-  return 1;
-}
-
-const EVP_HPKE_KEM *EVP_HPKE_KEY_kem(const EVP_HPKE_KEY *key) {
-  return key->kem;
 }
 
 int EVP_HPKE_KEY_public_key(const EVP_HPKE_KEY *key, uint8_t *out,
@@ -291,17 +245,6 @@ int EVP_HPKE_KEY_public_key(const EVP_HPKE_KEY *key, uint8_t *out,
   }
   OPENSSL_memcpy(out, key->public_key, key->kem->public_key_len);
   *out_len = key->kem->public_key_len;
-  return 1;
-}
-
-int EVP_HPKE_KEY_private_key(const EVP_HPKE_KEY *key, uint8_t *out,
-                            size_t *out_len, size_t max_out) {
-  if (max_out < key->kem->private_key_len) {
-    OPENSSL_PUT_ERROR(EVP, EVP_R_INVALID_BUFFER_SIZE);
-    return 0;
-  }
-  OPENSSL_memcpy(out, key->private_key, key->kem->private_key_len);
-  *out_len = key->kem->private_key_len;
   return 1;
 }
 
@@ -334,10 +277,6 @@ const EVP_HPKE_AEAD *EVP_hpke_chacha20_poly1305(void) {
 }
 
 uint16_t EVP_HPKE_AEAD_id(const EVP_HPKE_AEAD *aead) { return aead->id; }
-
-const EVP_AEAD *EVP_HPKE_AEAD_aead(const EVP_HPKE_AEAD *aead) {
-  return aead->aead_func();
-}
 
 
 // HPKE implementation.
@@ -411,7 +350,7 @@ static int hpke_key_schedule(EVP_HPKE_CTX *ctx, const uint8_t *shared_secret,
   }
 
   // key = LabeledExpand(secret, "key", key_schedule_context, Nk)
-  const EVP_AEAD *aead = EVP_HPKE_AEAD_aead(ctx->aead);
+  const EVP_AEAD *aead = ctx->aead->aead_func();
   uint8_t key[EVP_AEAD_MAX_KEY_LENGTH];
   const size_t kKeyLen = EVP_AEAD_key_length(aead);
   if (!hpke_labeled_expand(hkdf_md, key, kKeyLen, secret, secret_len, suite_id,
@@ -446,23 +385,6 @@ void EVP_HPKE_CTX_zero(EVP_HPKE_CTX *ctx) {
 
 void EVP_HPKE_CTX_cleanup(EVP_HPKE_CTX *ctx) {
   EVP_AEAD_CTX_cleanup(&ctx->aead_ctx);
-}
-
-EVP_HPKE_CTX *EVP_HPKE_CTX_new(void) {
-  EVP_HPKE_CTX *ctx = OPENSSL_malloc(sizeof(EVP_HPKE_CTX));
-  if (ctx == NULL) {
-    OPENSSL_PUT_ERROR(EVP, ERR_R_MALLOC_FAILURE);
-    return NULL;
-  }
-  EVP_HPKE_CTX_zero(ctx);
-  return ctx;
-}
-
-void EVP_HPKE_CTX_free(EVP_HPKE_CTX *ctx) {
-  if (ctx != NULL) {
-    EVP_HPKE_CTX_cleanup(ctx);
-    OPENSSL_free(ctx);
-  }
 }
 
 int EVP_HPKE_CTX_setup_sender(EVP_HPKE_CTX *ctx, uint8_t *out_enc,
