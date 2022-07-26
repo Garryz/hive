@@ -21,6 +21,8 @@ if(NOT OPENSSL_NO_ASM)
     else()
       if(ARCH STREQUAL "x86")
         set(PERLASM_FLAGS "-fPIC -DOPENSSL_IA32_SSE2")
+      else()
+        set(PERLASM_FLAGS "-fPIC")
       endif()
       if(APPLE)
         set(PERLASM_STYLE macosx)
@@ -67,136 +69,136 @@ if(NOT OPENSSL_NO_ASM)
   endif()
 endif()
 
-function(perlasm dest src)
-  get_filename_component(dir ${dest} DIRECTORY)
-  if(dir STREQUAL "")
-    set(dir ".")
-  endif()
+# function(perlasm dest src)
+#   get_filename_component(dir ${dest} DIRECTORY)
+#   if(dir STREQUAL "")
+#     set(dir ".")
+#   endif()
 
-  add_custom_command(
-    OUTPUT ${dest}
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${dir}
-    COMMAND ${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${src} ${PERLASM_STYLE} ${PERLASM_FLAGS} ${ARGN} ${dest}
-    DEPENDS
-    ${src}
-    ${PROJECT_SOURCE_DIR}/crypto/perlasm/arm-xlate.pl
-    ${PROJECT_SOURCE_DIR}/crypto/perlasm/ppc-xlate.pl
-    ${PROJECT_SOURCE_DIR}/crypto/perlasm/x86_64-xlate.pl
-    ${PROJECT_SOURCE_DIR}/crypto/perlasm/x86asm.pl
-    ${PROJECT_SOURCE_DIR}/crypto/perlasm/x86gas.pl
-    ${PROJECT_SOURCE_DIR}/crypto/perlasm/x86masm.pl
-    ${PROJECT_SOURCE_DIR}/crypto/perlasm/x86nasm.pl
-    WORKING_DIRECTORY .
-  )
-endfunction()
+#   add_custom_command(
+#     OUTPUT ${dest}
+#     COMMAND ${CMAKE_COMMAND} -E make_directory ${dir}
+#     COMMAND ${PERL_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/${src} ${PERLASM_STYLE} ${PERLASM_FLAGS} ${ARGN} ${dest}
+#     DEPENDS
+#     ${src}
+#     ${PROJECT_SOURCE_DIR}/crypto/perlasm/arm-xlate.pl
+#     ${PROJECT_SOURCE_DIR}/crypto/perlasm/ppc-xlate.pl
+#     ${PROJECT_SOURCE_DIR}/crypto/perlasm/x86_64-xlate.pl
+#     ${PROJECT_SOURCE_DIR}/crypto/perlasm/x86asm.pl
+#     ${PROJECT_SOURCE_DIR}/crypto/perlasm/x86gas.pl
+#     ${PROJECT_SOURCE_DIR}/crypto/perlasm/x86masm.pl
+#     ${PROJECT_SOURCE_DIR}/crypto/perlasm/x86nasm.pl
+#     WORKING_DIRECTORY .
+#   )
+# endfunction()
 
-add_subdirectory(fipsmodule)
+# add_subdirectory(fipsmodule)
 # add_subdirectory(test)
 
-if(FIPS_DELOCATE OR FIPS_SHARED)
-  SET_SOURCE_FILES_PROPERTIES(fipsmodule/bcm.o PROPERTIES EXTERNAL_OBJECT true)
-  SET_SOURCE_FILES_PROPERTIES(fipsmodule/bcm.o PROPERTIES GENERATED true)
+# if(FIPS_DELOCATE OR FIPS_SHARED)
+#   SET_SOURCE_FILES_PROPERTIES(fipsmodule/bcm.o PROPERTIES EXTERNAL_OBJECT true)
+#   SET_SOURCE_FILES_PROPERTIES(fipsmodule/bcm.o PROPERTIES GENERATED true)
 
-  set(
-    CRYPTO_FIPS_OBJECTS
+#   set(
+#     CRYPTO_FIPS_OBJECTS
 
-    fipsmodule/bcm.o
-  )
-endif()
+#     fipsmodule/bcm.o
+#   )
+# endif()
 
-if(ARCH STREQUAL "arm")
-  set(
-    CRYPTO_ARCH_SOURCES
+# if(ARCH STREQUAL "arm")
+#   set(
+#     CRYPTO_ARCH_SOURCES
 
-    chacha/chacha-armv4.${ASM_EXT}
-    curve25519/asm/x25519-asm-arm.S
-    poly1305/poly1305_arm_asm.S
-    test/trampoline-armv4.${ASM_EXT}
-  )
-endif()
+#     chacha/chacha-armv4.${ASM_EXT}
+#     curve25519/asm/x25519-asm-arm.S
+#     poly1305/poly1305_arm_asm.S
+#     test/trampoline-armv4.${ASM_EXT}
+#   )
+# endif()
 
-if(ARCH STREQUAL "aarch64")
-  set(
-    CRYPTO_ARCH_SOURCES
+# if(ARCH STREQUAL "aarch64")
+#   set(
+#     CRYPTO_ARCH_SOURCES
 
-    chacha/chacha-armv8.${ASM_EXT}
-    test/trampoline-armv8.${ASM_EXT}
-    cipher_extra/chacha20_poly1305_armv8.${ASM_EXT}
-  )
-endif()
+#     chacha/chacha-armv8.${ASM_EXT}
+#     test/trampoline-armv8.${ASM_EXT}
+#     cipher_extra/chacha20_poly1305_armv8.${ASM_EXT}
+#   )
+# endif()
 
-if(ARCH STREQUAL "ppc64le")
-  set(
-    CRYPTO_ARCH_SOURCES
+# if(ARCH STREQUAL "ppc64le")
+#   set(
+#     CRYPTO_ARCH_SOURCES
 
-    test/trampoline-ppc.${ASM_EXT}
-  )
-endif()
+#     test/trampoline-ppc.${ASM_EXT}
+#   )
+# endif()
 
-if(ARCH STREQUAL "x86")
-  set(
-    CRYPTO_ARCH_SOURCES
+# if(ARCH STREQUAL "x86")
+#   set(
+#     CRYPTO_ARCH_SOURCES
 
-    chacha/chacha-x86.${ASM_EXT}
-    test/trampoline-x86.${ASM_EXT}
-  )
-endif()
+#     chacha/chacha-x86.${ASM_EXT}
+#     test/trampoline-x86.${ASM_EXT}
+#   )
+# endif()
 
-if(ARCH STREQUAL "x86_64")
-  set(
-    CRYPTO_ARCH_SOURCES
+# if(ARCH STREQUAL "x86_64")
+#   set(
+#     CRYPTO_ARCH_SOURCES
 
-    chacha/chacha-x86_64.${ASM_EXT}
-    cipher_extra/aes128gcmsiv-x86_64.${ASM_EXT}
-    cipher_extra/chacha20_poly1305_x86_64.${ASM_EXT}
-    hrss/asm/poly_rq_mul.S
-    test/trampoline-x86_64.${ASM_EXT}
-  )
-endif()
+#     chacha/chacha-x86_64.${ASM_EXT}
+#     cipher_extra/aes128gcmsiv-x86_64.${ASM_EXT}
+#     cipher_extra/chacha20_poly1305_x86_64.${ASM_EXT}
+#     hrss/asm/poly_rq_mul.S
+#     test/trampoline-x86_64.${ASM_EXT}
+#   )
+# endif()
 
-perlasm(chacha/chacha-armv4.${ASM_EXT} chacha/asm/chacha-armv4.pl)
-perlasm(chacha/chacha-armv8.${ASM_EXT} chacha/asm/chacha-armv8.pl)
-perlasm(chacha/chacha-x86.${ASM_EXT} chacha/asm/chacha-x86.pl)
-perlasm(chacha/chacha-x86_64.${ASM_EXT} chacha/asm/chacha-x86_64.pl)
-perlasm(cipher_extra/aes128gcmsiv-x86_64.${ASM_EXT} cipher_extra/asm/aes128gcmsiv-x86_64.pl)
-perlasm(cipher_extra/chacha20_poly1305_x86_64.${ASM_EXT} cipher_extra/asm/chacha20_poly1305_x86_64.pl)
-perlasm(cipher_extra/chacha20_poly1305_armv8.${ASM_EXT} cipher_extra/asm/chacha20_poly1305_armv8.pl)
-perlasm(test/trampoline-armv4.${ASM_EXT} test/asm/trampoline-armv4.pl)
-perlasm(test/trampoline-armv8.${ASM_EXT} test/asm/trampoline-armv8.pl)
-perlasm(test/trampoline-ppc.${ASM_EXT} test/asm/trampoline-ppc.pl)
-perlasm(test/trampoline-x86.${ASM_EXT} test/asm/trampoline-x86.pl)
-perlasm(test/trampoline-x86_64.${ASM_EXT} test/asm/trampoline-x86_64.pl)
+# perlasm(chacha/chacha-armv4.${ASM_EXT} chacha/asm/chacha-armv4.pl)
+# perlasm(chacha/chacha-armv8.${ASM_EXT} chacha/asm/chacha-armv8.pl)
+# perlasm(chacha/chacha-x86.${ASM_EXT} chacha/asm/chacha-x86.pl)
+# perlasm(chacha/chacha-x86_64.${ASM_EXT} chacha/asm/chacha-x86_64.pl)
+# perlasm(cipher_extra/aes128gcmsiv-x86_64.${ASM_EXT} cipher_extra/asm/aes128gcmsiv-x86_64.pl)
+# perlasm(cipher_extra/chacha20_poly1305_x86_64.${ASM_EXT} cipher_extra/asm/chacha20_poly1305_x86_64.pl)
+# perlasm(cipher_extra/chacha20_poly1305_armv8.${ASM_EXT} cipher_extra/asm/chacha20_poly1305_armv8.pl)
+# perlasm(test/trampoline-armv4.${ASM_EXT} test/asm/trampoline-armv4.pl)
+# perlasm(test/trampoline-armv8.${ASM_EXT} test/asm/trampoline-armv8.pl)
+# perlasm(test/trampoline-ppc.${ASM_EXT} test/asm/trampoline-ppc.pl)
+# perlasm(test/trampoline-x86.${ASM_EXT} test/asm/trampoline-x86.pl)
+# perlasm(test/trampoline-x86_64.${ASM_EXT} test/asm/trampoline-x86_64.pl)
 
-add_custom_command(
-  OUTPUT err_data.c
-  COMMAND ${GO_EXECUTABLE} run err_data_generate.go > ${CMAKE_CURRENT_BINARY_DIR}/err_data.c
-  DEPENDS
-  err/err_data_generate.go
-  err/asn1.errordata
-  err/bio.errordata
-  err/bn.errordata
-  err/cipher.errordata
-  err/conf.errordata
-  err/dh.errordata
-  err/digest.errordata
-  err/dsa.errordata
-  err/ecdh.errordata
-  err/ecdsa.errordata
-  err/ec.errordata
-  err/engine.errordata
-  err/evp.errordata
-  err/hkdf.errordata
-  err/obj.errordata
-  err/pem.errordata
-  err/pkcs7.errordata
-  err/pkcs8.errordata
-  err/rsa.errordata
-  err/ssl.errordata
-  err/trust_token.errordata
-  err/x509.errordata
-  err/x509v3.errordata
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/err
-)
+# add_custom_command(
+#   OUTPUT err_data.c
+#   COMMAND ${GO_EXECUTABLE} run err_data_generate.go > ${CMAKE_CURRENT_BINARY_DIR}/err_data.c
+#   DEPENDS
+#   err/err_data_generate.go
+#   err/asn1.errordata
+#   err/bio.errordata
+#   err/bn.errordata
+#   err/cipher.errordata
+#   err/conf.errordata
+#   err/dh.errordata
+#   err/digest.errordata
+#   err/dsa.errordata
+#   err/ecdh.errordata
+#   err/ecdsa.errordata
+#   err/ec.errordata
+#   err/engine.errordata
+#   err/evp.errordata
+#   err/hkdf.errordata
+#   err/obj.errordata
+#   err/pem.errordata
+#   err/pkcs7.errordata
+#   err/pkcs8.errordata
+#   err/rsa.errordata
+#   err/ssl.errordata
+#   err/trust_token.errordata
+#   err/x509.errordata
+#   err/x509v3.errordata
+#   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/err
+# )
 
 add_library(
   crypto
@@ -429,7 +431,7 @@ add_library(
   x509v3/v3_skey.c
   x509v3/v3_utl.c
 
-  $<TARGET_OBJECTS:fipsmodule>
+  # $<TARGET_OBJECTS:fipsmodule>
 
   ${CRYPTO_ARCH_SOURCES}
   ${CRYPTO_FIPS_OBJECTS}
@@ -441,27 +443,27 @@ target_include_directories(crypto INTERFACE
 install(TARGETS crypto EXPORT OpenSSLTargets DESTINATION ${CMAKE_INSTALL_LIBDIR})
 set_property(TARGET crypto PROPERTY EXPORT_NAME Crypto)
 
-if(FIPS_SHARED)
-  # Rewrite libcrypto.so to inject the correct module hash value. This assumes
-  # UNIX-style library naming, but we only support FIPS mode on Linux anyway.
-  add_custom_command(
-    TARGET crypto POST_BUILD
-    COMMAND ${GO_EXECUTABLE} run
-    ${CMAKE_CURRENT_SOURCE_DIR}/../util/fipstools/inject_hash/inject_hash.go
-    -o libcrypto.so -in-object libcrypto.so
-    # The DEPENDS argument to a POST_BUILD rule appears to be ignored. Thus
-    # go_executable isn't used (as it doesn't get built), but we list this
-    # dependency anyway in case it starts working in some CMake version.
-    DEPENDS ../util/fipstools/inject_hash/inject_hash.go
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-  )
-endif()
+# if(FIPS_SHARED)
+#   # Rewrite libcrypto.so to inject the correct module hash value. This assumes
+#   # UNIX-style library naming, but we only support FIPS mode on Linux anyway.
+#   add_custom_command(
+#     TARGET crypto POST_BUILD
+#     COMMAND ${GO_EXECUTABLE} run
+#     ${CMAKE_CURRENT_SOURCE_DIR}/../util/fipstools/inject_hash/inject_hash.go
+#     -o libcrypto.so -in-object libcrypto.so
+#     # The DEPENDS argument to a POST_BUILD rule appears to be ignored. Thus
+#     # go_executable isn't used (as it doesn't get built), but we list this
+#     # dependency anyway in case it starts working in some CMake version.
+#     DEPENDS ../util/fipstools/inject_hash/inject_hash.go
+#     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+#   )
+# endif()
 
 add_dependencies(crypto global_target)
 
-if(FIPS_DELOCATE OR FIPS_SHARED)
-  add_dependencies(crypto bcm_o_target)
-endif()
+# if(FIPS_DELOCATE OR FIPS_SHARED)
+#   add_dependencies(crypto bcm_o_target)
+# endif()
 
 SET_TARGET_PROPERTIES(crypto PROPERTIES LINKER_LANGUAGE C)
 
