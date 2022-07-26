@@ -288,7 +288,7 @@ add_library(
   ec_extra/ec_derive.c
   ec_extra/hash_to_curve.c
   err/err.c
-  err_data.c
+  # err_data.c
   engine/engine.c
   evp/evp.c
   evp/evp_asn1.c
