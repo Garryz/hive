@@ -116,7 +116,7 @@ void scheduler_starttask(lua_State *L) {
 void scheduler_deletetask(lua_State *L) { lua_close(L); }
 
 static void wakeup(global_queue *gmq, int busy) {
-    if (gmq->sleep > gmq->thread - busy) {
+    if (gmq->sleep >= gmq->thread - busy) {
         // signal sleep worker, "spurious wakeup" is harmless
         gmq->cv->notify_one();
     }
@@ -161,7 +161,6 @@ static void _updatetime(timer *t) {
 static void _timer(timer *t) {
     for (;;) {
         _updatetime(t);
-        wakeup(t->mq, t->mq->thread - 1);
         std::this_thread::sleep_for(std::chrono::microseconds(2500));
         if (globalmq_size(t->mq) <= 0) {
             return;
