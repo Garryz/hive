@@ -122,6 +122,17 @@ static void wakeup(global_queue *gmq, int busy) {
     }
 }
 
+static void _logger(global_queue *gmq, cell *c) {
+    for (;;) {
+        if (!cell_dispatch_message(c)) {
+            std::this_thread::sleep_for(std::chrono::microseconds(1000));
+            if (globalmq_size(gmq) <= 0) {
+                return;
+            }
+        }
+    }
+}
+
 static void _cell(global_queue *gmq, cell *c) {
     for (;;) {
         if (cell_dispatch_message(c)) {
@@ -220,7 +231,7 @@ static void _start(global_queue *gmq, cell *sys, cell *socket, timer *t) {
 
     threads.emplace_back(_cell, gmq, socket);
 
-    threads.emplace_back(_cell, gmq, get_logger());
+    threads.emplace_back(_logger, gmq, get_logger());
 
     threads.emplace_back(_timer, t);
 
