@@ -17,7 +17,9 @@ local string = string
 local xpcall = xpcall
 
 local session = 0
-local coroutine_pool = setmetatable({}, {__mode = "kv"})
+local coroutine_pool = setmetatable({}, {
+    __mode = "kv"
+})
 local msg_dispatchers = {}
 local task_coroutine = {}
 local task_session = {}
@@ -47,20 +49,17 @@ end
 local function co_create(f)
     local co = table.remove(coroutine_pool)
     if co == nil then
-        co =
-            coroutine.create(
-            function(...)
-                local result = table.pack(f(...))
-                while true do
-                    -- recycle co into coroutine_pool
-                    f = nil
-                    coroutine_pool[#coroutine_pool + 1] = co
-                    -- recv new main function f
-                    f = coroutine.yield(table.unpack(result))
-                    result = table.pack(f(coroutine.yield()))
-                end
+        co = coroutine.create(function(...)
+            local result = table.pack(f(...))
+            while true do
+                -- recycle co into coroutine_pool
+                f = nil
+                coroutine_pool[#coroutine_pool + 1] = co
+                -- recv new main function f
+                f = coroutine.yield(table.unpack(result))
+                result = table.pack(f(coroutine.yield()))
             end
-        )
+        end)
     else
         local ret, err = coroutine.resume(co, f)
         if not ret then
@@ -199,13 +198,10 @@ end
 
 function cell.fork(func, ...)
     local args = {...}
-    local co =
-        co_create(
-        function()
-            func(table.unpack(args, 1, args.n))
-            return "EXIT"
-        end
-    )
+    local co = co_create(function()
+        func(table.unpack(args, 1, args.n))
+        return "EXIT"
+    end)
     session = session + 1
     new_task(nil, nil, co, session)
     cell.wakeup(session)
@@ -250,13 +246,10 @@ end
 
 function cell.timeout(ti, func, ...)
     local args = {...}
-    local co =
-        co_create(
-        function()
-            func(table.unpack(args, 1, args.n))
-            return "EXIT"
-        end
-    )
+    local co = co_create(function()
+        func(table.unpack(args, 1, args.n))
+        return "EXIT"
+    end)
     session = session + 1
     c.send(system, 2, self, session, "timeout", ti)
     new_task(nil, nil, co, session)
@@ -266,13 +259,10 @@ function cell.execwithtimeout(ti, f, ...)
     local ret
     local event = cell.event()
 
-    cell.fork(
-        function(...)
-            ret = table.pack(f(...))
-            cell.wakeup(event)
-        end,
-        ...
-    )
+    cell.fork(function(...)
+        ret = table.pack(f(...))
+        cell.wakeup(event)
+    end, ...)
 
     cell.sleep(ti, event)
 
@@ -335,23 +325,19 @@ function cell.debug(addr, ti, cmd, ...)
     if not ti or ti <= 0 then
         ti = DEBUG_TIMEOUT
     end
-    return cell.execwithtimeout(
-        ti,
-        function(...)
-            -- debug command
-            local event = cell.event()
-            if not c.send(addr, 21, self, event, cmd, ...) then
-                return "call error " .. addr
-            end
-            local ret = table.pack(coroutine.yield("WAIT", event))
-            if ret[1] then
-                return table.unpack(ret, 2, ret.n)
-            else
-                return addr .. "do debug cmd error"
-            end
-        end,
-        ...
-    )
+    return cell.execwithtimeout(ti, function(...)
+        -- debug command
+        local event = cell.event()
+        if not c.send(addr, 21, self, event, cmd, ...) then
+            return "call error " .. addr
+        end
+        local ret = table.pack(coroutine.yield("WAIT", event))
+        if ret[1] then
+            return table.unpack(ret, 2, ret.n)
+        else
+            return addr .. "do debug cmd error"
+        end
+    end, ...)
 end
 
 function debug_command.stat()
@@ -396,12 +382,9 @@ cell.dispatch {
         if f == nil then
             c.send(source, 1, session, false, "Unknown dubug command " .. cmd)
         else
-            local co =
-                co_create(
-                function(...)
-                    return "RETURN", f(...)
-                end
-            )
+            local co = co_create(function(...)
+                return "RETURN", f(...)
+            end)
             suspend(source, session, co, coroutine.resume(co, ...))
         end
     end
@@ -424,13 +407,10 @@ cell.dispatch {
     msg_type = 4, -- launch
     dispatch = function(source, session, report, ...)
         local op = report and "RETURN" or "EXIT"
-        local co =
-            co_create(
-            function(...)
-                cell_require.init_all()
-                return op, cell.main(...)
-            end
-        )
+        local co = co_create(function(...)
+            cell_require.init_all()
+            return op, cell.main(...)
+        end)
         suspend(source, session, co, coroutine.resume(co, ...))
     end
 }
@@ -442,12 +422,9 @@ cell.dispatch {
         if f == nil then
             log.error("Unknown message ", cmd)
         else
-            local co =
-                co_create(
-                function(...)
-                    return "EXIT", f(...)
-                end
-            )
+            local co = co_create(function(...)
+                return "EXIT", f(...)
+            end)
             suspend(nil, nil, co, coroutine.resume(co, ...))
         end
     end
@@ -460,12 +437,9 @@ cell.dispatch {
         if f == nil then
             c.send(source, 1, session, false, "Unknown command " .. cmd)
         else
-            local co =
-                co_create(
-                function(...)
-                    return "RETURN", f(...)
-                end
-            )
+            local co = co_create(function(...)
+                return "RETURN", f(...)
+            end)
             suspend(source, session, co, coroutine.resume(co, ...))
         end
     end
@@ -478,16 +452,14 @@ cell.dispatch {
     end
 }
 
-c.dispatch(
-    function(msg_type, ...)
-        local dispatcher = msg_dispatchers[msg_type]
-        if dispatcher == nil then
-            deliver_event()
-            error("Unknown msg_type : " .. msg_type)
-        end
-        dispatcher.dispatch(...)
+c.dispatch(function(msg_type, ...)
+    local dispatcher = msg_dispatchers[msg_type]
+    if dispatcher == nil then
         deliver_event()
+        error("Unknown msg_type : " .. msg_type)
     end
-)
+    dispatcher.dispatch(...)
+    deliver_event()
+end)
 
 return cell

@@ -299,8 +299,8 @@ int scheduler_start(lua_State *L) {
         return 0;
     }
 
-    sys = cell_sys(sL, sys, socket, logger, system_lua, main_lua, loader_lua,
-                   config);
+    sys = cell_sys(sL, sys, socket, logger, system_lua, socket_lua, logger_lua,
+                   main_lua, loader_lua, config);
     if (sys == nullptr) {
         return 0;
     }

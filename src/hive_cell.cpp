@@ -1,4 +1,11 @@
 #include "hive_cell.h"
+
+#include <atomic>
+#include <cassert>
+#include <functional>
+#include <mutex>
+#include <queue>
+
 #include "hive_cell_lib.h"
 #include "hive_env.h"
 #include "hive_log.h"
@@ -6,12 +13,6 @@
 #include "hive_seri.h"
 #include "hive_socket_lib.h"
 #include "hive_system_lib.h"
-
-#include <atomic>
-#include <cassert>
-#include <functional>
-#include <mutex>
-#include <queue>
 
 struct message {
     int type{-1};
@@ -93,11 +94,11 @@ static void require_socket(lua_State *L) {
 static void require_cell(lua_State *L, cell *c,
                          std::function<void(lua_State *, int)> set_sys) {
     hive_getenv(L, "cell_map");
-    int cell_map = lua_absindex(L, -1);      // cell_map
-    luaL_requiref(L, "cell.c", cell_lib, 0); // cell_map cell_lib
+    int cell_map = lua_absindex(L, -1);       // cell_map
+    luaL_requiref(L, "cell.c", cell_lib, 0);  // cell_map cell_lib
 
-    cell_touserdata(L, cell_map, c); // cell_map cell_lib cell_ud
-    lua_setfield(L, -2, "self");     // cell_map cell_lib
+    cell_touserdata(L, cell_map, c);  // cell_map cell_lib cell_ud
+    lua_setfield(L, -2, "self");      // cell_map cell_lib
 
     set_sys(L, cell_map);
 
@@ -107,7 +108,9 @@ static void require_cell(lua_State *L, cell *c,
     hive_setenv(L, "cell_pointer");
 }
 
-static void require_sys(lua_State *L, cell *socket, const char *mainfile,
+static void require_sys(lua_State *L, cell *socket, cell *logger,
+                        const char *sysfile, const char *socketfile,
+                        const char *loggerfile, const char *mainfile,
                         const char *loaderfile, void *config) {
     hive_getenv(L, "cell_map");
     int cell_map = lua_absindex(L, -1);
@@ -115,6 +118,18 @@ static void require_sys(lua_State *L, cell *socket, const char *mainfile,
 
     cell_touserdata(L, cell_map, socket);
     lua_setfield(L, -2, "socket");
+
+    cell_touserdata(L, cell_map, logger);
+    lua_setfield(L, -2, "logger");
+
+    lua_pushstring(L, sysfile);
+    lua_setfield(L, -2, "syscell");
+
+    lua_pushstring(L, socketfile);
+    lua_setfield(L, -2, "socketcell");
+
+    lua_pushstring(L, loggerfile);
+    lua_setfield(L, -2, "loggercell");
 
     lua_pushstring(L, mainfile);
     lua_setfield(L, -2, "maincell");
@@ -143,26 +158,27 @@ static int lcallback(lua_State *L) {
     void *msg = lua_touserdata(L, 2);
     int err = 0;
     lua_settop(L, 0);
-    lua_pushvalue(L, lua_upvalueindex(1)); // traceback
+    lua_pushvalue(L, lua_upvalueindex(1));  // traceback
     if (msg == nullptr) {
-        lua_pushvalue(L, lua_upvalueindex(3)); // traceback dispatcher
+        lua_pushvalue(L, lua_upvalueindex(3));  // traceback dispatcher
         lua_pushinteger(L, port);
         err = lua_pcall(L, 1, 0, 1);
     } else {
-        lua_pushvalue(L, lua_upvalueindex(3)); // traceback dispatcher
-        lua_pushinteger(L, port);              // traceback dispatcher port
+        lua_pushvalue(L, lua_upvalueindex(3));  // traceback dispatcher
+        lua_pushinteger(L, port);               // traceback dispatcher port
         lua_pushvalue(
             L,
-            lua_upvalueindex(2)); // traceback dispatcher port data_unpack
-        lua_pushlightuserdata(L,
-                              msg); // traceback dispatcher port data_unpack msg
+            lua_upvalueindex(2));  // traceback dispatcher port data_unpack
+        lua_pushlightuserdata(
+            L,
+            msg);  // traceback dispatcher port data_unpack msg
         err = lua_pcall(L, 1, LUA_MULTRET, 1);
         if (err) {
             log_error("Unpack failed : %s", lua_tostring(L, -1));
             return 0;
         }
-        int n = lua_gettop(L);           // traceback dispatcher ...
-        err = lua_pcall(L, n - 2, 0, 1); // traceback 1
+        int n = lua_gettop(L);            // traceback dispatcher ...
+        err = lua_pcall(L, n - 2, 0, 1);  // traceback 1
     }
 
     if (err) {
@@ -200,13 +216,13 @@ static cell *init_cell(lua_State *L, cell *c, const char *mainfile,
                    lua_tostring(L, -1));
     }
 
-    lua_pushcfunction(L, traceback);   // upvalue 1
-    lua_pushcfunction(L, data_unpack); // upvalue 2
-    hive_getenv(L, "dispatcher");      // upvalue 3
+    lua_pushcfunction(L, traceback);    // upvalue 1
+    lua_pushcfunction(L, data_unpack);  // upvalue 2
+    hive_getenv(L, "dispatcher");       // upvalue 3
     if (!lua_isfunction(L, -1)) {
         luaL_error(L, "set dispatcher first\n");
     }
-    lua_pushlightuserdata(L, c); // upvalue 4
+    lua_pushlightuserdata(L, c);  // upvalue 4
     lua_pushcclosure(L, lcallback, 4);
 
     return c;
@@ -247,9 +263,11 @@ cell *cell_socket(lua_State *L, cell *sys, const char *socketfile) {
 }
 
 cell *cell_sys(lua_State *L, cell *sys, cell *socket, cell *logger,
-               const char *systemfile, const char *mainfile,
+               const char *systemfile, const char *socketfile,
+               const char *loggerfile, const char *mainfile,
                const char *loaderfile, void *config) {
-    require_sys(L, socket, mainfile, loaderfile, config);
+    require_sys(L, socket, logger, systemfile, socketfile, loggerfile, mainfile,
+                loaderfile, config);
 
     sys->single_thread = true;
 
@@ -278,7 +296,7 @@ cell *cell_new(lua_State *L, const char *mainfile, const char *loaderfile) {
     require_cell(L, c, [](lua_State *L, int cell_map) {
         hive_getenv(L, "system_pointer");
         auto sys = static_cast<cell *>(
-            lua_touserdata(L, -1)); // cell_map cell_lib system_cell
+            lua_touserdata(L, -1));  // cell_map cell_lib system_cell
         lua_pop(L, 1);
         if (sys) {
             cell_touserdata(L, cell_map, sys);
@@ -287,7 +305,7 @@ cell *cell_new(lua_State *L, const char *mainfile, const char *loaderfile) {
 
         hive_getenv(L, "logger_pointer");
         auto logger = static_cast<cell *>(
-            lua_touserdata(L, -1)); // cell_map cell_lib logger_cell
+            lua_touserdata(L, -1));  // cell_map cell_lib logger_cell
         lua_pop(L, 1);
         if (logger) {
             cell_touserdata(L, cell_map, logger);

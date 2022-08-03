@@ -36,22 +36,19 @@ local function alloc_queue()
 end
 
 local function timeout(n, f)
-    local co =
-        cell.cocreate(
-        function()
-            local ev = cell.event()
-            local ti = ticker + n
-            local q = timer[ti]
-            if q == nil then
-                q = alloc_queue()
-                timer[ti] = q
-            end
-            table.insert(q, ev)
-            cell.wait(ev)
-            f()
-            return "EXIT"
+    local co = cell.cocreate(function()
+        local ev = cell.event()
+        local ti = ticker + n
+        local q = timer[ti]
+        if q == nil then
+            q = alloc_queue()
+            timer[ti] = q
         end
-    )
+        table.insert(q, ev)
+        cell.wait(ev)
+        f()
+        return "EXIT"
+    end)
     cell.suspend(nil, nil, co, coroutine.resume(co))
 end
 
@@ -63,15 +60,11 @@ function command.launch(name, ...)
     local fullname = assert(package.searchpath(name, package.path), "cell was not found")
     local c = system.launch(fullname, system.loader)
     if c then
-        local ok, result =
-            pcall(
-            function(...)
-                -- 4 is launch proto
-                local ev = cell.event()
-                return table.pack(cell.rawcall(c, ev, 4, cell.self, ev, true, ...))
-            end,
-            ...
-        )
+        local ok, result = pcall(function(...)
+            -- 4 is launch proto
+            local ev = cell.event()
+            return table.pack(cell.rawcall(c, ev, 4, cell.self, ev, true, ...))
+        end, ...)
         if ok then
             service_name[c] = fullname
             service_id[c] = c:id()
@@ -107,14 +100,10 @@ function command.uniquelaunch(name, ...)
         local c = system.launch(fullname, system.loader)
         local ok, result
         if c then
-            ok, result =
-                pcall(
-                function(...)
-                    local ev = cell.event()
-                    return table.pack(cell.rawcall(c, ev, 4, cell.self, ev, true, ...))
-                end,
-                ...
-            )
+            ok, result = pcall(function(...)
+                local ev = cell.event()
+                return table.pack(cell.rawcall(c, ev, 4, cell.self, ev, true, ...))
+            end, ...)
             if ok then
                 unique_service[fullname] = c
                 service_name[c] = fullname
@@ -259,9 +248,20 @@ function cell.main()
     builder.new("__HIVE_ENV", config)
 end
 
+local function addFloorService(c, fullname)
+    service_name[c] = fullname
+    service_id[c] = c:id()
+    id_service[c:id()] = c
+end
+
 local function start()
+    addFloorService(cell.self, system.syscell)
     print("[system cell]", cell.self)
+    local logger_cell = system.logger
+    addFloorService(logger_cell, system.loggercell)
+    print("[logger cell]", logger_cell)
     local socket_cell = system.socket
+    addFloorService(socket_cell, system.socketcell)
     print("[socket cell]", socket_cell)
     cell.rawsend(socket_cell, 4, nil, nil, false)
 
@@ -271,6 +271,7 @@ local function start()
 
     local c = system.launch(system.maincell, system.loader)
     if c then
+        addFloorService(c, system.maincell)
         print("[main cell]", c)
         cell.rawsend(c, 4, nil, nil, false)
     else
