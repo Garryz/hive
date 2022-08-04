@@ -191,18 +191,20 @@ end
 
 function command.list()
     local list = {}
-    for k, v in pairs(service_name) do
-        list[tostring(k)] = v
+    for c, v in pairs(service_name) do
+        local k = tostring(c)
+        list[k] = v
     end
     return list
 end
 
 local function list_srv(ti, cmd)
     local list = {}
-    for k in pairs(service_name) do
-        list[tostring(k)] = cell.debug(k, ti, cmd)
-        if not list[tostring(k)] then
-            list[tostring(k)] = k .. "timeout"
+    for c in pairs(service_name) do
+        local k = tostring(c)
+        list[k] = cell.debug(c, ti, cmd)
+        if not list[k] then
+            list[k] = k .. "timeout"
         end
     end
     return list

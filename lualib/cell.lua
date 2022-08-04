@@ -316,6 +316,15 @@ function cell.task()
     return t
 end
 
+function cell.tasktraceback()
+    local ret = {}
+    for session, co in pairs(task_coroutine) do
+        local key = string.format("%s session: %d", tostring(co), session)
+        ret[key] = debug.traceback(co)
+    end
+    return ret
+end
+
 function cell.info()
 end
 
@@ -335,7 +344,7 @@ function cell.debug(addr, ti, cmd, ...)
         if ret[1] then
             return table.unpack(ret, 2, ret.n)
         else
-            return addr .. "do debug cmd error"
+            return tostring(addr) .. "do debug cmd error"
         end
     end, ...)
 end
@@ -355,6 +364,10 @@ end
 function debug_command.mem()
     local kb = collectgarbage "count"
     return string.format("%.2f Kb", kb)
+end
+
+function debug_command.task()
+    return cell.tasktraceback()
 end
 
 local gcing = false

@@ -234,9 +234,12 @@ cell *cell_logger(lua_State *L, cell *sys, const char *loggerfile,
     cell *c = cell_alloc(L);
     c->single_thread = true;
 
-    require_cell(L, c, [sys, logdir, logfile](lua_State *L, int cell_map) {
+    require_cell(L, c, [sys, c, logdir, logfile](lua_State *L, int cell_map) {
         cell_touserdata(L, cell_map, sys);
         lua_setfield(L, -2, "system");
+
+        cell_touserdata(L, cell_map, c);
+        lua_setfield(L, -2, "logger");
 
         lua_pushstring(L, logdir);
         lua_setfield(L, -2, "logdir");
@@ -248,15 +251,19 @@ cell *cell_logger(lua_State *L, cell *sys, const char *loggerfile,
     return init_cell(L, c, loggerfile, loaderfile);
 }
 
-cell *cell_socket(lua_State *L, cell *sys, const char *socketfile) {
+cell *cell_socket(lua_State *L, cell *sys, cell *logger,
+                  const char *socketfile) {
     require_socket(L);
 
     cell *c = cell_alloc(L);
     c->single_thread = true;
 
-    require_cell(L, c, [sys](lua_State *L, int cell_map) {
+    require_cell(L, c, [sys, logger](lua_State *L, int cell_map) {
         cell_touserdata(L, cell_map, sys);
         lua_setfield(L, -2, "system");
+
+        cell_touserdata(L, cell_map, logger);
+        lua_setfield(L, -2, "logger");
     });
 
     return init_cell(L, c, socketfile, nullptr);

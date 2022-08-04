@@ -294,7 +294,7 @@ int scheduler_start(lua_State *L) {
     set_logger(logger);
 
     lua_State *socketL = scheduler_newtask(L, false);
-    cell *socket = cell_socket(socketL, sys, socket_lua);
+    cell *socket = cell_socket(socketL, sys, logger, socket_lua);
     if (socket == nullptr) {
         return 0;
     }
