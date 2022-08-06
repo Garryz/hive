@@ -4,7 +4,7 @@
 #include "session.h"
 
 class client : public std::enable_shared_from_this<client> {
-  public:
+   public:
     client(const client &) = delete;
     client &operator=(const client &) = delete;
 
@@ -24,10 +24,11 @@ class client : public std::enable_shared_from_this<client> {
         asio::ip::tcp::resolver::iterator end;
 
         if (iter == end || ec) {
-            log_error("client connect address = %s, port = %d, id = %d, "
-                      "error_code = %d, error = %s",
-                      addr, port, session_ptr->session_id(), ec.value(),
-                      ec.message().c_str());
+            log_error(
+                "client connect address = %s, port = %d, id = %d, "
+                "error_code = %d, error = %s",
+                addr, port, session_ptr->session_id(), ec.value(),
+                ec.message().c_str());
             return false;
         }
 
@@ -47,11 +48,9 @@ class client : public std::enable_shared_from_this<client> {
 
     ~client() {}
 
-  private:
+   private:
     void handle_connect(lua_Integer event, std::error_code &ec) {
         if (!ec) {
-            session_ptr->get_socket().set_option(
-                asio::socket_base::debug(true));
             session_ptr->get_socket().set_option(
                 asio::socket_base::enable_connection_aborted(true));
             session_ptr->get_socket().set_option(
@@ -65,10 +64,11 @@ class client : public std::enable_shared_from_this<client> {
             client_map[session_ptr->session_id()] = nullptr;
             session_map[session_ptr->session_id()] = nullptr;
 
-            log_error("client connect address = %s, port = %d, id = %d, "
-                      "error_code = %d, error = %s",
-                      addr, port, session_ptr->session_id(), ec.value(),
-                      ec.message().c_str());
+            log_error(
+                "client connect address = %s, port = %d, id = %d, "
+                "error_code = %d, error = %s",
+                addr, port, session_ptr->session_id(), ec.value(),
+                ec.message().c_str());
 
             notify_connect_fail(event, ec.message());
         }

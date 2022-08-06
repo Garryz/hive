@@ -4,13 +4,16 @@
 #include "session.h"
 
 class server : public std::enable_shared_from_this<server> {
-  public:
+   public:
     server(const server &) = delete;
     server &operator=(const server &) = delete;
 
     server(cell *c, const char *addr, unsigned short port)
-        : acceptor(io_context), to_cell(c), id(get_session_increase_id()),
-          addr(addr), port(port) {
+        : acceptor(io_context),
+          to_cell(c),
+          id(get_session_increase_id()),
+          addr(addr),
+          port(port) {
         cell_grab(c);
     }
 
@@ -31,7 +34,6 @@ class server : public std::enable_shared_from_this<server> {
 
         acceptor.open(iter->endpoint().protocol());
         acceptor.set_option(asio::ip::tcp::acceptor::reuse_address(true));
-        acceptor.set_option(asio::socket_base::debug(true));
         acceptor.set_option(asio::socket_base::enable_connection_aborted(true));
         acceptor.set_option(asio::socket_base::linger(true, 30));
         acceptor.set_option(asio::ip::tcp::no_delay(true));
@@ -53,29 +55,29 @@ class server : public std::enable_shared_from_this<server> {
         }
     }
 
-  private:
+   private:
     void accept() {
         auto self(shared_from_this());
 
-        acceptor.async_accept([this, self](std::error_code ec,
-                                           asio::ip::tcp::socket socket) {
-            if (!acceptor.is_open()) {
-                log_error("accept not open, id = %d", id);
-                return;
-            }
+        acceptor.async_accept(
+            [this, self](std::error_code ec, asio::ip::tcp::socket socket) {
+                if (!acceptor.is_open()) {
+                    log_error("accept not open, id = %d", id);
+                    return;
+                }
 
-            if (!ec) {
-                auto s = std::make_shared<session>(std::move(socket),
-                                                   get_session_increase_id());
-                session_map[s->session_id()] = s;
-                notify_accept(s);
-                s->start();
-                accept();
-            } else if (ec != asio::error::operation_aborted) {
-                log_error("accept error_code = %d, error = %s, id = %d",
-                          ec.value(), ec.message().c_str(), id);
-            }
-        });
+                if (!ec) {
+                    auto s = std::make_shared<session>(
+                        std::move(socket), get_session_increase_id());
+                    session_map[s->session_id()] = s;
+                    notify_accept(s);
+                    s->start();
+                    accept();
+                } else if (ec != asio::error::operation_aborted) {
+                    log_error("accept error_code = %d, error = %s, id = %d",
+                              ec.value(), ec.message().c_str(), id);
+                }
+            });
     }
 
     void notify_accept(std::shared_ptr<session> session) {
