@@ -1,17 +1,16 @@
 #define LUA_LIB
 
-#include "lua.hpp"
-
-#include "openssl/hmac.h"
-#include "openssl/md5.h"
-#include "openssl/sha.h"
-
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
 #include <random>
+
+#include "lua.hpp"
+#include "openssl/hmac.h"
+#include "openssl/md5.h"
+#include "openssl/sha.h"
 
 static std::random_device sd;
 static std::default_random_engine rng(sd());
@@ -143,77 +142,77 @@ static uint32_t RHs[16] = {
 
 /* platform-independant 32-bit integer manipulation macros */
 
-#define GET_UINT32(n, b, i)                                                    \
-    {                                                                          \
-        (n) = ((uint32_t)(b)[(i)] << 24) | ((uint32_t)(b)[(i) + 1] << 16) |    \
-              ((uint32_t)(b)[(i) + 2] << 8) | ((uint32_t)(b)[(i) + 3]);        \
+#define GET_UINT32(n, b, i)                                                 \
+    {                                                                       \
+        (n) = ((uint32_t)(b)[(i)] << 24) | ((uint32_t)(b)[(i) + 1] << 16) | \
+              ((uint32_t)(b)[(i) + 2] << 8) | ((uint32_t)(b)[(i) + 3]);     \
     }
 
-#define PUT_UINT32(n, b, i)                                                    \
-    {                                                                          \
-        (b)[(i)] = (uint8_t)((n) >> 24);                                       \
-        (b)[(i) + 1] = (uint8_t)((n) >> 16);                                   \
-        (b)[(i) + 2] = (uint8_t)((n) >> 8);                                    \
-        (b)[(i) + 3] = (uint8_t)((n));                                         \
+#define PUT_UINT32(n, b, i)                  \
+    {                                        \
+        (b)[(i)] = (uint8_t)((n) >> 24);     \
+        (b)[(i) + 1] = (uint8_t)((n) >> 16); \
+        (b)[(i) + 2] = (uint8_t)((n) >> 8);  \
+        (b)[(i) + 3] = (uint8_t)((n));       \
     }
 
 /* Initial Permutation macro */
 
-#define DES_IP(X, Y)                                                           \
-    {                                                                          \
-        T = ((X >> 4) ^ Y) & 0x0F0F0F0F;                                       \
-        Y ^= T;                                                                \
-        X ^= (T << 4);                                                         \
-        T = ((X >> 16) ^ Y) & 0x0000FFFF;                                      \
-        Y ^= T;                                                                \
-        X ^= (T << 16);                                                        \
-        T = ((Y >> 2) ^ X) & 0x33333333;                                       \
-        X ^= T;                                                                \
-        Y ^= (T << 2);                                                         \
-        T = ((Y >> 8) ^ X) & 0x00FF00FF;                                       \
-        X ^= T;                                                                \
-        Y ^= (T << 8);                                                         \
-        Y = ((Y << 1) | (Y >> 31)) & 0xFFFFFFFF;                               \
-        T = (X ^ Y) & 0xAAAAAAAA;                                              \
-        Y ^= T;                                                                \
-        X ^= T;                                                                \
-        X = ((X << 1) | (X >> 31)) & 0xFFFFFFFF;                               \
+#define DES_IP(X, Y)                             \
+    {                                            \
+        T = ((X >> 4) ^ Y) & 0x0F0F0F0F;         \
+        Y ^= T;                                  \
+        X ^= (T << 4);                           \
+        T = ((X >> 16) ^ Y) & 0x0000FFFF;        \
+        Y ^= T;                                  \
+        X ^= (T << 16);                          \
+        T = ((Y >> 2) ^ X) & 0x33333333;         \
+        X ^= T;                                  \
+        Y ^= (T << 2);                           \
+        T = ((Y >> 8) ^ X) & 0x00FF00FF;         \
+        X ^= T;                                  \
+        Y ^= (T << 8);                           \
+        Y = ((Y << 1) | (Y >> 31)) & 0xFFFFFFFF; \
+        T = (X ^ Y) & 0xAAAAAAAA;                \
+        Y ^= T;                                  \
+        X ^= T;                                  \
+        X = ((X << 1) | (X >> 31)) & 0xFFFFFFFF; \
     }
 
 /* Final Permutation macro */
 
-#define DES_FP(X, Y)                                                           \
-    {                                                                          \
-        X = ((X << 31) | (X >> 1)) & 0xFFFFFFFF;                               \
-        T = (X ^ Y) & 0xAAAAAAAA;                                              \
-        X ^= T;                                                                \
-        Y ^= T;                                                                \
-        Y = ((Y << 31) | (Y >> 1)) & 0xFFFFFFFF;                               \
-        T = ((Y >> 8) ^ X) & 0x00FF00FF;                                       \
-        X ^= T;                                                                \
-        Y ^= (T << 8);                                                         \
-        T = ((Y >> 2) ^ X) & 0x33333333;                                       \
-        X ^= T;                                                                \
-        Y ^= (T << 2);                                                         \
-        T = ((X >> 16) ^ Y) & 0x0000FFFF;                                      \
-        Y ^= T;                                                                \
-        X ^= (T << 16);                                                        \
-        T = ((X >> 4) ^ Y) & 0x0F0F0F0F;                                       \
-        Y ^= T;                                                                \
-        X ^= (T << 4);                                                         \
+#define DES_FP(X, Y)                             \
+    {                                            \
+        X = ((X << 31) | (X >> 1)) & 0xFFFFFFFF; \
+        T = (X ^ Y) & 0xAAAAAAAA;                \
+        X ^= T;                                  \
+        Y ^= T;                                  \
+        Y = ((Y << 31) | (Y >> 1)) & 0xFFFFFFFF; \
+        T = ((Y >> 8) ^ X) & 0x00FF00FF;         \
+        X ^= T;                                  \
+        Y ^= (T << 8);                           \
+        T = ((Y >> 2) ^ X) & 0x33333333;         \
+        X ^= T;                                  \
+        Y ^= (T << 2);                           \
+        T = ((X >> 16) ^ Y) & 0x0000FFFF;        \
+        Y ^= T;                                  \
+        X ^= (T << 16);                          \
+        T = ((X >> 4) ^ Y) & 0x0F0F0F0F;         \
+        Y ^= T;                                  \
+        X ^= (T << 4);                           \
     }
 
 /* DES round macro */
 
-#define DES_ROUND(X, Y)                                                        \
-    {                                                                          \
-        T = *SK++ ^ X;                                                         \
-        Y ^= SB8[(T)&0x3F] ^ SB6[(T >> 8) & 0x3F] ^ SB4[(T >> 16) & 0x3F] ^    \
-             SB2[(T >> 24) & 0x3F];                                            \
-                                                                               \
-        T = *SK++ ^ ((X << 28) | (X >> 4));                                    \
-        Y ^= SB7[(T)&0x3F] ^ SB5[(T >> 8) & 0x3F] ^ SB3[(T >> 16) & 0x3F] ^    \
-             SB1[(T >> 24) & 0x3F];                                            \
+#define DES_ROUND(X, Y)                                                     \
+    {                                                                       \
+        T = *SK++ ^ X;                                                      \
+        Y ^= SB8[(T)&0x3F] ^ SB6[(T >> 8) & 0x3F] ^ SB4[(T >> 16) & 0x3F] ^ \
+             SB2[(T >> 24) & 0x3F];                                         \
+                                                                            \
+        T = *SK++ ^ ((X << 28) | (X >> 4));                                 \
+        Y ^= SB7[(T)&0x3F] ^ SB5[(T >> 8) & 0x3F] ^ SB3[(T >> 16) & 0x3F] ^ \
+             SB1[(T >> 24) & 0x3F];                                         \
     }
 
 /* DES key schedule */
@@ -327,7 +326,7 @@ static int lrandomkey(lua_State *L) {
         x ^= tmp[i];
     }
     if (x == 0) {
-        tmp[0] |= 1; // avoid 0
+        tmp[0] |= 1;  // avoid 0
     }
     lua_pushlstring(L, tmp, 8);
     return 1;
@@ -382,8 +381,7 @@ static int padding_remove_pkcs7(const uint8_t *last) {
     int i;
     for (i = 1; i < padding; i++) {
         --last;
-        if (*last != padding)
-            return 0; // invalid
+        if (*last != padding) return 0;  // invalid
     }
     return padding;
 }
@@ -406,8 +404,7 @@ static inline void check_padding_mode(lua_State *L, int mode) {
 static void add_padding(lua_State *L, uint8_t buf[8], const uint8_t *src,
                         int offset, int mode) {
     check_padding_mode(L, mode);
-    if (offset >= 8)
-        luaL_error(L, "Invalid padding");
+    if (offset >= 8) luaL_error(L, "Invalid padding");
     memcpy(buf, src, offset);
     padding_add_func[mode](buf, offset);
 }
@@ -531,14 +528,14 @@ static int ltohex(lua_State *L) {
     return 1;
 }
 
-#define HEX(v, c)                                                              \
-    {                                                                          \
-        char tmp = (char)c;                                                    \
-        if (tmp >= '0' && tmp <= '9') {                                        \
-            v = tmp - '0';                                                     \
-        } else {                                                               \
-            v = tmp - 'a' + 10;                                                \
-        }                                                                      \
+#define HEX(v, c)                       \
+    {                                   \
+        char tmp = (char)c;             \
+        if (tmp >= '0' && tmp <= '9') { \
+            v = tmp - '0';              \
+        } else {                        \
+            v = tmp - 'a' + 10;         \
+        }                               \
     }
 
 static int lfromhex(lua_State *L) {
@@ -784,8 +781,7 @@ static inline uint64_t pow_mod_p(uint64_t a, uint64_t b) {
 
 // calc a^b % p
 static uint64_t powmodp(uint64_t a, uint64_t b) {
-    if (a > P)
-        a %= P;
+    if (a > P) a %= P;
     return pow_mod_p(a, b);
 }
 
@@ -808,8 +804,7 @@ static int ldhsecret(lua_State *L) {
     read64(L, x, y);
     uint64_t xx = (uint64_t)x[0] | (uint64_t)x[1] << 32;
     uint64_t yy = (uint64_t)y[0] | (uint64_t)y[1] << 32;
-    if (xx == 0 || yy == 0)
-        return luaL_error(L, "Can't be 0");
+    if (xx == 0 || yy == 0) return luaL_error(L, "Can't be 0");
     uint64_t r = powmodp(xx, yy);
 
     push64(L, r);
@@ -830,8 +825,7 @@ static int ldhexchange(lua_State *L) {
     xx[1] = x[4] | x[5] << 8 | x[6] << 16 | x[7] << 24;
 
     uint64_t x64 = (uint64_t)xx[0] | (uint64_t)xx[1] << 32;
-    if (x64 == 0)
-        return luaL_error(L, "Can't be 0");
+    if (x64 == 0) return luaL_error(L, "Can't be 0");
 
     uint64_t r = powmodp(G, x64);
     push64(L, r);
@@ -864,20 +858,20 @@ static int lb64encode(lua_State *L) {
     int padding = sz - i;
     uint32_t v;
     switch (padding) {
-    case 1:
-        v = text[i];
-        buffer[j] = encoding[v >> 2];
-        buffer[j + 1] = encoding[(v & 3) << 4];
-        buffer[j + 2] = '=';
-        buffer[j + 3] = '=';
-        break;
-    case 2:
-        v = text[i] << 8 | text[i + 1];
-        buffer[j] = encoding[v >> 10];
-        buffer[j + 1] = encoding[(v >> 4) & 0x3f];
-        buffer[j + 2] = encoding[(v & 0xf) << 2];
-        buffer[j + 3] = '=';
-        break;
+        case 1:
+            v = text[i];
+            buffer[j] = encoding[v >> 2];
+            buffer[j + 1] = encoding[(v & 3) << 4];
+            buffer[j + 2] = '=';
+            buffer[j + 3] = '=';
+            break;
+        case 2:
+            v = text[i] << 8 | text[i + 1];
+            buffer[j] = encoding[v >> 10];
+            buffer[j + 1] = encoding[(v >> 4) & 0x3f];
+            buffer[j + 2] = encoding[(v & 0xf) << 2];
+            buffer[j + 3] = '=';
+            break;
     }
     lua_pushlstring(L, buffer, encode_sz);
     return 1;
@@ -895,8 +889,7 @@ static inline int b64index(uint8_t c) {
         return -1;
     }
     c -= 43;
-    if (c >= decoding_size)
-        return -1;
+    if (c >= decoding_size) return -1;
     return decoding[c];
 }
 
@@ -915,10 +908,13 @@ static int lb64decode(lua_State *L) {
         int padding = 0;
         int c[4];
         for (j = 0; j < 4;) {
-            if (i >= sz) {
-                return luaL_error(L, "Invalid base64 text");
+            if (i >= sz && 4 > j) {
+                /*To improve compatibility, there may not be enough equal signs
+                 */
+                c[j] = -2;
+            } else {
+                c[j] = b64index(text[i]);
             }
-            c[j] = b64index(text[i]);
             if (c[j] == -1) {
                 ++i;
                 continue;
@@ -931,32 +927,32 @@ static int lb64decode(lua_State *L) {
         }
         uint32_t v;
         switch (padding) {
-        case 0:
-            v = (unsigned)c[0] << 18 | c[1] << 12 | c[2] << 6 | c[3];
-            buffer[output] = v >> 16;
-            buffer[output + 1] = (v >> 8) & 0xff;
-            buffer[output + 2] = v & 0xff;
-            output += 3;
-            break;
-        case 1:
-            if (c[3] != -2 || (c[2] & 3) != 0) {
+            case 0:
+                v = (unsigned)c[0] << 18 | c[1] << 12 | c[2] << 6 | c[3];
+                buffer[output] = v >> 16;
+                buffer[output + 1] = (v >> 8) & 0xff;
+                buffer[output + 2] = v & 0xff;
+                output += 3;
+                break;
+            case 1:
+                if (c[3] != -2 || (c[2] & 3) != 0) {
+                    return luaL_error(L, "Invalid base64 text");
+                }
+                v = (unsigned)c[0] << 10 | c[1] << 4 | c[2] >> 2;
+                buffer[output] = v >> 8;
+                buffer[output + 1] = v & 0xff;
+                output += 2;
+                break;
+            case 2:
+                if (c[3] != -2 || c[2] != -2 || (c[1] & 0xf) != 0) {
+                    return luaL_error(L, "Invalid base64 text");
+                }
+                v = (unsigned)c[0] << 2 | c[1] >> 4;
+                buffer[output] = v;
+                ++output;
+                break;
+            default:
                 return luaL_error(L, "Invalid base64 text");
-            }
-            v = (unsigned)c[0] << 10 | c[1] << 4 | c[2] >> 2;
-            buffer[output] = v >> 8;
-            buffer[output + 1] = v & 0xff;
-            output += 2;
-            break;
-        case 2:
-            if (c[3] != -2 || c[2] != -2 || (c[1] & 0xf) != 0) {
-                return luaL_error(L, "Invalid base64 text");
-            }
-            v = (unsigned)c[0] << 2 | c[1] >> 4;
-            buffer[output] = v;
-            ++output;
-            break;
-        default:
-            return luaL_error(L, "Invalid base64 text");
         }
     }
     lua_pushlstring(L, buffer, output);

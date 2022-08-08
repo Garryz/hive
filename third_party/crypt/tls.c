@@ -1,12 +1,10 @@
 #define LUA_LIB
 
-#include <stdbool.h>
-#include <string.h>
-
-#include <openssl/ssl.h>
-
 #include <lauxlib.h>
 #include <lua.h>
+#include <openssl/ssl.h>
+#include <stdbool.h>
+#include <string.h>
 
 struct tls_context {
     SSL *ssl;
@@ -92,7 +90,7 @@ static int _ltls_context_close(lua_State *L) {
         SSL_free(tls_p->ssl);
         tls_p->ssl = NULL;
         tls_p->in_bio =
-            NULL; // in_bio and out_bio will be free when SSL_free is called
+            NULL;  // in_bio and out_bio will be free when SSL_free is called
         tls_p->out_bio = NULL;
         tls_p->is_close = true;
     }
@@ -202,13 +200,15 @@ static int _ltls_context_read(lua_State *L) {
 
     do {
         read = SSL_read(tls_p->ssl, outbuff, sizeof(outbuff));
-        if (read <= 0) {
+        if (read < 0) {
             int err = SSL_get_error(tls_p->ssl, read);
             ERR_clear_error();
             if (err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE) {
                 break;
             }
             luaL_error(L, "SSL_read error:%d", err);
+        } else if (read == 0) {
+            break;
         } else if (read <= sizeof(outbuff)) {
             luaL_addlstring(&b, outbuff, read);
         } else {
@@ -329,7 +329,7 @@ static int lnew_tls(lua_State *L) {
     const char *method = luaL_optstring(L, 1, "nil");
     struct ssl_ctx *ctx_p = _check_sslctx(L, 2);
     lua_pushvalue(L, 2);
-    lua_setiuservalue(L, -2, 1); // set ssl_ctx associated to tls_context
+    lua_setiuservalue(L, -2, 1);  // set ssl_ctx associated to tls_context
 
     if (strcmp(method, "client") == 0) {
         _init_client_context(L, tls_p, ctx_p);

@@ -128,10 +128,8 @@ local function read_handshake(self, upgrade_ops)
 
     -- response handshake
     local accept = crypt.base64encode(crypt.sha1(sw_key .. self.guid))
-    local resp =
-        "HTTP/1.1 101 Switching Protocols\r\n" ..
-        "Upgrade: websocket\r\n" ..
-            "Connection: Upgrade\r\n" .. string.format("Sec-WebSocket-Accept: %s\r\n", accept) .. sub_pro .. "\r\n"
+    local resp = "HTTP/1.1 101 Switching Protocols\r\n" .. "Upgrade: websocket\r\n" .. "Connection: Upgrade\r\n" ..
+                     string.format("Sec-WebSocket-Accept: %s\r\n", accept) .. sub_pro .. "\r\n"
     self.interface.write(resp)
     return nil, header, url
 end
@@ -161,7 +159,7 @@ local function write_frame(self, op, payload_data, masking_key)
     -- mask set to 0
     if payload_len < 126 then
         s = string.pack("I1I1", v1, mask | payload_len)
-    elseif payload_len < 0xffff then
+    elseif payload_len <= 0xffff then
         s = string.pack("I1I1>I2", v1, mask | 126, payload_len)
     else
         s = string.pack("I1I1>I8", v1, mask | 127, payload_len)
@@ -303,19 +301,15 @@ function websocket:ping()
 end
 
 function websocket:close(code, reason)
-    local ok, err =
-        xpcall(
-        function()
-            reason = reason or ""
-            local payload_data
-            if code then
-                local fmt = string.format(">I2c%d", #reason)
-                payload_data = string.pack(fmt, code, reason)
-            end
-            write_frame(self, "close", payload_data)
-        end,
-        debug.traceback
-    )
+    local ok, err = xpcall(function()
+        reason = reason or ""
+        local payload_data
+        if code then
+            local fmt = string.format(">I2c%d", #reason)
+            payload_data = string.pack(fmt, code, reason)
+        end
+        write_frame(self, "close", payload_data)
+    end, debug.traceback)
     self.interface.close()
     if not ok then
         log.error(err)

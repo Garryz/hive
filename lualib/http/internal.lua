@@ -171,8 +171,8 @@ function M.request(interface, method, host, url, recvheader, header, content)
     local write = interface.write
     local header_content = ""
     if header then
-        if not header.host then
-            header.host = host
+        if not header.Host then
+            header.Host = host
         end
         for k, v in pairs(header) do
             header_content = string.format("%s%s:%s\r\n", header_content, k, v)
@@ -182,8 +182,8 @@ function M.request(interface, method, host, url, recvheader, header, content)
     end
 
     if content then
-        local data =
-            string.format("%s %s HTTP/1.1\r\n%sContent-length:%d\r\n\r\n", method, url, header_content, #content)
+        local data = string.format("%s %s HTTP/1.1\r\n%sContent-length:%d\r\n\r\n", method, url, header_content,
+            #content)
         write(data)
         write(content)
     else
@@ -374,10 +374,14 @@ function M.response_stream(interface, code, body, header)
 
     -- TODO: timeout
 
-    return setmetatable(
-        {status = code, _body = body, _interface = interface, _reading = read_func, header = header, connected = true},
-        stream
-    )
+    return setmetatable({
+        status = code,
+        _body = body,
+        _interface = interface,
+        _reading = read_func,
+        header = header,
+        connected = true
+    }, stream)
 end
 
 return M
