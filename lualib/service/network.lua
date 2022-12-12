@@ -28,12 +28,39 @@ function message.disconnect(fd)
     csocket.close(fd)
 end
 
+function command.udp_listen(source, addr, port)
+    return csocket.udp_listen(source, addr, port)
+end
+
+function command.udp_forward(fd, addr)
+    return csocket.udp_forward(fd, addr)
+end
+
+function message.udp_connect(source, addr, port, ev)
+    csocket.udp_connect(source, addr, port, ev)
+end
+
+function message.udp_disconnect(fd)
+    csocket.udp_close(fd)
+end
+
 cell.command(command)
 cell.message(message)
 
 cell.dispatch {
     msg_type = 10, -- write socket
-    dispatch = csocket.send
+    dispatch = function(...)
+        csocket.send(...)
+        csocket.pollonce()
+    end
+}
+
+cell.dispatch {
+    msg_type = 15, -- udp write socket
+    dispatch = function(...)
+        csocket.udp_send(...)
+        csocket.pollonce()
+    end
 }
 
 local dispatch_message = cell.getdispatch(3)

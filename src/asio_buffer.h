@@ -1,13 +1,14 @@
 #ifndef asio_buffer_h
 #define asio_buffer_h
 
-#include "asio/buffer.hpp"
-
 #include <array>
 #include <list>
 #include <vector>
 
+#include "asio/buffer.hpp"
+
 static const int READ_BLOCK_SIZE = 512;
+static const int UDP_BLOCK_SIZE = 1400;
 
 struct r_block {
     std::array<char, READ_BLOCK_SIZE> data;
@@ -100,7 +101,7 @@ struct w_block {
 };
 
 class write_buffer {
-  public:
+   public:
     write_buffer() = default;
     write_buffer(const write_buffer &) = delete;
     write_buffer &operator=(const write_buffer &) = delete;
@@ -159,8 +160,94 @@ class write_buffer {
         buffer.clear();
     }
 
-  private:
+   private:
     std::list<w_block *> buffer;
+    std::vector<asio::const_buffer> c_buffer;
+};
+
+struct udp_r_block {
+    std::array<char, UDP_BLOCK_SIZE> data;
+    std::size_t len{UDP_BLOCK_SIZE};
+    udp_r_block *next{nullptr};
+};
+
+struct udp_read_buffer {
+    udp_r_block *head;
+
+    void init(udp_r_block *block) { head = block; }
+
+    void append(udp_r_block *block) {
+        if (head == nullptr) {
+            head = block;
+        } else {
+            head->next = block;
+        }
+    }
+
+    udp_r_block *pop() {
+        auto block = head;
+        if (head != nullptr) {
+            head = head->next;
+        }
+        return block;
+    }
+
+    void free() {
+        while (head != nullptr) {
+            auto block = head;
+            head = head->next;
+            delete block;
+        }
+    }
+};
+
+struct udp_w_block {
+    const char *data{nullptr};
+    std::size_t len{0};
+
+    ~udp_w_block() { delete[] data; }
+};
+
+class udp_write_buffer {
+   public:
+    udp_write_buffer() = default;
+    udp_write_buffer(const udp_write_buffer &) = delete;
+    udp_write_buffer *operator=(const udp_write_buffer &) = delete;
+
+    void append(const char *data, std::size_t len) {
+        udp_w_block *blk = new udp_w_block;
+        blk->data = data;
+        blk->len = len;
+        buffer.push_back(blk);
+    }
+
+    const std::vector<asio::const_buffer> &const_buffer() {
+        c_buffer.clear();
+        std::list<udp_w_block *>::iterator iter = buffer.begin();
+        if (iter != buffer.end()) {
+            c_buffer.push_back(asio::buffer((*iter)->data, (*iter)->len));
+        }
+        return c_buffer;
+    }
+
+    void retrieve() {
+        std::list<udp_w_block *>::iterator iter = buffer.begin();
+        if (iter != buffer.end()) {
+            delete (*iter);
+            iter = buffer.erase(iter);
+        }
+    }
+
+    ~udp_write_buffer() {
+        for (std::list<udp_w_block *>::iterator iter = buffer.begin();
+             iter != buffer.end(); ++iter) {
+            delete (*iter);
+        }
+        buffer.clear();
+    }
+
+   private:
+    std::list<udp_w_block *> buffer;
     std::vector<asio::const_buffer> c_buffer;
 };
 

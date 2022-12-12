@@ -213,10 +213,13 @@ end
 function socket_ins.listen(addr, port, accepter)
     assert(type(accepter) == "function")
     sockets_fd = sockets_fd or cell.cmd("socket")
-    local obj = {__fd = assert(cell.call(sockets_fd, "listen", cell.self, addr, port), "Listen failed"), __addr = addr}
+    local obj = {
+        __fd = assert(cell.call(sockets_fd, "listen", cell.self, addr, port), "Listen failed"),
+        __addr = addr
+    }
     sockets_accept[obj.__fd] = function(fd, addr)
         local c = accepter(fd, addr, obj)
-        if type(c) ~= "userdata" then
+        if c and type(c) ~= "userdata" then
             c = cell.cmd("getcell", c)
         end
         return c
@@ -233,7 +236,10 @@ function socket_ins.connect(addr, port)
     if not fd then
         return fd, err
     end
-    local obj = {__fd = fd, __addr = addr}
+    local obj = {
+        __fd = fd,
+        __addr = addr
+    }
     setmetatable(obj, socket_meta)
     sockets[obj.__fd] = obj
     return obj
@@ -241,7 +247,10 @@ end
 
 function socket_ins.bind(fd, addr)
     sockets_fd = sockets_fd or cell.cmd("socket")
-    local obj = {__fd = fd, __addr = addr}
+    local obj = {
+        __fd = fd,
+        __addr = addr
+    }
     setmetatable(obj, socket_meta)
     sockets[obj.__fd] = obj
     return obj
@@ -253,14 +262,11 @@ cell.dispatch {
         local accepter = sockets_accept[accept_fd]
         if accepter then
             -- accepter: new fd ,  ip addr
-            local co =
-                cell.cocreate(
-                function()
-                    local forward = accepter(fd, addr) or cell.self
-                    cell.call(sockets_fd, "forward", fd, forward)
-                    return "EXIT"
-                end
-            )
+            local co = cell.cocreate(function()
+                local forward = accepter(fd, addr) or cell.self
+                cell.call(sockets_fd, "forward", fd, forward)
+                return "EXIT"
+            end)
             cell.suspend(nil, nil, co, coroutine.resume(co))
         end
     end
@@ -312,13 +318,10 @@ cell.dispatch {
     dispatch = function(fd)
         local obj = sockets[fd]
         if obj then
-            local co =
-                cell.cocreate(
-                function()
-                    obj:disconnect()
-                    return "EXIT"
-                end
-            )
+            local co = cell.cocreate(function()
+                obj:disconnect()
+                return "EXIT"
+            end)
             cell.suspend(nil, nil, co, coroutine.resume(co))
         end
     end
@@ -329,16 +332,13 @@ cell.dispatch {
     dispatch = function(fd, size)
         local obj = sockets[fd]
         if obj then
-            local co =
-                cell.cocreate(
-                function()
-                    local warning = sockets_warning[fd] or function(fd, size)
-                            log.warningf("WARNING: %d K bytes need to send out (fd = %d)", size, fd)
-                        end
-                    warning(fd, size)
-                    return "EXIT"
+            local co = cell.cocreate(function()
+                local warning = sockets_warning[fd] or function(fd, size)
+                    log.warningf("WARNING: %d K bytes need to send out (fd = %d)", size, fd)
                 end
-            )
+                warning(fd, size)
+                return "EXIT"
+            end)
             cell.suspend(nil, nil, co, coroutine.resume(co))
         end
     end

@@ -1,20 +1,19 @@
 #ifndef session_h
 #define session_h
 
+#include <vector>
+
+#include "asio/ip/tcp.hpp"
 #include "asio_buffer.h"
 #include "common.h"
 #include "hive_cell.h"
 #include "hive_log.h"
 #include "hive_seri.h"
 
-#include "asio/ip/tcp.hpp"
-
-#include <vector>
-
 static const std::size_t WARNING_SIZE = 1014 * 1024;
 
 class session : public std::enable_shared_from_this<session> {
-  public:
+   public:
     session(const session &) = delete;
     session &operator=(const session &) = delete;
 
@@ -73,7 +72,7 @@ class session : public std::enable_shared_from_this<session> {
         unsend_read_buffers.clear();
     }
 
-  private:
+   private:
     void write() {
         if (!writing && pending_write_len > 0) {
             writing = true;
@@ -153,6 +152,7 @@ class session : public std::enable_shared_from_this<session> {
                 read();
             }
         } else {
+            delete block;
             log_error("session id = %d, read error_code = %d, error = %s", id,
                       ec.value(), ec.message().c_str());
             if (ec != asio::error::operation_aborted &&

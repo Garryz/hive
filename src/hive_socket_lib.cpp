@@ -1,6 +1,9 @@
 #include "hive_socket_lib.h"
+
 #include "client.h"
 #include "server.h"
+#include "udp_client.h"
+#include "udp_server.h"
 
 static int llisten(lua_State *L) {
     cell *c = cell_fromuserdata(L, 1);
@@ -344,14 +347,173 @@ static int lclose(lua_State *L) {
     return 0;
 }
 
+static int ludp_listen(lua_State *L) {
+    cell *c = cell_fromuserdata(L, 1);
+    if (c == nullptr) {
+        return 0;
+    }
+    const char *addr = luaL_checkstring(L, 2);
+    unsigned short port = static_cast<unsigned short>(luaL_checkinteger(L, 3));
+
+    auto s = std::make_shared<udp_server>(c, addr, port);
+    if (s->listen()) {
+        udp_server_map[s->session_id()] = s;
+        lua_pushinteger(L, s->session_id());
+        return 1;
+    }
+
+    return 0;
+}
+
+static int ludp_connect(lua_State *L) {
+    cell *c = cell_fromuserdata(L, 1);
+    if (c == nullptr) {
+        return 0;
+    }
+    const char *addr = luaL_checkstring(L, 2);
+    unsigned short port = static_cast<unsigned short>(luaL_checkinteger(L, 3));
+    lua_Integer event = luaL_checkinteger(L, 4);
+
+    auto cl = std::make_shared<udp_client>(c, addr, port);
+    if (cl->connect(event)) {
+        udp_client_map[cl->session_id()] = cl;
+        udp_session_map[cl->session_id()] = cl->get_session();
+    }
+
+    return 0;
+}
+
+static int ludp_forward(lua_State *L) {
+    uint32_t session_id = static_cast<uint32_t>(luaL_checkinteger(L, 1));
+    cell *c = cell_fromuserdata(L, 2);
+    if (c == nullptr) {
+        return 0;
+    }
+    auto session = udp_session_map[session_id];
+    if (session == nullptr) {
+        return 0;
+    }
+    int boolean = session->set_to_cell(c);
+    lua_pushboolean(L, boolean);
+    return 1;
+}
+
+static int ludp_send(lua_State *L) {
+    uint32_t id = static_cast<uint32_t>(luaL_checkinteger(L, 1));
+    std::size_t sz = static_cast<std::size_t>(luaL_checkinteger(L, 2));
+    auto msg = static_cast<const char *>(lua_touserdata(L, 3));
+    auto session = udp_session_map[id];
+    if (session == nullptr) {
+        delete[] msg;
+        return luaL_error(L, "Write to invalid udp socket %d", id);
+    }
+    session->write(msg, sz);
+    return 0;
+}
+
+static int ludp_free(lua_State *L) {
+    udp_read_buffer *buffer =
+        static_cast<udp_read_buffer *>(lua_touserdata(L, 1));
+    buffer->free();
+    return 0;
+}
+
+static int ludp_push(lua_State *L) {
+    udp_read_buffer *buffer =
+        static_cast<udp_read_buffer *>(lua_touserdata(L, 1));
+    udp_r_block *block = static_cast<udp_r_block *>(lua_touserdata(L, 2));
+    if (block == nullptr) {
+        lua_settop(L, 1);
+        lua_pushboolean(L,
+                        (buffer != nullptr && buffer->head != nullptr ? 1 : 0));
+        return 2;
+    }
+
+    if (buffer == nullptr) {
+        buffer = static_cast<udp_read_buffer *>(
+            lua_newuserdatauv(L, sizeof(udp_read_buffer), 0));
+        lua_newtable(L);
+        lua_pushcfunction(L, ludp_free);
+        lua_setfield(L, -2, "__gc");
+        lua_setmetatable(L, -2);
+
+        buffer->init(block);
+    } else {
+        lua_settop(L, 1);
+        buffer->append(block);
+    }
+    lua_pushboolean(L, 1);
+    return 2;
+}
+
+static int ludp_pop(lua_State *L) {
+    udp_read_buffer *buffer =
+        static_cast<udp_read_buffer *>(lua_touserdata(L, 1));
+    if (buffer == nullptr) {
+        return 0;
+    }
+
+    udp_r_block *block = buffer->pop();
+    if (block == nullptr) {
+        return 0;
+    }
+
+    lua_pushlstring(L, block->data.data(), block->len);
+    delete block;
+    return 1;
+}
+
+static int ludp_close(lua_State *L) {
+    uint32_t id = static_cast<uint32_t>(luaL_checkinteger(L, 1));
+
+    auto server = udp_server_map[id];
+    auto client = udp_client_map[id];
+    auto session = udp_session_map[id];
+
+    if (server) {
+        server->close();
+        udp_server_map[id] = nullptr;
+    } else if (client) {
+        client->close();
+        udp_client_map[id] = nullptr;
+        udp_session_map[id] = nullptr;
+    } else if (session) {
+        session->close();
+        udp_session_map[id] = nullptr;
+        server = udp_server_map[session->belong_session_id()];
+        if (server) {
+            server->remove_session(session->remote_endpoint());
+        }
+    }
+
+    return 0;
+}
+
 int socket_lib(lua_State *L) {
     luaL_checkversion(L);
     luaL_Reg l[] = {
-        {"listen", llisten},   {"connect", lconnect}, {"pollonce", lpollonce},
-        {"pollfor", lpollfor}, {"forward", lforward}, {"sendpack", lsendpack},
-        {"send", lsend},       {"push", lpush},       {"readline", lreadline},
-        {"pop", lpop},         {"readall", lreadall}, {"pause", lpause},
-        {"resume", lresume},   {"close", lclose},     {nullptr, nullptr},
+        {"listen", llisten},
+        {"connect", lconnect},
+        {"pollonce", lpollonce},
+        {"pollfor", lpollfor},
+        {"forward", lforward},
+        {"sendpack", lsendpack},
+        {"send", lsend},
+        {"push", lpush},
+        {"readline", lreadline},
+        {"pop", lpop},
+        {"readall", lreadall},
+        {"pause", lpause},
+        {"resume", lresume},
+        {"close", lclose},
+        {"udp_listen", ludp_listen},
+        {"udp_connect", ludp_connect},
+        {"udp_forward", ludp_forward},
+        {"udp_send", ludp_send},
+        {"udp_push", ludp_push},
+        {"udp_pop", ludp_pop},
+        {"udp_close", ludp_close},
+        {nullptr, nullptr},
     };
     luaL_newlib(L, l);
 

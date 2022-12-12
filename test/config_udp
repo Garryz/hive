@@ -1,0 +1,5 @@
+thread = 4
+main = "test.udp"
+logger = "service.loggerd"
+logdir = "./log"
+logfile = "log"
