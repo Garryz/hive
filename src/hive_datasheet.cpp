@@ -1,7 +1,7 @@
+#include <cstdint>
+
 #include "endian.h"
 #include "lua.hpp"
-
-#include <cstdint>
 
 static const char *NODECACHE = "_ctable";
 static const char *PROXYCACHE = "_proxy";
@@ -49,6 +49,7 @@ static inline const table *gettable(const document *doc, uint32_t index) {
 
 static void create_proxy(lua_State *L, const void *data, uint32_t index) {
     const table *t = gettable(static_cast<const document *>(data), index);
+
     if (t == nullptr) {
         luaL_error(L, "Invalid index %d", index);
     }
@@ -82,7 +83,7 @@ static void create_proxy(lua_State *L, const void *data, uint32_t index) {
 }
 
 static void clear_table(lua_State *L) {
-    int t = lua_gettop(L); // clear top
+    int t = lua_gettop(L);  // clear top
     if (lua_type(L, t) != LUA_TTABLE) {
         luaL_error(L, "Invalid cache");
     }
@@ -103,7 +104,7 @@ static void update_cache(lua_State *L, const void *data, const void *newdata) {
     int t = lua_gettop(L);
     lua_getfield(L, LUA_REGISTRYINDEX, PROXYCACHE);
     int pt = t + 1;
-    lua_newtable(L); // temp table
+    lua_newtable(L);  // temp table
     int nt = pt + 1;
     lua_pushnil(L);
     while (lua_next(L, t) != 0) {
@@ -169,29 +170,29 @@ static int lupdate(lua_State *L) {
 static void pushvalue(lua_State *L, const uint32_t *v, value_type type,
                       const document *doc) {
     switch (type) {
-    case value_type::VALUE_NIL:
-        lua_pushnil(L);
-        break;
-    case value_type::VALUE_INTEGER:
-        lua_pushinteger(
-            L, adapte_endian(*reinterpret_cast<const int32_t *>(v), false));
-        break;
-    case value_type::VALUE_REAL:
-        lua_pushnumber(
-            L, adapte_endian(*reinterpret_cast<const float *>(v), false));
-        break;
-    case value_type::VALUE_BOOLEAN:
-        lua_pushboolean(L, adapte_endian(*v, false));
-        break;
-    case value_type::VALUE_TABLE:
-        create_proxy(L, doc, adapte_endian(*v, false));
-        break;
-    case value_type::VALUE_STRING:
-        lua_pushstring(L, reinterpret_cast<const char *>(doc) + doc->strtbl +
-                              adapte_endian(*v, false));
-        break;
-    default:
-        luaL_error(L, "Invalid type %d at %p", type, v);
+        case value_type::VALUE_NIL:
+            lua_pushnil(L);
+            break;
+        case value_type::VALUE_INTEGER:
+            lua_pushinteger(
+                L, adapte_endian(*reinterpret_cast<const int32_t *>(v), false));
+            break;
+        case value_type::VALUE_REAL:
+            lua_pushnumber(
+                L, adapte_endian(*reinterpret_cast<const float *>(v), false));
+            break;
+        case value_type::VALUE_BOOLEAN:
+            lua_pushboolean(L, adapte_endian(*v, false));
+            break;
+        case value_type::VALUE_TABLE:
+            create_proxy(L, doc, adapte_endian(*v, false));
+            break;
+        case value_type::VALUE_STRING:
+            lua_pushstring(L, reinterpret_cast<const char *>(doc) +
+                                  doc->strtbl + adapte_endian(*v, false));
+            break;
+        default:
+            luaL_error(L, "Invalid type %d at %p", type, v);
     }
 }
 
@@ -238,7 +239,7 @@ static void copyfromdata(lua_State *L) {
     lua_pop(L, 2);
     copytable(L, 1, p);
     lua_pushnil(L);
-    lua_setmetatable(L, 1); // remove metatable
+    lua_setmetatable(L, 1);  // remove metatable
 }
 
 static int lindex(lua_State *L) {
@@ -275,30 +276,34 @@ static int llen(lua_State *L) {
 static void new_weak_table(lua_State *L, const char *mode) {
     lua_newtable(L);
 
-    lua_createtable(L, 0, 1); // weak meta table
+    lua_createtable(L, 0, 1);  // weak meta table
     lua_pushstring(L, mode);
     lua_setfield(L, -2, "__mode");
 
-    lua_setmetatable(L, -2); // make weak
+    lua_setmetatable(L, -2);  // make weak
 }
 
 static void gen_metatable(lua_State *L) {
-    new_weak_table(L, "kv"); // NODECACHE { pointer:table }
+    new_weak_table(L, "kv");  // NODECACHE { pointer:table }
     lua_setfield(L, LUA_REGISTRYINDEX, NODECACHE);
 
-    new_weak_table(L, "k"); // PROXYCACHE { table:userdata }
+    new_weak_table(L, "k");  // PROXYCACHE { table:userdata }
     lua_setfield(L, LUA_REGISTRYINDEX, PROXYCACHE);
 
     lua_newtable(L);
     lua_setfield(L, LUA_REGISTRYINDEX, TABLES);
 
+    lua_createtable(L, 0, 1);  // mod table
+
+    lua_createtable(L, 0, 2);  // metatable
     luaL_Reg l[] = {
         {"__index", lindex},
         {"__pairs", lpairs},
         {"__len", llen},
-        {nullptr, nullptr},
+        {NULL, NULL},
     };
-    luaL_newlib(L, l);
+    lua_pushvalue(L, -1);
+    luaL_setfuncs(L, l, 1);
 }
 
 static int lstringpointer(lua_State *L) {
