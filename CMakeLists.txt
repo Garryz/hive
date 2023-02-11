@@ -1,6 +1,6 @@
 project(hive)
 
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.16.4)
 
 set(EXE ${CMAKE_CURRENT_SOURCE_DIR})
 set(LIB ${CMAKE_CURRENT_SOURCE_DIR}/luaclib)
@@ -51,6 +51,6 @@ add_subdirectory(./third_party/lua)
 add_subdirectory(./third_party/pb)
 add_subdirectory(./third_party/protobuf)
 add_subdirectory(./third_party/crypt)
-add_subdirectory(./third_party/boringssl)
+add_subdirectory(./third_party/LibreSSL)
 add_subdirectory(./third_party/lfs)
 add_subdirectory(./third_party/logger)
