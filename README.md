@@ -7,7 +7,7 @@
 1.  底层 来源于 https://github.com/cloudwu/hive
 2.  上层 来源于 https://github.com/cloudwu/skynet
 3.  third_party/asio 来源于 https://github.com/chriskohlhoff/asio
-4.  third_party/boringssl 来源于 https://github.com/google/boringssl
+4.  third_party/LibreSSL 来源于 https://github.com/PowerShell/LibreSSL
 5.  third_party/jemalloc 来源于 https://github.com/jemalloc/jemalloc
 6.  third_party/lfs 来源于 https://github.com/keplerproject/luafilesystem
 7.  third_party/lua 来源于 https://github.com/lua/lua
@@ -21,27 +21,17 @@
 
 ### linux
 1.  gcc g++ 7
-2.  third_party/boringssl/BUILDING.md
-3.  perl
-4.  golang
-5.  cmake 3.5
-6.  ./build.sh
+2.  cmake 3.16.4
+3.  ./build.sh
 
 ### mac
-1.  third_party/boringssl/BUILDING.md
-2.  perl
-3.  golang
-4.  cmake 3.5
-5.  ./build.sh
+1.  cmake 3.16.4
+2.  ./build.sh
 
 ### windows
 1.  Visual Studio 2019
-2.  third_party/boringssl/BUILDING.md
-3.  perl
-4.  nasm
-5.  golang
-6.  cmake 3.5
-7.  ./build.bat
+2.  cmake 3.16.4
+3.  ./build.bat
 
 #### 使用说明
 
