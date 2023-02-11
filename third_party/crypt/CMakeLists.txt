@@ -7,7 +7,7 @@ if(CMAKE_SYSTEM_NAME MATCHES "Windows")
 endif()
 
 include_directories(../lua)
-include_directories(../boringssl/include)
+include_directories(../LibreSSL/include)
 
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR} CRYPT_SOURCES)
 
