@@ -19,7 +19,7 @@ local command = {}
 local node_address = {}
 local node_sender = {}
 
-local CLUSTERNAME = "./clustername.lua"
+local CLUSTERNAME = env.getconfig("cluster") or "./clustername.lua"
 
 local connecting = {}
 
@@ -85,7 +85,9 @@ local function open_channel(t, key)
     return c
 end
 
-local node_channel = setmetatable({}, {__index = open_channel})
+local node_channel = setmetatable({}, {
+    __index = open_channel
+})
 
 function command.sender(node)
     return node_channel[node]
@@ -94,12 +96,11 @@ end
 local function loadconfig(tmp)
     if tmp == nil then
         tmp = {}
-        local config_name = env.getconfig("cluster") or CLUSTERNAME
-        if config_name then
-            local f = assert(io.open(config_name))
+        if CLUSTERNAME then
+            local f = assert(io.open(CLUSTERNAME))
             local source = f:read "*a"
             f:close()
-            assert(load(source, "@" .. config_name, "t", tmp))()
+            assert(load(source, "@" .. CLUSTERNAME, "t", tmp))()
         end
     end
     local reload = {}

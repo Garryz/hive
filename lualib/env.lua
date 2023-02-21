@@ -1,13 +1,18 @@
-local datasheet = require "datasheet"
+local c = require "cell.c"
+local seri = require "hive.seri"
+
+local config
+
+local function init()
+    config = seri.unpack(c.config)
+end
+
+init()
 
 local env = {}
 
-function env.getenv()
-    return datasheet.query("__HIVE_ENV")
-end
-
 function env.getconfig(key)
-    return env.getenv()[key]
+    return config[key]
 end
 
 return env

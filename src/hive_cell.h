@@ -14,7 +14,7 @@ cell *cell_socket(lua_State *L, cell *sys, cell *logger,
 cell *cell_sys(lua_State *L, cell *sys, cell *socket, cell *logger,
                const char *systemfile, const char *socketfile,
                const char *loggerfile, const char *mainfile,
-               const char *loaderfile, void *config);
+               const char *loaderfile);
 cell *cell_new(lua_State *L, const char *mainfile, const char *loaderfile);
 void cell_close(cell *c);
 bool cell_dispatch_message(cell *c);

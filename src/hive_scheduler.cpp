@@ -92,6 +92,7 @@ lua_State *scheduler_newtask(lua_State *pL, bool inc) {
     }
     hive_copyenv(L, pL, "system_pointer");
     hive_copyenv(L, pL, "logger_pointer");
+    hive_copyenv(L, pL, "config");
 
     lua_newtable(L);
     lua_newtable(L);
@@ -266,6 +267,8 @@ int scheduler_start(lua_State *L) {
     const char *logfile = luaL_checkstring(L, -1);
     lua_pop(L, 1);
 
+    hive_createenv(L);
+
     lua_pushcfunction(L, data_pack);
     lua_pushvalue(L, 1);
     int err = lua_pcall(L, 1, 1, 0);
@@ -274,10 +277,8 @@ int scheduler_start(lua_State *L) {
         lua_pop(L, 1);
         return 0;
     }
-    void *config = lua_touserdata(L, -1);
-    lua_pop(L, 1);
+    hive_setenv(L, "config");
 
-    hive_createenv(L);
     auto gmq = static_cast<global_queue *>(
         lua_newuserdatauv(L, sizeof(global_queue), 0));
     globalmq_init(gmq, thread);
@@ -300,7 +301,7 @@ int scheduler_start(lua_State *L) {
     }
 
     sys = cell_sys(sL, sys, socket, logger, system_lua, socket_lua, logger_lua,
-                   main_lua, loader_lua, config);
+                   main_lua, loader_lua);
     if (sys == nullptr) {
         return 0;
     }

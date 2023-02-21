@@ -1,4 +1,5 @@
 #include "hive_seri.h"
+
 #include "hive_env.h"
 
 int data_pack(lua_State *L) {
@@ -15,6 +16,7 @@ int data_unpack(lua_State *L) {
     if (blk == nullptr) {
         return luaL_error(L, "Need a block to unpack");
     }
+    bool nodelete = lua_toboolean(L, 2) ? true : false;
     lua_settop(L, 1);
     hive_getenv(L, "cell_map");
 
@@ -33,7 +35,9 @@ int data_unpack(lua_State *L) {
         rb._push_value(L, *t & 0x7, *t >> 3, 2);
     }
 
-    rb.close();
+    if (!nodelete) {
+        rb.close();
+    }
 
     return lua_gettop(L) - 2;
 }

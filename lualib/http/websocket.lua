@@ -9,8 +9,8 @@ local log = require "log"
 local GLOBAL_GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 local MAX_FRAME_SIZE = 256 * 1024 -- max frame is 256K
 
-local CERT_FILE = "./server-cert.pem"
-local KEY_FILE = "./server-key.pem"
+local CERT_FILE = env.getconfig("certfile") or "./server-cert.pem"
+local KEY_FILE = env.getconfig("keyfile") or "./server-key.pem"
 
 local M = {}
 
@@ -349,9 +349,7 @@ local function _new_server_ws(sock, protocol)
             SSLCTX_SERVER = tls.newctx()
             -- gen cert and key
             -- openssl req -x509 -newkey rsa:2048 -days 3650 -nodes -keyout server-key.pem -out server-cert.pem
-            local certfile = env.getconfig("certfile") or CERT_FILE
-            local keyfile = env.getconfig("keyfile") or KEY_FILE
-            SSLCTX_SERVER:set_cert(certfile, keyfile)
+            SSLCTX_SERVER:set_cert(CERT_FILE, KEY_FILE)
         end
         local tls_ctx = tls.newtls("server", SSLCTX_SERVER)
         local init = tls.initresponsefunc(sock, tls_ctx)
