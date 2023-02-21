@@ -4,7 +4,7 @@ local seri = require "hive.seri"
 local config
 
 local function init()
-    config = seri.unpack(c.config)
+    config = seri.unpack(c.config, true)
 end
 
 init()
