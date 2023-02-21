@@ -1,13 +1,13 @@
 #ifndef hive_seri_h
 #define hive_seri_h
 
-#include "hive_cell.h"
-#include "lua.hpp"
-
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
 #include <functional>
+
+#include "hive_cell.h"
+#include "lua.hpp"
 
 static const int BLOCK_SIZE = 128;
 static const int MAX_DEPTH = 32;
@@ -15,10 +15,10 @@ static const int MAX_COOKIE = 32;
 
 enum class data_type {
     TYPE_NIL,
-    TYPE_BOOLEAN, // hibits 0 false 1 true
-    TYPE_NUMBER,  // hibits 0 : 0 , 1: byte, 2:word, 4: dword, 8 : double
+    TYPE_BOOLEAN,  // hibits 0 false 1 true
+    TYPE_NUMBER,   // hibits 0 : 0 , 1: byte, 2:word, 4: dword, 8 : double
     TYPE_USERDATA,
-    TYPE_SHORT_STRING, // hibits 0~31 : len
+    TYPE_SHORT_STRING,  // hibits 0~31 : len
     TYPE_LONG_STRING,
     TYPE_TABLE,
     TYPE_CELL,
@@ -262,47 +262,47 @@ struct write_block {
         }
         int type = lua_type(L, index);
         switch (type) {
-        case LUA_TNIL:
-            wb_nil();
-            break;
-        case LUA_TNUMBER: {
-            if (lua_isinteger(L, index)) {
-                lua_Integer x = lua_tointeger(L, index);
-                wb_integer(x);
-            } else {
-                lua_Number n = lua_tonumber(L, index);
-                wb_number(n);
-            }
-            break;
-        }
-        case LUA_TBOOLEAN:
-            wb_boolean(lua_toboolean(L, index));
-            break;
-        case LUA_TSTRING: {
-            std::size_t sz = 0;
-            const char *str = lua_tolstring(L, index, &sz);
-            wb_string(str, sz);
-            break;
-        }
-        case LUA_TLIGHTUSERDATA:
-            wb_pointer(lua_touserdata(L, index), data_type::TYPE_USERDATA);
-            break;
-        case LUA_TTABLE:
-            wb_table(L, index, depth + 1);
-            break;
-        case LUA_TUSERDATA: {
-            cell *c = cell_fromuserdata(L, index);
-            if (c) {
-                cell_grab(c);
-                wb_pointer(c, data_type::TYPE_CELL);
+            case LUA_TNIL:
+                wb_nil();
+                break;
+            case LUA_TNUMBER: {
+                if (lua_isinteger(L, index)) {
+                    lua_Integer x = lua_tointeger(L, index);
+                    wb_integer(x);
+                } else {
+                    lua_Number n = lua_tonumber(L, index);
+                    wb_number(n);
+                }
                 break;
             }
-            // else go through
-        }
-        default:
-            free();
-            luaL_error(L, "Unsupport type %s to serialize",
-                       lua_typename(L, type));
+            case LUA_TBOOLEAN:
+                wb_boolean(lua_toboolean(L, index));
+                break;
+            case LUA_TSTRING: {
+                std::size_t sz = 0;
+                const char *str = lua_tolstring(L, index, &sz);
+                wb_string(str, sz);
+                break;
+            }
+            case LUA_TLIGHTUSERDATA:
+                wb_pointer(lua_touserdata(L, index), data_type::TYPE_USERDATA);
+                break;
+            case LUA_TTABLE:
+                wb_table(L, index, depth + 1);
+                break;
+            case LUA_TUSERDATA: {
+                cell *c = cell_fromuserdata(L, index);
+                if (c) {
+                    cell_grab(c);
+                    wb_pointer(c, data_type::TYPE_CELL);
+                    break;
+                }
+                // else go through
+            }
+            default:
+                free();
+                luaL_error(L, "Unsupport type %s to serialize",
+                           lua_typename(L, type));
         }
     }
 
@@ -316,11 +316,13 @@ struct write_block {
 
 struct read_block {
     char *buffer{nullptr};
+    block *head{nullptr};
     block *current{nullptr};
     int len{0};
     int ptr{0};
 
     int init(block *b) {
+        head = b;
         current = b;
         memcpy(&len, b->buffer, sizeof(len));
         ptr = sizeof(len);
@@ -342,7 +344,6 @@ struct read_block {
 
         if (ptr == BLOCK_SIZE) {
             block *next = current->next;
-            delete current;
             current = next;
             ptr = 0;
         }
@@ -365,7 +366,6 @@ struct read_block {
 
         for (;;) {
             block *next = current->next;
-            delete current;
             current = next;
 
             if (sz < BLOCK_SIZE) {
@@ -383,10 +383,10 @@ struct read_block {
     }
 
     void close() {
-        while (current) {
-            block *next = current->next;
-            delete current;
-            current = next;
+        while (head) {
+            block *next = head->next;
+            delete head;
+            head = next;
         }
         len = 0;
         ptr = 0;
@@ -405,43 +405,43 @@ struct read_block {
     lua_Integer _get_integer(lua_State *L, int cookie) {
         number_type type = static_cast<number_type>(cookie);
         switch (type) {
-        case number_type::TYPE_NUMBER_ZERO:
-            return 0;
-        case number_type::TYPE_NUMBER_BYTE: {
-            uint8_t n = 0;
-            uint8_t *pn = static_cast<uint8_t *>(read(&n, sizeof(n)));
-            if (pn == nullptr) {
-                _invalid_stream(L);
+            case number_type::TYPE_NUMBER_ZERO:
+                return 0;
+            case number_type::TYPE_NUMBER_BYTE: {
+                uint8_t n = 0;
+                uint8_t *pn = static_cast<uint8_t *>(read(&n, sizeof(n)));
+                if (pn == nullptr) {
+                    _invalid_stream(L);
+                }
+                return *pn;
             }
-            return *pn;
-        }
-        case number_type::TYPE_NUMBER_WORD: {
-            uint16_t n = 0;
-            uint16_t *pn = static_cast<uint16_t *>(read(&n, sizeof(n)));
-            if (pn == nullptr) {
-                _invalid_stream(L);
+            case number_type::TYPE_NUMBER_WORD: {
+                uint16_t n = 0;
+                uint16_t *pn = static_cast<uint16_t *>(read(&n, sizeof(n)));
+                if (pn == nullptr) {
+                    _invalid_stream(L);
+                }
+                return *pn;
             }
-            return *pn;
-        }
-        case number_type::TYPE_NUMBER_DWORD: {
-            int32_t n = 0;
-            int32_t *pn = static_cast<int32_t *>(read(&n, sizeof(n)));
-            if (pn == nullptr) {
-                _invalid_stream(L);
+            case number_type::TYPE_NUMBER_DWORD: {
+                int32_t n = 0;
+                int32_t *pn = static_cast<int32_t *>(read(&n, sizeof(n)));
+                if (pn == nullptr) {
+                    _invalid_stream(L);
+                }
+                return *pn;
             }
-            return *pn;
-        }
-        case number_type::TYPE_NUMBER_QWORD: {
-            int64_t n = 0;
-            int64_t *pn = static_cast<int64_t *>(read(&n, sizeof(n)));
-            if (pn == nullptr) {
-                _invalid_stream(L);
+            case number_type::TYPE_NUMBER_QWORD: {
+                int64_t n = 0;
+                int64_t *pn = static_cast<int64_t *>(read(&n, sizeof(n)));
+                if (pn == nullptr) {
+                    _invalid_stream(L);
+                }
+                return *pn;
             }
-            return *pn;
-        }
-        default:
-            _invalid_stream(L);
-            return 0;
+            default:
+                _invalid_stream(L);
+                return 0;
         }
     }
 
@@ -511,56 +511,56 @@ struct read_block {
 
     void _push_value(lua_State *L, int type, int cookie, int table_index) {
         switch (static_cast<data_type>(type)) {
-        case data_type::TYPE_NIL:
-            lua_pushnil(L);
-            break;
-        case data_type::TYPE_BOOLEAN:
-            lua_pushboolean(L, cookie);
-            break;
-        case data_type::TYPE_NUMBER:
-            if (cookie == static_cast<int>(number_type::TYPE_NUMBER_REAL)) {
-                lua_pushnumber(L, _get_number(L));
-            } else {
-                lua_pushinteger(L, _get_integer(L, cookie));
+            case data_type::TYPE_NIL:
+                lua_pushnil(L);
+                break;
+            case data_type::TYPE_BOOLEAN:
+                lua_pushboolean(L, cookie);
+                break;
+            case data_type::TYPE_NUMBER:
+                if (cookie == static_cast<int>(number_type::TYPE_NUMBER_REAL)) {
+                    lua_pushnumber(L, _get_number(L));
+                } else {
+                    lua_pushinteger(L, _get_integer(L, cookie));
+                }
+                break;
+            case data_type::TYPE_USERDATA:
+                lua_pushlightuserdata(L, _get_pointer(L));
+                break;
+            case data_type::TYPE_CELL: {
+                cell *c = static_cast<cell *>(_get_pointer(L));
+                cell_touserdata(L, table_index, c);
+                cell_release(c);
+                break;
             }
-            break;
-        case data_type::TYPE_USERDATA:
-            lua_pushlightuserdata(L, _get_pointer(L));
-            break;
-        case data_type::TYPE_CELL: {
-            cell *c = static_cast<cell *>(_get_pointer(L));
-            cell_touserdata(L, table_index, c);
-            cell_release(c);
-            break;
-        }
-        case data_type::TYPE_SHORT_STRING:
-            _get_buffer(L, cookie);
-            break;
-        case data_type::TYPE_LONG_STRING:
-            if (cookie == 2) {
-                uint16_t len = 0;
-                uint16_t *plen =
-                    static_cast<uint16_t *>(read(&len, sizeof(len)));
-                if (plen == nullptr) {
-                    _invalid_stream(L);
+            case data_type::TYPE_SHORT_STRING:
+                _get_buffer(L, cookie);
+                break;
+            case data_type::TYPE_LONG_STRING:
+                if (cookie == 2) {
+                    uint16_t len = 0;
+                    uint16_t *plen =
+                        static_cast<uint16_t *>(read(&len, sizeof(len)));
+                    if (plen == nullptr) {
+                        _invalid_stream(L);
+                    }
+                    _get_buffer(L, static_cast<int>(*plen));
+                } else {
+                    if (cookie != 4) {
+                        _invalid_stream(L);
+                    }
+                    uint32_t len = 0;
+                    uint32_t *plen =
+                        static_cast<uint32_t *>(read(&len, sizeof(len)));
+                    if (plen == nullptr) {
+                        _invalid_stream(L);
+                    }
+                    _get_buffer(L, static_cast<int>(*plen));
                 }
-                _get_buffer(L, static_cast<int>(*plen));
-            } else {
-                if (cookie != 4) {
-                    _invalid_stream(L);
-                }
-                uint32_t len = 0;
-                uint32_t *plen =
-                    static_cast<uint32_t *>(read(&len, sizeof(len)));
-                if (plen == nullptr) {
-                    _invalid_stream(L);
-                }
-                _get_buffer(L, static_cast<int>(*plen));
-            }
-            break;
-        case data_type::TYPE_TABLE:
-            _unpack_table(L, cookie, table_index);
-            break;
+                break;
+            case data_type::TYPE_TABLE:
+                _unpack_table(L, cookie, table_index);
+                break;
         }
     }
 };
