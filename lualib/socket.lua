@@ -27,6 +27,7 @@ local listen_socket = {}
 local socket_ins = {}
 
 local function close_msg(self)
+    sockets_closed[self.__fd] = true
     cell.send(sockets_fd, "disconnect", self.__fd)
 end
 
@@ -60,6 +61,10 @@ function socket:write(msg)
         return
     end
     return cell.rawsend(sockets_fd, 10, fd, csocket.sendpack(msg))
+end
+
+function socket:isconnect()
+    return not sockets_closed[self.__fd]
 end
 
 function socket:disconnect()
